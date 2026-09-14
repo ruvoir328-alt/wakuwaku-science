@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="元素と周期表をクイズで楽しく覚えられる学習アプリ。むずかしさは3だんかいから選べます。">
+<meta name="theme-color" content="#d3ecf8">
+<title>わくわく化学</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚗️</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="title"><span class="mark">⚗️</span>わくわく化学</div>
+  <p class="tagline">元素と周期表を、たのしく覚えよう</p>
+</header>
+
+<nav class="navbar hidden" id="navbar">
+  <button class="nav-btn icon" id="sound-toggle" type="button" aria-label="音のオン・オフ">🔊</button>
+  <button class="nav-btn" type="button" onclick="goSetup()">モードをえらぶ</button>
+  <button class="nav-btn" type="button" onclick="showRecord()">📘 きろく</button>
+</nav>
+
+<main class="wrap">
+
+  <!-- ===== タイトル ===== -->
+  <section class="screen active" id="screen-title">
+    <div class="title-card pop-in">
+      <div class="title-emoji">⚗️</div>
+      <h1 class="title-main">わくわく化学</h1>
+      <p class="title-sub">元素の名前・記号・番号と<br>周期表の場所をクイズで覚えよう！</p>
+      <button class="start-btn" type="button" onclick="goSetup()">スタート！ 🚀</button>
+      <button class="ghost-btn" type="button" onclick="showRecord()">📘 きろくを見る</button>
+      <ul class="title-points">
+        <li>🎚 むずかしさは3だんかい。20番までなら中学生でもOK</li>
+        <li>🏅 難易度とモードごとにハイスコアがのこるよ</li>
+        <li>📱 とうろく・ログインはいりません</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== モード選択 ===== -->
+  <section class="screen" id="screen-setup">
+    <p class="section-label">🎚 どこまでの元素にする？</p>
+    <div class="option-list" id="difficulty-list"></div>
+
+    <p class="section-label">🧪 あそびかたをえらぼう</p>
+    <div class="option-list" id="mode-list"></div>
+
+    <p class="section-label">🔢 なん問やる？</p>
+    <div class="pill-row" id="count-list"></div>
+
+    <div class="current-best" id="current-best">いまのハイスコアを見るには、えらんでね</div>
+
+    <button class="start-btn" type="button" onclick="startQuiz()">はじめる！ 🚀</button>
+    <button class="ghost-btn" type="button" onclick="showScreen('title')">← タイトルにもどる</button>
+  </section>
+
+  <!-- ===== クイズ（4択） ===== -->
+  <section class="screen" id="screen-quiz">
+    <div class="quiz-bar">
+      <span id="q-progress">1 / 20</span>
+      <span class="score" id="q-score">正解 0</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="q-fill" style="width:0%"></div></div>
+
+    <div class="qcard" id="qcard">
+      <span class="q-label" id="q-label">問題</span>
+      <div class="q-main" id="q-main">?</div>
+      <div class="q-ask" id="q-ask"></div>
+    </div>
+
+    <div class="choices" id="choices"></div>
+    <p class="feedback" id="q-feedback"></p>
+    <button class="ghost-btn" type="button" onclick="quitQuiz()">やめる</button>
+  </section>
+
+  <!-- ===== 周期表タップ ===== -->
+  <section class="screen" id="screen-ptable">
+    <div class="quiz-bar">
+      <span id="pt-progress">1 / 20</span>
+      <span class="score" id="pt-score">正解 0</span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="pt-fill" style="width:0%"></div></div>
+
+    <div class="pt-question">
+      <span class="pt-q-label" id="pt-q-label">元素記号</span>
+      <div class="pt-q-text" id="pt-q-text">?</div>
+      <div class="pt-q-ask">周期表で場所をタップ！<span class="pt-badge" id="pt-badge">番号ひょうじ</span></div>
+    </div>
+
+    <p class="pt-hint">← よこにスクロールできるよ →</p>
+    <div class="pt-scroll"><div class="pt-grid" id="pt-grid"></div></div>
+    <p class="pt-feedback" id="pt-feedback"></p>
+    <button class="ghost-btn" type="button" onclick="quitQuiz()">やめる</button>
+  </section>
+
+  <!-- ===== 結果 ===== -->
+  <section class="screen" id="screen-result">
+    <div class="result-card pop-in" id="result-card">
+      <div class="sparkles" id="sparkles"></div>
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-score" id="result-score">0/0</div>
+      <div class="result-unit">正解した数</div>
+      <p class="result-comment" id="result-comment"></p>
+      <div class="result-meta" id="result-meta"></div>
+      <div class="best-banner hidden" id="best-banner">
+        <div class="bb-title">🎊 自己ベスト更新！</div>
+        <div class="bb-sub" id="bb-sub"></div>
+      </div>
+    </div>
+    <div class="btn-stack">
+      <button class="primary-btn" type="button" onclick="startQuiz()">もう一回！ 🔄</button>
+      <button class="ghost-btn" type="button" onclick="goSetup()">モードをえらびなおす</button>
+      <button class="ghost-btn" type="button" onclick="showRecord()">📘 きろくを見る</button>
+    </div>
+  </section>
+
+  <!-- ===== きろく ===== -->
+  <section class="screen" id="screen-record">
+    <div class="card">
+      <h2>📘 きろく</h2>
+      <p class="lead">むずかしさ × あそびかた ごとのハイスコアだよ。</p>
+      <p class="record-note">
+        ℹ️ きろくは、いま使っている<strong>この端末</strong>（スマホ・タブレット・パソコン）の中だけに保存されます。
+        ほかの端末やブラウザには引きつがれません。ブラウザのデータを消すと、きろくも消えます。
+      </p>
+      <div class="stat-row" id="stat-row"></div>
+      <div style="overflow-x:auto">
+        <table class="score-table" id="score-table"></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🏅 ランクの見かた</h2>
+      <p class="lead" style="margin-bottom:10px">正解した割合でランクがつくよ。</p>
+      <div style="font-size:12.5px;line-height:2;color:var(--muted)">
+        🏆 ぜんもん正解 ／ 🥇 80%いじょう ／ 🥈 60%いじょう ／ 🥉 40%いじょう
+      </div>
+    </div>
+
+    <div class="btn-stack">
+      <button class="primary-btn" type="button" onclick="goSetup()">あそびにいく 🚀</button>
+      <button class="ghost-btn" type="button" onclick="showScreen('title')">← タイトルにもどる</button>
+      <button class="danger-btn" type="button" onclick="resetRecord()">きろくをぜんぶ消す</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <!-- TODO: 公開時にリンク先URLを差しかえる -->
+  <a class="credit" id="credit-link" href="#" target="_blank" rel="noopener noreferrer">パカえもん制作</a>
+  <p class="footer-note">わくわく化学</p>
+</footer>
+
+<script src="js/elements.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
