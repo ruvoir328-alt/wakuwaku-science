@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>わくわく化学基礎</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cyan:#00BCD4;--cyan-dark:#0097A7;--cyan-light:#E0F7FA;--cyan-mid:#B2EBF2;
+  --sky:#03A9F4;--teal:#009688;
+  --bg:#F0FBFF;--white:#fff;--text:#1A3A4A;--muted:#5C8FA0;
+  --shadow:0 4px 20px rgba(0,188,212,0.15);
+  --radius:16px;--radius-sm:10px;
+}
+body{font-family:'Nunito','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#0097A7 0%,#00BCD4 50%,#03A9F4 100%);padding:24px 20px 18px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-30px;left:-30px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.07)}
+.header::after{content:'';position:absolute;bottom:-40px;right:-20px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.header-icon{font-size:32px;margin-bottom:4px;position:relative;z-index:1}
+.header h1{font-size:24px;font-weight:900;color:#fff;letter-spacing:1px;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.header p{font-size:12px;color:rgba(255,255,255,0.85);margin-top:3px;position:relative;z-index:1}
+.navbar{background:#fff;border-bottom:2px solid var(--cyan-mid);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,188,212,0.1)}
+.student-id{font-size:12px;font-weight:700;color:var(--cyan-dark)}
+.nav-btns{display:flex;gap:6px;align-items:center}
+.nav-btn{background:var(--cyan-light);border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:var(--cyan-dark);cursor:pointer;font-family:inherit}
+.nav-btn:hover{background:var(--cyan-mid)}
+.sound-btn{background:var(--cyan-light);border:1px solid var(--cyan-mid);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px}
+.screen{display:none;padding:16px;max-width:500px;margin:0 auto}
+.screen.active{display:block}
+.login-card{background:#fff;border-radius:var(--radius);padding:28px 20px;box-shadow:var(--shadow);text-align:center;margin-top:20px}
+.login-card h2{font-size:18px;font-weight:800;color:var(--cyan-dark);margin-bottom:6px}
+.login-card p{font-size:12px;color:var(--muted);margin-bottom:20px}
+.login-input{width:100%;border:2px solid var(--cyan-mid);border-radius:var(--radius-sm);padding:11px 14px;font-size:20px;font-weight:700;text-align:center;letter-spacing:4px;font-family:inherit;color:var(--text);outline:none;transition:border 0.2s}
+.login-input:focus{border-color:var(--cyan)}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--cyan-dark),var(--cyan));border:none;border-radius:var(--radius-sm);padding:12px;font-size:15px;font-weight:800;color:#fff;cursor:pointer;margin-top:14px;font-family:inherit;box-shadow:0 4px 12px rgba(0,188,212,0.3)}
+.login-btn:hover{transform:translateY(-1px)}
+.mode-title{font-size:17px;font-weight:800;color:var(--cyan-dark);margin-bottom:14px;text-align:center}
+.mode-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.mode-card{background:#fff;border:2px solid var(--cyan-mid);border-radius:var(--radius);padding:16px 8px;text-align:center;cursor:pointer;transition:all 0.2s;box-shadow:var(--shadow)}
+.mode-card:hover,.mode-card.selected{border-color:var(--cyan);background:var(--cyan-light);transform:translateY(-2px)}
+.mode-card .icon{font-size:26px;margin-bottom:6px}
+.mode-card h3{font-size:13px;font-weight:800;color:var(--cyan-dark)}
+.mode-card p{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3}
+.start-btn{width:100%;background:linear-gradient(135deg,var(--teal),var(--cyan));border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(0,188,212,0.3);margin-top:8px}
+.start-btn:hover{transform:translateY(-1px)}
+.medal-display{display:flex;gap:6px;justify-content:center;margin-bottom:14px;flex-wrap:wrap}
+.medal-badge{background:#fff;border:1.5px solid var(--cyan-mid);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px}
+.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-info{font-size:12px;font-weight:700;color:var(--muted)}
+.score-info{font-size:12px;font-weight:700;color:var(--cyan-dark)}
+.progress-bar{background:var(--cyan-mid);border-radius:20px;height:7px;margin-bottom:16px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--cyan-dark),var(--sky));height:100%;border-radius:20px;transition:width 0.4s ease}
+.flashcard{background:#fff;border-radius:var(--radius);padding:24px 20px;text-align:center;box-shadow:var(--shadow);margin-bottom:16px;min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:2px solid var(--cyan-mid)}
+.card-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:6px}
+.card-question{font-size:26px;font-weight:900;color:var(--cyan-dark);line-height:1.2}
+.card-sub{font-size:12px;color:var(--muted);margin-top:6px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.choice-btn{background:#fff;border:2px solid var(--cyan-mid);border-radius:var(--radius-sm);padding:12px 8px;font-size:14px;font-weight:700;color:var(--text);cursor:pointer;transition:all 0.2s;font-family:inherit;text-align:center}
+.choice-btn:hover:not(:disabled){border-color:var(--cyan);background:var(--cyan-light)}
+.choice-btn.correct{background:#E8F5E9;border-color:#4CAF50;color:#2E7D32}
+.choice-btn.wrong{background:#FFEBEE;border-color:#EF5350;color:#C62828}
+.choice-btn:disabled{cursor:default}
+.feedback{text-align:center;margin-top:10px;font-size:14px;font-weight:700;min-height:22px}
+.feedback.ok{color:#4CAF50}
+.feedback.ng{color:#EF5350}
+.pt-question{background:#fff;border-radius:var(--radius);padding:16px;text-align:center;box-shadow:var(--shadow);margin-bottom:10px;border:2px solid var(--cyan-mid)}
+.pt-q-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
+.pt-q-text{font-size:24px;font-weight:900;color:var(--cyan-dark)}
+.pt-q-ask{font-size:11px;color:var(--muted);margin-top:4px}
+.pt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:8px;padding-bottom:4px}
+.pt-grid{display:inline-grid;grid-template-columns:repeat(18,1fr);gap:2px;min-width:520px;padding:2px}
+.pt-cell{width:27px;height:27px;border-radius:3px;border:1.5px solid #ccc;background:#f8f8f8;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-weight:700;color:#999;transition:all 0.15s;user-select:none;line-height:1.1;text-align:center;padding:1px}
+.pt-cell.has-element{background:var(--cyan-light);color:var(--cyan-dark);border-color:var(--cyan-mid);cursor:pointer}
+.pt-cell.has-element:hover{background:var(--cyan-mid);transform:scale(1.12);z-index:2;box-shadow:0 2px 6px rgba(0,188,212,0.3)}
+.pt-cell.empty{background:transparent;border-color:transparent;cursor:default;pointer-events:none}
+.pt-cell.correct-ans{background:#C8E6C9;border-color:#4CAF50;color:#1B5E20;transform:scale(1.15);z-index:3;box-shadow:0 2px 8px rgba(76,175,80,0.4)}
+.pt-cell.wrong-ans{background:#FFCDD2;border-color:#EF5350;color:#B71C1C;animation:shake 0.3s ease}
+.pt-cell.show-correct{background:#C8E6C9;border-color:#4CAF50;color:#1B5E20}
+.pt-cell.disabled-cell{pointer-events:none}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.pt-hint{font-size:10px;color:var(--muted);text-align:center;margin-bottom:6px}
+.pt-feedback{text-align:center;font-size:13px;font-weight:700;min-height:20px;margin-top:4px;padding:0 8px}
+.pt-feedback.ok{color:#4CAF50}
+.pt-feedback.ng{color:#EF5350}
+.pt-display-badge{display:inline-block;background:var(--cyan-dark);color:#fff;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;margin-left:6px}
+.result-card{background:#fff;border-radius:var(--radius);padding:24px 18px;text-align:center;box-shadow:var(--shadow);margin-bottom:14px}
+.result-emoji{font-size:50px;margin-bottom:6px}
+.result-score{font-size:44px;font-weight:900;color:var(--cyan-dark);line-height:1}
+.result-label{font-size:13px;color:var(--muted);margin-top:3px}
+.result-comment{font-size:14px;font-weight:700;color:var(--text);margin-top:10px}
+.save-status{font-size:11px;margin-top:6px;color:var(--muted);min-height:16px}
+.save-status.ok{color:#4CAF50}
+.save-status.ng{color:#EF5350}
+.awards{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.award{background:#fff;border:2px solid var(--cyan-mid);border-radius:var(--radius);padding:14px;text-align:center;min-width:90px;box-shadow:var(--shadow)}
+.award .award-icon{font-size:32px}
+.award .award-name{font-size:11px;font-weight:700;color:var(--muted);margin-top:3px}
+.retry-btn{width:100%;background:linear-gradient(135deg,var(--cyan-dark),var(--sky));border:none;border-radius:var(--radius-sm);padding:13px;font-size:15px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(0,188,212,0.3);margin-top:8px}
+.retry-btn:hover{transform:translateY(-1px)}
+.back-btn{width:100%;background:var(--cyan-light);border:2px solid var(--cyan-mid);border-radius:var(--radius-sm);padding:11px;font-size:13px;font-weight:700;color:var(--cyan-dark);cursor:pointer;font-family:inherit;margin-top:8px}
+.mypage-section{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.mypage-section h3{font-size:15px;font-weight:800;color:var(--cyan-dark);margin-bottom:14px}
+.award-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.award-item{background:var(--cyan-light);border:1.5px solid var(--cyan-mid);border-radius:var(--radius-sm);padding:12px 6px;text-align:center}
+.award-item.earned{background:#fff;border-color:var(--cyan)}
+.award-item.locked{opacity:0.3;filter:grayscale(1)}
+.award-item .a-icon{font-size:26px}
+.award-item .a-name{font-size:10px;font-weight:700;color:var(--cyan-dark);margin-top:3px;line-height:1.3}
+.award-item .a-cond{font-size:9px;color:var(--muted);margin-top:2px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+.fade-in{animation:fadeIn 0.3s ease}
+.pop-in{animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+.hidden{display:none!important}
+select{border:2px solid var(--cyan-mid);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;font-weight:700;font-family:inherit;color:var(--text);background:#fff;outline:none;width:100%;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-icon">⚗️</div>
+  <h1>わくわく化学基礎</h1>
+  <p>高校化学をたのしく学ぼう！</p>
+</div>
+<div class="navbar hidden" id="navbar">
+  <div class="student-id"><a href="../" style="color:inherit;text-decoration:none">← わくわくサイエンス</a><span id="nav-id" hidden></span></div>
+  <div class="nav-btns">
+    <button class="sound-btn" id="sound-toggle">🔊</button>
+    <button class="nav-btn" onclick="showScreen('mode')">モード</button>
+    <button class="nav-btn" onclick="showMyPage()">🏅 マイページ</button>
+  </div>
+</div>
+<div class="screen active" id="screen-login">
+  <div class="login-card pop-in">
+    <div style="font-size:44px;margin-bottom:10px">🔬</div>
+    <h2>ようこそ！</h2>
+    <p>ログインなしで遊べます。メダルはこの端末に保存されるよ</p>
+    <input type="hidden" id="login-input" value="guest">
+    <button class="login-btn" onclick="doLogin()">スタート →</button>
+  </div>
+</div>
+<div class="screen" id="screen-mode">
+  <div style="margin-top:14px">
+    <p class="mode-title">🧪 モードを選んでね</p>
+    <div class="medal-display" id="medal-display"></div>
+    <div class="mode-cards">
+      <div class="mode-card selected" onclick="selectMode('simple')" id="card-simple">
+        <div class="icon">⚗️</div><h3>シンプル</h3><p>3点セット4択</p>
+      </div>
+      <div class="mode-card" onclick="selectMode('hard')" id="card-hard">
+        <div class="icon">🔬</div><h3>ハード</h3><p>性質・分類も出題</p>
+      </div>
+      <div class="mode-card" onclick="selectMode('ptable')" id="card-ptable">
+        <div class="icon">🗺️</div><h3>周期表</h3><p>場所をタップ！</p>
+      </div>
+    </div>
+    <select id="count-select">
+      <option value="10">10問</option>
+      <option value="20" selected>20問</option>
+      <option value="35">全元素（35問）</option>
+    </select>
+    <button class="start-btn" onclick="startQuiz()">スタート！🚀</button>
+  </div>
+</div>
+<div class="screen" id="screen-quiz">
+  <div class="quiz-header">
+    <span class="progress-info" id="q-progress">1 / 20</span>
+    <span class="score-info" id="q-score">正解: 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="flashcard fade-in" id="flashcard">
+    <div class="card-label" id="card-label">問題</div>
+    <div class="card-question" id="card-question">?</div>
+    <div class="card-sub" id="card-sub"></div>
+  </div>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback"></div>
+</div>
+<div class="screen" id="screen-ptable">
+  <div class="quiz-header">
+    <span class="progress-info" id="pt-progress">1 / 20</span>
+    <span class="score-info" id="pt-score">正解: 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pt-progress-fill" style="width:0%"></div></div>
+  <div class="pt-question">
+    <div class="pt-q-label" id="pt-q-label">元素記号</div>
+    <div class="pt-q-text" id="pt-q-text">?</div>
+    <div class="pt-q-ask">周期表で場所をタップ！<span class="pt-display-badge" id="pt-display-badge">番号表示</span></div>
+  </div>
+  <div class="pt-hint">← スクロールして周期表全体を見てね →</div>
+  <div class="pt-wrap"><div class="pt-grid" id="pt-grid"></div></div>
+  <div class="pt-feedback" id="pt-feedback"></div>
+</div>
+<div class="screen" id="screen-result">
+  <div class="result-card pop-in" id="result-card">
+    <div class="result-emoji" id="result-emoji">🎉</div>
+    <div class="result-score" id="result-score">20/20</div>
+    <div class="result-label">正解数</div>
+    <div class="result-comment" id="result-comment">すごい！</div>
+    <div class="save-status" id="save-status">📊 スコアを記録中...</div>
+  </div>
+  <div class="awards" id="awards"></div>
+  <button class="retry-btn" onclick="startQuiz()">もう一回！🔄</button>
+  <button class="back-btn" onclick="showScreen('mode')">モード選択に戻る</button>
+</div>
+<div class="screen" id="screen-mypage">
+  <div style="margin-top:14px">
+    <div class="mypage-section">
+      <h3>🏅 獲得メダル・トロフィー</h3>
+      <div id="mypage-awards"></div>
+    </div>
+    <button class="back-btn" onclick="showScreen('mode')">← モード選択に戻る</button>
+  </div>
+</div>
+<script>
+const GAS_URL=''; // 公開版：記録は送信しない
+const PT_LAYOUT=[
+  [1,1,1],[2,1,18],[3,2,1],[4,2,2],[5,2,13],[6,2,14],[7,2,15],[8,2,16],[9,2,17],[10,2,18],
+  [11,3,1],[12,3,2],[13,3,13],[14,3,14],[15,3,15],[16,3,16],[17,3,17],[18,3,18],
+  [19,4,1],[20,4,2],[21,4,3],[22,4,4],[23,4,5],[24,4,6],[25,4,7],[26,4,8],[27,4,9],[28,4,10],[29,4,11],[30,4,12],[31,4,13],[32,4,14],[33,4,15],[34,4,16],[35,4,17],[36,4,18],
+  [37,5,1],[38,5,2],[39,5,3],[40,5,4],[41,5,5],[42,5,6],[43,5,7],[44,5,8],[45,5,9],[46,5,10],[47,5,11],[48,5,12],[49,5,13],[50,5,14],[51,5,15],[52,5,16],[53,5,17],[54,5,18],
+  [55,6,1],[56,6,2],[57,6,3],[72,6,4],[73,6,5],[74,6,6],[75,6,7],[76,6,8],[77,6,9],[78,6,10],[79,6,11],[80,6,12],[81,6,13],[82,6,14],[83,6,15],[84,6,16],[85,6,17],[86,6,18],
+  [87,7,1],[88,7,2],[89,7,3],[104,7,4],[105,7,5],[106,7,6],[107,7,7],[108,7,8],[109,7,9],[110,7,10],[111,7,11],[112,7,12],[113,7,13],[114,7,14],[115,7,15],[116,7,16],[117,7,17],[118,7,18],
+  [58,9,4],[59,9,5],[60,9,6],[61,9,7],[62,9,8],[63,9,9],[64,9,10],[65,9,11],[66,9,12],[67,9,13],[68,9,14],[69,9,15],[70,9,16],[71,9,17],
+  [90,10,4],[91,10,5],[92,10,6],[93,10,7],[94,10,8],[95,10,9],[96,10,10],[97,10,11],[98,10,12],[99,10,13],[100,10,14],[101,10,15],[102,10,16],[103,10,17],
+];
+const ELEMENTS=[
+  {no:1,sym:'H',name:'水素',type:'非金属',group:'1族',state:'気体',notes:'最も軽い元素'},
+  {no:2,sym:'He',name:'ヘリウム',type:'貴ガス',group:'18族',state:'気体',notes:'希ガス元素'},
+  {no:3,sym:'Li',name:'リチウム',type:'金属',group:'1族',state:'固体',notes:'アルカリ金属'},
+  {no:4,sym:'Be',name:'ベリリウム',type:'金属',group:'2族',state:'固体',notes:'アルカリ土類金属'},
+  {no:5,sym:'B',name:'ホウ素',type:'半金属',group:'13族',state:'固体',notes:'半金属元素'},
+  {no:6,sym:'C',name:'炭素',type:'非金属',group:'14族',state:'固体',notes:'有機物の基本元素'},
+  {no:7,sym:'N',name:'窒素',type:'非金属',group:'15族',state:'気体',notes:'空気の約78%'},
+  {no:8,sym:'O',name:'酸素',type:'非金属',group:'16族',state:'気体',notes:'空気の約21%'},
+  {no:9,sym:'F',name:'フッ素',type:'非金属',group:'17族',state:'気体',notes:'最も電気陰性度が大きい'},
+  {no:10,sym:'Ne',name:'ネオン',type:'貴ガス',group:'18族',state:'気体',notes:'希ガス元素'},
+  {no:11,sym:'Na',name:'ナトリウム',type:'金属',group:'1族',state:'固体',notes:'アルカリ金属、炎色反応は黄'},
+  {no:12,sym:'Mg',name:'マグネシウム',type:'金属',group:'2族',state:'固体',notes:'白く燃える'},
+  {no:13,sym:'Al',name:'アルミニウム',type:'金属',group:'13族',state:'固体',notes:'軽量で両性金属'},
+  {no:14,sym:'Si',name:'ケイ素',type:'半金属',group:'14族',state:'固体',notes:'半導体材料'},
+  {no:15,sym:'P',name:'リン',type:'非金属',group:'15族',state:'固体',notes:'赤リン・白リン'},
+  {no:16,sym:'S',name:'硫黄',type:'非金属',group:'16族',state:'固体',notes:'火山に多い'},
+  {no:17,sym:'Cl',name:'塩素',type:'非金属',group:'17族',state:'気体',notes:'ハロゲン族、消毒作用'},
+  {no:18,sym:'Ar',name:'アルゴン',type:'貴ガス',group:'18族',state:'気体',notes:'希ガス元素'},
+  {no:19,sym:'K',name:'カリウム',type:'金属',group:'1族',state:'固体',notes:'アルカリ金属、炎色反応は紫'},
+  {no:20,sym:'Ca',name:'カルシウム',type:'金属',group:'2族',state:'固体',notes:'アルカリ土類金属、骨の成分'},
+  {no:22,sym:'Ti',name:'チタン',type:'金属',group:'4族',state:'固体',notes:'軽くて強い金属'},
+  {no:25,sym:'Mn',name:'マンガン',type:'金属',group:'7族',state:'固体',notes:'酸化剤として使用'},
+  {no:26,sym:'Fe',name:'鉄',type:'金属',group:'8族',state:'固体',notes:'最もよく使われる金属'},
+  {no:29,sym:'Cu',name:'銅',type:'金属',group:'11族',state:'固体',notes:'電気の良導体'},
+  {no:30,sym:'Zn',name:'亜鉛',type:'金属',group:'12族',state:'固体',notes:'トタン板に使用'},
+  {no:35,sym:'Br',name:'臭素',type:'非金属',group:'17族',state:'液体',notes:'常温で液体のハロゲン'},
+  {no:47,sym:'Ag',name:'銀',type:'金属',group:'11族',state:'固体',notes:'電気伝導率が最大'},
+  {no:50,sym:'Sn',name:'スズ',type:'金属',group:'14族',state:'固体',notes:'缶詰の材料'},
+  {no:53,sym:'I',name:'ヨウ素',type:'非金属',group:'17族',state:'固体',notes:'ヨードチンキに使用'},
+  {no:56,sym:'Ba',name:'バリウム',type:'金属',group:'2族',state:'固体',notes:'炎色反応は黄緑'},
+  {no:79,sym:'Au',name:'金',type:'金属',group:'11族',state:'固体',notes:'貴金属、錆びない'},
+  {no:80,sym:'Hg',name:'水銀',type:'金属',group:'12族',state:'液体',notes:'常温で液体の金属'},
+  {no:82,sym:'Pb',name:'鉛',type:'金属',group:'14族',state:'固体',notes:'X線を遮断する'},
+  {no:92,sym:'U',name:'ウラン',type:'金属',group:'アクチノイド',state:'固体',notes:'核燃料として使用'},
+];
+const SIMPLE_TYPES=[
+  {label:'原子番号',get:e=>`${e.no}`,ask:'元素記号は？',ans:e=>e.sym},
+  {label:'原子番号',get:e=>`${e.no}`,ask:'元素名は？',ans:e=>e.name},
+  {label:'元素記号',get:e=>e.sym,ask:'原子番号は？',ans:e=>`${e.no}`},
+  {label:'元素記号',get:e=>e.sym,ask:'元素名は？',ans:e=>e.name},
+  {label:'元素名',get:e=>e.name,ask:'元素記号は？',ans:e=>e.sym},
+  {label:'元素名',get:e=>e.name,ask:'原子番号は？',ans:e=>`${e.no}`},
+];
+const HARD_EXTRA=[
+  {label:'元素名',get:e=>e.name,ask:'分類は？',ans:e=>e.type},
+  {label:'元素名',get:e=>e.name,ask:'族は？',ans:e=>e.group},
+  {label:'元素名',get:e=>e.name,ask:'常温での状態は？',ans:e=>e.state},
+  {label:'ヒント',get:e=>e.notes,ask:'この説明の元素記号は？',ans:e=>e.sym},
+];
+const PT_Q_TYPES=[
+  {qType:'sym',label:'元素記号',getQ:e=>e.sym,cellDisplay:'no',badgeText:'番号表示'},
+  {qType:'name',label:'元素名',getQ:e=>e.name,cellDisplay:'no_or_sym',badgeText:'番号/記号表示'},
+  {qType:'no',label:'原子番号',getQ:e=>`${e.no}番`,cellDisplay:'sym',badgeText:'記号表示'},
+];
+const ALL_AWARDS=[
+  {id:'simple_trophy',icon:'🏆',name:'シンプル全問制覇',cond:'シンプル全問正解'},
+  {id:'hard_trophy',icon:'🏆',name:'ハード全問制覇',cond:'ハード全問正解'},
+  {id:'ptable_trophy',icon:'🏆',name:'周期表マスター',cond:'周期表全問正解'},
+  {id:'simple_gold',icon:'🥇',name:'シンプル金メダル',cond:'シンプル80%以上'},
+  {id:'hard_gold',icon:'🥇',name:'ハード金メダル',cond:'ハード80%以上'},
+  {id:'ptable_gold',icon:'🥇',name:'周期表金メダル',cond:'周期表80%以上'},
+  {id:'simple_silver',icon:'🥈',name:'シンプル銀メダル',cond:'シンプル60%以上'},
+  {id:'hard_silver',icon:'🥈',name:'ハード銀メダル',cond:'ハード60%以上'},
+  {id:'ptable_silver',icon:'🥈',name:'周期表銀メダル',cond:'周期表60%以上'},
+  {id:'simple_bronze',icon:'🥉',name:'シンプル銅メダル',cond:'シンプル40%以上'},
+  {id:'hard_bronze',icon:'🥉',name:'ハード銅メダル',cond:'ハード40%以上'},
+  {id:'ptable_bronze',icon:'🥉',name:'周期表銅メダル',cond:'周期表40%以上'},
+];
+let currentStudent='',currentMode='simple',currentQuiz=[],currentIdx=0,correctCount=0,totalQ=20;
+let medals={},soundOn=true,audioCtx,bgmTimer,ptCells={},lastCellDisplay='';
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function playTone(f,d,t='sine',v=0.3){if(!soundOn)return;try{const c=getAudioCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
+function playCorrect(){playTone(523,.1);setTimeout(()=>playTone(659,.1),100);setTimeout(()=>playTone(784,.2),200);}
+function playWrong(){playTone(200,.3,'sawtooth',.2);}
+function playStart(){[262,330,392,523].forEach((f,i)=>setTimeout(()=>playTone(f,.15),i*80));}
+function playFinish(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,.2),i*100));}
+function startBGM(){if(!soundOn)return;const n=[262,294,330,349,392,440,494,523];let ni=0;bgmTimer=setInterval(()=>{if(!soundOn){clearInterval(bgmTimer);return;}playTone(n[ni%n.length],.3,'sine',.05);ni++;},600);}
+function stopBGM(){clearInterval(bgmTimer);}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');}
+function $(id){return document.getElementById(id);}
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+function doLogin(){
+  const val=$('login-input').value.trim();
+  if(!val){$('login-input').style.borderColor='#EF5350';return;}
+  currentStudent=val;$('nav-id').textContent=val;
+  $('navbar').classList.remove('hidden');
+  loadMedals();showScreen('mode');updateMedalDisplay();playStart();startBGM();
+}
+
+function logout(){stopBGM();currentStudent='';$('navbar').classList.add('hidden');$('login-input').value='';showScreen('login');}
+function getMedalKey(){return 'medals_chempub_guest';}
+function loadMedals(){try{medals=JSON.parse(localStorage.getItem(getMedalKey())||'{}');}catch(e){medals={};}}
+function saveMedals(){try{localStorage.setItem(getMedalKey(),JSON.stringify(medals));}catch(e){}}
+function updateMedalDisplay(){
+  const el=$('medal-display'),items=Object.values(medals);
+  if(!items.length){el.innerHTML='<span style="font-size:11px;color:var(--muted)">まだメダルはないよ！挑戦しよう🏅</span>';return;}
+  el.innerHTML=items.slice(-4).map(m=>`<div class="medal-badge">${m.icon} ${m.name}</div>`).join('');
+}
+function showMyPage(){
+  const el=$('mypage-awards'),earned=Object.keys(medals);
+  el.innerHTML='<div class="award-grid">'+ALL_AWARDS.map(a=>`
+    <div class="award-item ${earned.includes(a.id)?'earned':'locked'}">
+      <div class="a-icon">${a.icon}</div>
+      <div class="a-name">${a.name}</div>
+      <div class="a-cond">${a.cond}</div>
+    </div>`).join('')+'</div>';
+  showScreen('mypage');
+}
+function selectMode(mode){
+  currentMode=mode;
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('selected'));
+  $('card-'+mode).classList.add('selected');
+}
+function buildPeriodicTable(cellDisplay){
+  const grid=$('pt-grid');grid.innerHTML='';ptCells={};
+  PT_LAYOUT.forEach(([no,row,col])=>{
+    const el=ELEMENTS.find(e=>e.no===no);
+    const cell=document.createElement('div');
+    cell.className='pt-cell has-element';
+    cell.style.gridRow=row;cell.style.gridColumn=col;
+    cell.textContent=cellDisplay==='no'?`${no}`:cellDisplay==='sym'?(el?el.sym:`${no}`):(Math.random()<0.5?`${no}`:(el?el.sym:`${no}`));
+    cell.dataset.no=no;
+    cell.addEventListener('click',()=>onPTCellClick(no));
+    grid.appendChild(cell);ptCells[no]=cell;
+  });
+  [[9,3,'La'],[10,3,'Ac']].forEach(([row,col,txt])=>{
+    const d=document.createElement('div');
+    d.className='pt-cell';d.style.gridRow=row;d.style.gridColumn=col;
+    d.style.fontSize='6px';d.style.color='var(--muted)';d.style.cursor='default';d.style.pointerEvents='none';
+    d.textContent=txt;grid.appendChild(d);
+  });
+}
+function resetPTCells(){Object.values(ptCells).forEach(c=>{c.classList.remove('correct-ans','wrong-ans','show-correct','disabled-cell');c.style.pointerEvents='auto';});}
+let ptCurrentQ=null;
+function showPTQuestion(){
+  const q=currentQuiz[currentIdx];ptCurrentQ=q;
+  let cd=q.ptDef.cellDisplay;
+  if(cd==='no_or_sym') cd=Math.random()<0.5?'no':'sym';
+  if(cd!==lastCellDisplay){buildPeriodicTable(cd);lastCellDisplay=cd;}
+  else{resetPTCells();}
+  $('pt-progress').textContent=`${currentIdx+1} / ${totalQ}`;
+  $('pt-score').textContent=`正解: ${correctCount}`;
+  $('pt-progress-fill').style.width=`${(currentIdx/totalQ)*100}%`;
+  $('pt-q-label').textContent=q.ptDef.label;
+  $('pt-q-text').textContent=q.question;
+  $('pt-display-badge').textContent=cd==='no'?'番号表示':'記号表示';
+  $('pt-feedback').textContent='';$('pt-feedback').className='pt-feedback';
+}
+function onPTCellClick(no){
+  if(!ptCurrentQ)return;
+  const correctNo=ptCurrentQ.el.no;
+  Object.values(ptCells).forEach(c=>{c.classList.add('disabled-cell');c.style.pointerEvents='none';});
+  if(no===correctNo){
+    ptCells[no].classList.remove('disabled-cell');ptCells[no].classList.add('correct-ans');
+    correctCount++;
+    $('pt-feedback').textContent=`⭕ 正解！ ${ptCurrentQ.el.sym}（${ptCurrentQ.el.name}）`;
+    $('pt-feedback').className='pt-feedback ok';playCorrect();
+  }else{
+    ptCells[no].classList.add('wrong-ans');
+    if(ptCells[correctNo])ptCells[correctNo].classList.add('show-correct');
+    $('pt-feedback').textContent=`❌ 不正解... 正解は ${ptCurrentQ.el.sym}（${ptCurrentQ.el.name}）の場所！`;
+    $('pt-feedback').className='pt-feedback ng';playWrong();
+  }
+  ptCurrentQ=null;
+  setTimeout(()=>{currentIdx++;if(currentIdx>=totalQ){showResult();}else{showPTQuestion();}},1500);
+}
+function buildQuestions(){
+  const count=parseInt($('count-select').value);const qs=[];
+  if(currentMode==='ptable'){
+    const ptPool=shuffle(ELEMENTS.filter(e=>PT_LAYOUT.some(([no])=>no===e.no)));
+    let j=0;
+    while(qs.length<count&&j<300){
+      const el=ptPool[j%ptPool.length];
+      const ptDef=PT_Q_TYPES[Math.floor(Math.random()*PT_Q_TYPES.length)];
+      qs.push({el,ptDef,question:ptDef.getQ(el)});j++;
+    }
+  }else{
+    const types=currentMode==='hard'?[...SIMPLE_TYPES,...HARD_EXTRA]:SIMPLE_TYPES;
+    const pool=shuffle(ELEMENTS);let i=0;
+    while(qs.length<count&&i<300){
+      const el=pool[i%pool.length];
+      const type=types[Math.floor(Math.random()*types.length)];
+      const correct=type.ans(el);
+      let wrongs=shuffle(ELEMENTS.filter(e=>e.no!==el.no)).slice(0,8).map(e=>type.ans(e)).filter(v=>v!==correct);
+      wrongs=[...new Set(wrongs)].slice(0,3);
+      if(wrongs.length<3){i++;continue;}
+      qs.push({el,type,question:type.get(el),label:type.label,ask:type.ask,correct,choices:shuffle([correct,...wrongs])});i++;
+    }
+  }
+  return qs.slice(0,count);
+}
+function startQuiz(){
+  currentQuiz=buildQuestions();totalQ=currentQuiz.length;currentIdx=0;correctCount=0;lastCellDisplay='';
+  if(currentMode==='ptable'){showPTQuestion();showScreen('ptable');}
+  else{showNextQuestion();showScreen('quiz');}
+  playStart();
+}
+function showNextQuestion(){
+  const q=currentQuiz[currentIdx];
+  $('q-progress').textContent=`${currentIdx+1} / ${totalQ}`;
+  $('q-score').textContent=`正解: ${correctCount}`;
+  $('progress-fill').style.width=`${(currentIdx/totalQ)*100}%`;
+  $('card-label').textContent=q.label;$('card-question').textContent=q.question;$('card-sub').textContent=q.ask;
+  $('feedback').textContent='';$('feedback').className='feedback';
+  const fc=$('flashcard');fc.classList.remove('fade-in');void fc.offsetWidth;fc.classList.add('fade-in');
+  const ch=$('choices');ch.innerHTML='';
+  q.choices.forEach(c=>{
+    const btn=document.createElement('button');btn.className='choice-btn';btn.textContent=c;
+    btn.onclick=()=>answerChoice(btn,c,q);ch.appendChild(btn);
+  });
+}
+function answerChoice(btn,choice,q){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  const ok=choice===q.correct;
+  if(ok){btn.classList.add('correct');correctCount++;$('feedback').textContent='⭕ 正解！';$('feedback').className='feedback ok';playCorrect();}
+  else{btn.classList.add('wrong');document.querySelectorAll('.choice-btn').forEach(b=>{if(b.textContent===q.correct)b.classList.add('correct');});$('feedback').textContent=`❌ 不正解... 正解は「${q.correct}」`;$('feedback').className='feedback ng';playWrong();}
+  setTimeout(()=>{currentIdx++;if(currentIdx>=totalQ){showResult();}else{showNextQuestion();}},1200);
+}
+async function sendScore(){ /* 公開版：記録は送信しない */ const s=$('save-status'); if(s) s.style.display='none'; }
+function showResult(){
+  stopBGM();
+  const pct=Math.round((correctCount/totalQ)*100);
+  $('result-score').textContent=`${correctCount}/${totalQ}`;
+  let emoji,comment;
+  if(pct===100){emoji='🏆';comment='パーフェクト！全問正解だ！！';}
+  else if(pct>=80){emoji='🌟';comment='すごい！よく頑張ったね！';}
+  else if(pct>=60){emoji='😊';comment='いい感じ！もう少しだ！';}
+  else if(pct>=40){emoji='🔥';comment='諦めないで！練習あるのみ！';}
+  else{emoji='💪';comment='もう一回チャレンジしよう！';}
+  $('result-emoji').textContent=emoji;$('result-comment').textContent=comment;
+  $('save-status').textContent='📊 スコアを記録中...';$('save-status').className='save-status';
+  sendScore();
+  const newMedals=[];
+  if(pct>=40){
+    const tier=pct===100?'trophy':pct>=80?'gold':pct>=60?'silver':'bronze';
+    const id=`${currentMode}_${tier}`;
+    if(!medals[id]){const found=ALL_AWARDS.find(a=>a.id===id);if(found){medals[id]=found;newMedals.push(found);}}
+  }
+  saveMedals();
+  const aw=$('awards');aw.innerHTML='';
+  const show=newMedals.length?newMedals:Object.values(medals).slice(-3);
+  show.forEach(m=>{const d=document.createElement('div');d.className='award pop-in';d.innerHTML=`<div class="award-icon">${m.icon}</div><div class="award-name">${newMedals.length?'NEW! ':''}${m.name}</div>`;aw.appendChild(d);});
+  showScreen('result');playFinish();setTimeout(()=>startBGM(),1500);
+  const rc=$('result-card');rc.classList.remove('pop-in');void rc.offsetWidth;rc.classList.add('pop-in');
+}
+$('sound-toggle').onclick=function(){soundOn=!soundOn;this.textContent=soundOn?'🔊':'🔇';if(soundOn){startBGM();}else{stopBGM();}};
+</script>
+</body>
+</html>

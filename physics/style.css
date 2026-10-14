@@ -1,0 +1,565 @@
+/* ================================
+   力学ドリル - スタイル
+   ================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+  background: linear-gradient(150deg, #4f46e5 0%, #7c3aed 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px 48px;
+}
+
+.app {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* ---- ヘッダー ---- */
+header {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  align-items: center;
+  margin-bottom: 20px;
+  color: white;
+  gap: 8px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* ---- サウンドボタン ---- */
+.sound-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.sound-btn:hover { background: rgba(255, 255, 255, 0.35); }
+
+header h1 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
+}
+
+.back-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.back-link:hover { color: white; }
+
+.btn-home {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: #7c3aed;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn-home:hover { text-decoration: underline; }
+
+.score-box {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 6px 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+}
+
+.score-num {
+  font-size: 1.3rem;
+  color: #fde68a;
+}
+
+.score-sep {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 1px;
+}
+
+.score-total {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ---- カード ---- */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* ---- バッジ ---- */
+.badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+/* ---- 問題文 ---- */
+.problem-text {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #1e1b4b;
+  margin-bottom: 14px;
+}
+
+.problem-text b {
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.problem-text i {
+  color: #dc2626;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.problem-text small {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* ---- Canvas ---- */
+#canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: #f0f4ff;
+  margin-bottom: 14px;
+}
+
+/* ---- モード選択バー ---- */
+.mode-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.mode-btn {
+  flex: 1;
+  border: 2px solid #e0e0f0;
+  border-radius: 10px;
+  padding: 7px 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.mode-btn:hover {
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-color: transparent;
+  color: white;
+}
+
+/* ---- 計算モード・区切り線 ---- */
+.result-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  color: #aaa;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.result-divider::before,
+.result-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e0f0;
+}
+
+/* ---- テストモード・メモ欄 ---- */
+.memo-area {
+  width: 100%;
+  min-height: 90px;
+  border: 2px dashed #d0d0e8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.92rem;
+  color: #444;
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+  background: #fafafe;
+  margin-top: 12px;
+  transition: border-color 0.2s;
+}
+
+.memo-area::placeholder { color: #c0c0d8; }
+.memo-area:focus { border-color: #7c3aed; background: white; }
+
+.memo-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 0.8px;
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+/* ---- 公式ボックス ---- */
+.formula-box {
+  background: #f5f3ff;
+  border-left: 4px solid #7c3aed;
+  border-radius: 0 10px 10px 0;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+}
+
+.formula-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #7c3aed;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.formula-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1e1b4b;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+/* ---- 入力コンテナ（複数入力） ---- */
+#inputs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* ---- 入力行 ---- */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  white-space: nowrap;
+  min-width: 36px;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.answer-input {
+  flex: 1;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  text-align: center;
+  color: #1e1b4b;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  -moz-appearance: textfield;
+}
+
+.answer-input::-webkit-inner-spin-button,
+.answer-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+.answer-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.answer-input.correct {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.answer-input.incorrect {
+  border-color: #ef4444;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.unit {
+  font-size: 0.9rem;
+  color: #666;
+  white-space: nowrap;
+  min-width: 42px;
+}
+
+/* ---- 計算結果リビール ---- */
+#result-reveal {
+  background: #f0f4ff;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.reveal-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #4f46e5;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.reveal-calc {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+.reveal-var {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #dc2626;
+  font-style: italic;
+}
+
+.reveal-eq {
+  color: #555;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.reveal-expr {
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.reveal-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.reveal-unit {
+  font-size: 0.88rem;
+  color: #666;
+}
+
+/* ---- ボタン ---- */
+.btn-primary {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-bottom: 10px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  display: none;
+  width: 100%;
+  background: white;
+  color: #4f46e5;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  padding: 11px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-secondary:hover {
+  background: #4f46e5;
+  color: white;
+}
+
+/* ---- フィードバック ---- */
+.feedback {
+  text-align: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+  min-height: 28px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: all 0.3s;
+  line-height: 1.5;
+}
+
+.feedback.correct {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.feedback.incorrect {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+/* ---- プログレス ---- */
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: white;
+  border-radius: 999px;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.progress-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- 結果カード ---- */
+.result-card {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.result-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.result-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e1b4b;
+  margin-bottom: 16px;
+}
+
+.result-score {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #4f46e5;
+  margin-bottom: 4px;
+  line-height: 1.1;
+}
+
+.result-score-denom {
+  font-size: 1.2rem;
+  color: #888;
+  font-weight: 600;
+}
+
+.result-msg {
+  font-size: 0.92rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 16px 0 28px;
+}
+
+/* ---- 正解エフェクト ---- */
+.sparkle-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  animation: sparkle-burst 0.9s ease-out forwards;
+  user-select: none;
+}
+
+@keyframes sparkle-burst {
+  0%   { transform: translate(-50%, -50%) translate(0, 0) scale(0.2); opacity: 1; }
+  60%  { opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(1.1); opacity: 0; }
+}
+
+/* カード正解バウンス */
+@keyframes card-bounce {
+  0%, 100% { transform: translateY(0); }
+  30%       { transform: translateY(-10px); }
+  60%       { transform: translateY(-4px); }
+}
+
+.card.bounce {
+  animation: card-bounce 0.45s ease;
+}

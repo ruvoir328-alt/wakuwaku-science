@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マイページ - わくわく物理基礎</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mypage.css">
+</head>
+<body>
+
+  <div class="mypage">
+
+    <header class="mp-hero">
+      <a href="index.html" class="mp-back">← ホーム</a>
+      <div class="mp-hero-center">
+        <h1 class="mp-title">🏅 マイページ</h1>
+        <div class="mp-student-id" id="mp-student-id"></div>
+      </div>
+      <div></div>
+    </header>
+
+    <main class="mp-main">
+
+      <!-- ステータスサマリー -->
+      <div class="mp-summary" id="mp-summary"></div>
+
+      <!-- 凡例 -->
+      <div class="mp-legend">
+        <div class="mp-legend-item"><span>🏆</span>全問正解</div>
+        <div class="mp-legend-item"><span>🥇</span>クリア済</div>
+        <div class="mp-legend-item"><span class="legend-empty">⊙</span>未挑戦</div>
+      </div>
+
+      <!-- 第1章 -->
+      <section class="mp-section">
+        <div class="mp-section-header">
+          <span class="mp-section-num">第1章</span>
+          <h2 class="mp-section-title">⚙ わくわく力学</h2>
+        </div>
+        <div class="mp-grid" id="mp-grid-1"></div>
+      </section>
+
+    </main>
+
+    <footer class="mp-footer">
+      <button class="mp-csv-btn" id="mp-csv">📥 自分のデータをCSVで保存</button>
+      <button class="mp-logout-btn" id="mp-logout">ログアウト</button>
+    </footer>
+
+  </div>
+
+  <script>
+    const UNITS = [
+      { id: '1-1', name: '速度と時間と変位', formula: 'v = x/t' },
+      { id: '1-2', name: '等速直線運動',     formula: 'x = vt' },
+      { id: '1-3', name: '等加速度運動',     formula: 'v = v₀ + at' },
+      { id: '1-4', name: '自由落下',         formula: 'v = gt' },
+      { id: '1-5', name: '鉛直投げおろし',   formula: 'v = v₀ + gt' },
+      { id: '1-6', name: '鉛直投げ上げ',     formula: 'v = v₀ − gt' },
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const sid = 'guest';
+      
+
+      document.getElementById('mp-student-id').textContent = 'ゲストプレイ（記録はこの端末だけに保存されます）';
+
+      document.getElementById('mp-logout').style.display = 'none';
+
+      document.getElementById('mp-csv').addEventListener('click', () => {
+        const log = JSON.parse(localStorage.getItem(`wakuwakupub_log_${sid}`) || '[]');
+        if (!log.length) { alert('まだ記録がありません。ドリルを完了すると記録されます。'); return; }
+        downloadCSV(log, `log_${sid}.csv`);
+      });
+
+      const data = JSON.parse(localStorage.getItem(`wakuwakupub_progress_${sid}`) || '{}');
+
+      // ── サマリー ──
+      let cleared = 0, trophies = 0;
+      UNITS.forEach(u => {
+        if (data[u.id]) {
+          cleared++;
+          if (data[u.id].perfect) trophies++;
+        }
+      });
+      document.getElementById('mp-summary').innerHTML = `
+        <div class="mp-stat">
+          <span class="mp-stat-num">${cleared}</span>
+          <span class="mp-stat-lbl">/ ${UNITS.length} クリア</span>
+        </div>
+        <div class="mp-stat-div"></div>
+        <div class="mp-stat">
+          <span class="mp-stat-icon">🏆</span>
+          <span class="mp-stat-num">${trophies}</span>
+          <span class="mp-stat-lbl">トロフィー</span>
+        </div>
+      `;
+
+      // ── CSV ダウンロード ──
+      function downloadCSV(entries, filename) {
+        const header = ['日時', '学籍番号', 'クラス', 'ユニット', 'ユニット名',
+                        'スコア', '満点', 'メダル', 'トロフィー', '初クリア', '初トロフィー'];
+        const rows = entries.map(e => [
+          e.timestamp, e.studentId, e.classNum, e.unitId, e.unitName,
+          e.score, e.total, e.medal, e.trophy, e.firstClear, e.firstTrophy
+        ]);
+        const csv = [header, ...rows]
+          .map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','))
+          .join('\r\n');
+        const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      // ── ユニットグリッド ──
+      const grid = document.getElementById('mp-grid-1');
+      UNITS.forEach(unit => {
+        const prog = data[unit.id];
+        const perfect = prog && prog.perfect;
+        const done    = prog && !perfect;
+
+        const card = document.createElement('a');
+        card.href = `drill.html?unit=${unit.id}`;
+        card.className = `mp-card ${perfect ? 'mp-perfect' : done ? 'mp-done' : 'mp-new'}`;
+        card.innerHTML = `
+          <div class="mp-card-icon">
+            ${perfect ? '🏆' : done ? '🥇' : '<span class="mp-card-empty">⊙</span>'}
+          </div>
+          <div class="mp-card-id">${unit.id}</div>
+          <div class="mp-card-name">${unit.name}</div>
+          <div class="mp-card-formula">${unit.formula}</div>
+          <div class="mp-card-score">${prog ? `${prog.bestScore} / 10` : '未挑戦'}</div>
+        `;
+        grid.appendChild(card);
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">力学ドリル - わくわく物理基礎</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <header>
+      <a href="index.html" class="back-link">← ホーム</a>
+      <h1 id="drill-title">⚡ ドリル</h1>
+      <div class="header-right">
+        <div class="score-box">
+          <span class="score-num" id="score">0</span>
+          <span class="score-sep">/</span>
+          <span class="score-total" id="total">0</span>
+        </div>
+        <button class="sound-btn" id="sound-btn" onclick="cycleSoundMode()" title="サウンド切替">🎵</button>
+      </div>
+    </header>
+
+    <!-- 問題画面 -->
+    <div id="problem-view">
+      <div class="card">
+        <span class="badge" id="badge">等速直線運動</span>
+
+        <p class="problem-text" id="problem-text"></p>
+
+        <canvas id="canvas" width="400" height="160"></canvas>
+
+        <!-- モード選択バー -->
+        <div class="mode-bar">
+          <button class="mode-btn active" id="btn-easy"  onclick="setMode('easy')">⭐ かんたん</button>
+          <button class="mode-btn"        id="btn-calc"  onclick="setMode('calc')">🧮 計算</button>
+          <button class="mode-btn"        id="btn-test"  onclick="setMode('test')">📝 テスト</button>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-title">公式</div>
+          <div class="formula-text" id="formula"></div>
+        </div>
+
+        <!-- 変数入力フィールド（動的生成） -->
+        <div id="inputs-container"></div>
+
+        <!-- 計算結果の表示 -->
+        <div id="result-reveal" style="display:none"></div>
+
+        <button class="btn-primary" id="check-btn" onclick="checkAnswer()">答えを確認する</button>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="btn-secondary" id="next-btn" onclick="nextProblem()">次の問題 →</button>
+      </div>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="progress-text" id="progress-text">0 / 10 問</span>
+      </div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-view" style="display:none">
+      <div class="card result-card">
+        <div class="result-emoji" id="result-emoji"></div>
+        <div class="result-title" id="result-title"></div>
+        <div class="result-score">
+          <span id="result-score-num"></span>
+          <span class="result-score-denom"> / 10</span>
+        </div>
+        <p class="result-msg" id="result-msg"></p>
+        <button class="btn-primary" onclick="retry()">もう一度挑戦！</button>
+        <a href="index.html" class="btn-home">← ほかのドリルを見る</a>
+      </div>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -583,10 +583,6 @@ a { text-decoration: none; color: inherit; }
       <a href="#for-students">生徒の方へ</a>
       <a href="teacher.html">先生の方へ</a>
     </nav>
-    <button class="student-badge" id="id-badge" onclick="openModal()" aria-label="学籍番号を設定する">
-      <span class="student-badge-dot"></span>
-      <span id="id-badge-label">番号を設定</span>
-    </button>
   </div>
 </header>
 
@@ -643,9 +639,7 @@ a { text-decoration: none; color: inherit; }
           <p class="card-desc">力・運動・エネルギーを、インタラクティブに学べるコンテンツ。授業の予習・復習に活用できる。</p>
         </div>
         <div class="card-footer">
-          <a href="https://ruvoir328-alt.github.io/wakuwaku-physics/"
-             class="card-link"
-             target="_blank" rel="noopener noreferrer">
+          <a href="./physics/" class="card-link">
             開く &rarr;
           </a>
         </div>
@@ -661,9 +655,7 @@ a { text-decoration: none; color: inherit; }
           <p class="card-desc">元素・化学結合・反応をわかりやすく解説。高校化学基礎の学習コンテンツ。</p>
         </div>
         <div class="card-footer">
-          <a href="https://ruvoir328-alt.github.io/wakuwaku-chemistry/"
-             class="card-link"
-             target="_blank" rel="noopener noreferrer">
+          <a href="./chemistry/" class="card-link">
             開く &rarr;
           </a>
         </div>
@@ -807,29 +799,6 @@ a { text-decoration: none; color: inherit; }
 </main>
 
 <!-- ===== Student ID Modal ===== -->
-<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal">
-    <div class="modal-icon" aria-hidden="true">番</div>
-    <h2 id="modal-title" class="modal-title">学籍番号を入力してください</h2>
-    <p class="modal-desc">
-      取り組んだ問題の結果を先生に送るために使います。<br>
-      先生から指定された番号を入力してください。
-    </p>
-    <label for="modal-id-input" class="modal-label">学籍番号</label>
-    <input
-      type="text"
-      id="modal-id-input"
-      class="modal-input"
-      placeholder="例：1101"
-      maxlength="10"
-      autocomplete="off"
-      inputmode="numeric"
-    >
-    <p class="modal-hint">※ 入力した番号はこのデバイスに保存され、先生に結果を送る際に使われます。</p>
-    <button class="modal-btn" onclick="saveStudentId()">保存する</button>
-    <button class="modal-skip" onclick="closeModal()">あとで設定する</button>
-  </div>
-</div>
 
 <!-- ===== Footer ===== -->
 <footer class="site-footer">
@@ -849,62 +818,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// Student ID
-const WKS_KEY = 'wks_student';
-
-function getStudentId() {
-  try {
-    const data = JSON.parse(localStorage.getItem(WKS_KEY) || '{}');
-    return data.studentId || '';
-  } catch { return ''; }
-}
-
-function updateBadge() {
-  const id = getStudentId();
-  const label = document.getElementById('id-badge-label');
-  if (id) {
-    label.textContent = 'ID: ' + id;
-  } else {
-    label.textContent = '番号を設定';
-  }
-}
-
-function openModal() {
-  const overlay = document.getElementById('modal-overlay');
-  const input = document.getElementById('modal-id-input');
-  input.value = getStudentId();
-  overlay.classList.add('is-open');
-  setTimeout(() => input.focus(), 200);
-}
-
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('is-open');
-}
-
-function saveStudentId() {
-  const input = document.getElementById('modal-id-input');
-  const id = input.value.trim();
-  if (!id) { input.focus(); return; }
-  localStorage.setItem(WKS_KEY, JSON.stringify({ studentId: id }));
-  updateBadge();
-  closeModal();
-}
-
-// Enter key to save
-document.getElementById('modal-id-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') saveStudentId();
-});
-
-// Close on overlay click
-document.getElementById('modal-overlay').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeModal();
-});
-
-// Init: show modal if no ID set, update badge
-updateBadge();
-if (!getStudentId()) {
-  setTimeout(openModal, 800);
-}
 </script>
 
 </body>
