@@ -17,6 +17,7 @@ window.EPISODE = {
   chapter: '1章 直線運動の世界',
   topic: '自由落下運動',
   title: '重いほうが先に落ちる？',
+  simUrl: '../sim/freefall.html',
   drillUrl: '../physics/drill.html?unit=1-4',
   scenes: [
     { bg: 'title' },
@@ -94,7 +95,7 @@ window.EPISODE = {
 
     /* ---- まとめ ---- */
     { bg: 'end', end: true, chars: [{ who: 'newton', face: 'happy', side: 'left' }, { who: 'rika', face: 'happy', side: 'right' }],
-      speaker: 'newton', text: '2秒後の速さは？ 何m落ちた？ 次は計算に挑戦じゃ！',
+      speaker: 'newton', text: 'まずは真空の筒で、自分の手で落としてみよう。それから計算に挑戦じゃ！',
       points: [
         '空気の抵抗がなければ、物体は重さに関係なく同じように落ちる',
         '落下の加速度は一定で、重力加速度 g = 9.8 m/s²',

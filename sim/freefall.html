@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自由落下シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=06">← 第6話 ストーリーにもどる</a>
+    <span>1章 直線運動の世界</span>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード</div>
+    <h1>真空の筒で、落としてみよう</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 420" role="img" aria-label="筒の中で鉄球と羽根を落とす実験"></svg>
+    </div>
+
+    <div class="time-row">
+      <span class="label">落としてからの時間</span>
+      <span class="t" id="tOut">0.00<small>秒</small></span>
+    </div>
+
+    <div class="readout" aria-live="off">
+      <div></div><div>鉄球</div><div>羽根</div>
+      <div class="k">落ちた距離</div><div class="num" id="yBall">0.00<small>m</small></div><div class="num" id="yFeather">0.00<small>m</small></div>
+      <div class="k">速さ</div><div class="num" id="vBall">0.00<small>m/s</small></div><div class="num" id="vFeather">0.00<small>m/s</small></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <div class="row">
+        <span class="name">筒の中</span>
+        <div class="seg" role="group" aria-label="筒の中">
+          <button type="button" data-mode="vacuum" aria-pressed="true">真空（空気なし）</button>
+          <button type="button" data-mode="air" aria-pressed="false">空気あり</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="name">速さ</span>
+        <div class="seg" role="group" aria-label="再生の速さ">
+          <button type="button" data-speed="1" aria-pressed="true">ふつう</button>
+          <button type="button" data-speed="0.2" aria-pressed="false">スロー（1/5）</button>
+        </div>
+      </div>
+      <button type="button" class="switch" id="strobe" role="switch" aria-checked="false">
+        <span>0.1秒ごとの記録を残す</span><span class="knob" aria-hidden="true"></span>
+      </button>
+      <button type="button" class="drop" id="drop">落とす ▶</button>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>真空の筒で落として、鉄球と羽根がどう落ちるか見る</span></li>
+      <li id="m2"><span class="box" aria-hidden="true"></span><span>「空気あり」に切りかえて、くらべる</span></li>
+      <li id="m3"><span class="box" aria-hidden="true"></span><span>「0.1秒ごとの記録」をオンにして落とし、間隔の広がり方を見る</span></li>
+    </ol>
+  </div>
+
+  <div class="links">
+    <a class="go" href="../physics/drill.html?unit=1-4">チャレンジモードで計算する →</a>
+    <a class="back" href="../story/?ep=06">第6話のストーリーを見る</a>
+  </div>
+</div>
+
+<script>
+/* ---- 物理 ----
+   筒の高さ H = 1.225 m（真空なら ちょうど 0.5 秒で底に着く）
+   真空：鉄球も羽根も y = ½gt²、v = gt
+   空気あり：鉄球は空気の影響が小さいので真空と同じとみなす。
+             羽根は終端速度 VT に近づく（速さに比例する抵抗のモデル）
+*/
+const G = 9.8, H = 1.225, VT = 0.6;
+const ballAt = t => ({ y: Math.min(H, 0.5 * G * t * t), v: Math.min(G * t, Math.sqrt(2 * G * H)) });
+const tBallLand = Math.sqrt(2 * H / G);
+function featherAirAt(t){
+  const e = Math.exp(-G * t / VT);
+  return { y: VT * t - VT * VT / G * (1 - e), v: VT * (1 - e) };
+}
+const tFeatherAirLand = (() => { let lo = 0, hi = 10; for (let k = 0; k < 60; k++){ const m = (lo + hi) / 2; featherAirAt(m).y < H ? lo = m : hi = m; } return hi; })();
+function featherAt(t, air){
+  if (!air) return ballAt(t);
+  if (t >= tFeatherAirLand) return { y: H, v: featherAirAt(tFeatherAirLand).v };
+  return featherAirAt(t);
+}
+
+/* ---- 絵 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const TOP = 62, BOTTOM = 384, S = (BOTTOM - TOP) / H;   // 1 m あたりのpx
+const BX = 142, FX = 186;                                // 鉄球・羽根の位置
+const svg = document.getElementById('svg');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let mode = 'vacuum', speed = 1, strobe = false;
+let raf = 0, running = false, simT = 0, lastStamp = 0;
+let ballG, featherG, ghosts, labelEl;
+const done = { m1: false, m2: false, m3: false };
+let ranVacuum = false;
+
+function el(tag, attrs, parent){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+function drawStatic(){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 420, fill: '#eef2f7' }, svg);
+  el('rect', { y: 396, width: 320, height: 24, fill: '#d6dce6' }, svg);
+  // 筒
+  el('rect', { x: 112, y: 30, width: 104, height: 366, rx: 18, fill: mode === 'vacuum' ? 'rgba(190,225,250,.45)' : 'rgba(214,230,240,.75)', stroke: '#86aac4', 'stroke-width': 3 }, svg);
+  el('rect', { x: 104, y: 22, width: 120, height: 14, rx: 5, fill: '#9aa9b8' }, svg);
+  el('rect', { x: 104, y: 388, width: 120, height: 14, rx: 5, fill: '#9aa9b8' }, svg);
+  el('rect', { x: 122, y: 42, width: 7, height: 330, rx: 3.5, fill: 'rgba(255,255,255,.6)' }, svg);
+  // 空気ありのときは、空気のつぶを描く
+  if (mode === 'air'){
+    const dots = [[132,80],[200,110],[150,150],[208,190],[128,230],[176,262],[204,300],[140,330],[190,350],[160,100],[196,236]];
+    dots.forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 2.2, fill: '#9fb6c8', opacity: .6 }, svg));
+  }
+  // ものさし（0〜1.2 m）
+  el('line', { x1: 244, x2: 244, y1: TOP, y2: BOTTOM, stroke: '#4b5568', 'stroke-width': 1.5 }, svg);
+  for (let i = 0; i <= 12; i++){
+    const y = TOP + i * 0.1 * S, big = i % 2 === 0;
+    el('line', { x1: 244, x2: big ? 256 : 251, y1: y, y2: y, stroke: '#4b5568', 'stroke-width': big ? 1.5 : 1 }, svg);
+    if (big){
+      const t = el('text', { x: 260, y: y + 4, 'font-size': 12, fill: '#4b5568', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, svg);
+      t.textContent = (i / 10).toFixed(1) + ' m';
+    }
+  }
+  // 筒の名前
+  labelEl = el('text', { x: 164, y: 414, 'text-anchor': 'middle', 'font-size': 12, 'font-weight': 700, fill: '#4b5568', 'font-family': 'Zen Maru Gothic' }, svg);
+  labelEl.textContent = mode === 'vacuum' ? '真空（空気なし）' : '空気あり';
+  ghosts = el('g', {}, svg);
+  // 鉄球
+  ballG = el('g', {}, svg);
+  el('circle', { cx: BX, cy: 0, r: 12, fill: '#59616f' }, ballG);
+  el('circle', { cx: BX - 4, cy: -4, r: 3.5, fill: '#9aa3b1' }, ballG);
+  // 羽根（先端が y=0）
+  featherG = el('g', {}, svg);
+  featherPath(featherG, 1);
+  place(0);
+}
+
+function featherPath(parent, op){
+  el('path', { d: 'M' + FX + ' -14 q13 11 2 28 q-9 -6 -9 -15 q0 -9 7 -13z', fill: '#f4f1e8', stroke: '#b9b29c', 'stroke-width': 1.2, opacity: op }, parent);
+  el('path', { d: 'M' + FX + ' -14 L' + FX + ' 18', stroke: '#b9b29c', 'stroke-width': 1, opacity: op }, parent);
+}
+
+function place(t){
+  const b = ballAt(t), f = featherAt(t, mode === 'air');
+  const sway = mode === 'air' && f.y < H ? Math.sin(t * 5) * 8 : 0;
+  ballG.setAttribute('transform', 'translate(0,' + (TOP + b.y * S - 12).toFixed(1) + ')');
+  featherG.setAttribute('transform', 'translate(' + sway.toFixed(1) + ',' + (TOP + f.y * S - 18).toFixed(1) + ')');
+  drawGhosts(t);
+  show(t, b, f);
+}
+
+// 0.1秒ごとの記録（残像）
+function drawGhosts(t){
+  ghosts.innerHTML = '';
+  if (!strobe) return;
+  const air = mode === 'air';
+  for (let n = 0; n * 0.1 <= t + 1e-9; n++){
+    const tn = n * 0.1;
+    if (tn <= tBallLand + 1e-9){
+      const y = TOP + ballAt(tn).y * S;
+      el('circle', { cx: BX, cy: y - 12, r: 12, fill: '#59616f', opacity: .22 }, ghosts);
+      el('line', { x1: 96, x2: 108, y1: y - 12, y2: y - 12, stroke: '#d93a3f', 'stroke-width': 1.5 }, ghosts);
+      if (n !== 1){
+        const lab = el('text', { x: 92, y: y - 8, 'text-anchor': 'end', 'font-size': 11, fill: '#d93a3f', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, ghosts);
+        lab.textContent = tn.toFixed(1) + '秒';
+      }
+    }
+    const fl = air ? tFeatherAirLand : tBallLand;
+    if (tn <= fl + 1e-9){
+      const fy = TOP + featherAt(tn, air).y * S - 18;
+      const g = el('g', { transform: 'translate(0,' + fy.toFixed(1) + ')' }, ghosts);
+      featherPath(g, .18);
+    }
+  }
+}
+
+const fmt = (x, d) => x.toFixed(d);
+function show(t, b, f){
+  document.getElementById('tOut').innerHTML = fmt(t, 2) + '<small>秒</small>';
+  document.getElementById('yBall').innerHTML = fmt(b.y, 2) + '<small>m</small>';
+  document.getElementById('vBall').innerHTML = fmt(b.v, 2) + '<small>m/s</small>';
+  document.getElementById('yFeather').innerHTML = fmt(f.y, 2) + '<small>m</small>';
+  document.getElementById('vFeather').innerHTML = fmt(f.v, 2) + '<small>m/s</small>';
+  const tt = Math.min(t, tBallLand);
+  document.getElementById('formula').innerHTML =
+    '式で計算すると <span class="m">y</span> = ½<span class="m">gt</span>² = ½ × 9.8 × ' + fmt(tt, 2) + '² = <b>' + fmt(0.5 * G * tt * tt, 2) + ' m</b>' +
+    (t > 0 ? '<br>鉄球が落ちた距離と、くらべてみよう。' : '<br>落とすと、ここに式の計算が出るよ。');
+}
+
+/* ---- 再生 ---- */
+function endTime(){ return mode === 'air' ? tFeatherAirLand : tBallLand; }
+
+function drop(){
+  cancelAnimationFrame(raf);
+  simT = 0; place(0);
+  running = true;
+  const btn = document.getElementById('drop');
+  btn.disabled = true; btn.textContent = '落下中…';
+  if (reduce){ simT = endTime(); place(simT); finish(); return; }
+  let wait = 0.3;   // 手をはなすまでの間
+  lastStamp = performance.now();
+  const step = now => {
+    const dt = Math.min(0.05, (now - lastStamp) / 1000); lastStamp = now;
+    if (wait > 0){ wait -= dt; raf = requestAnimationFrame(step); return; }
+    simT = Math.min(endTime(), simT + dt * speed);
+    place(simT);
+    if (simT < endTime()) raf = requestAnimationFrame(step);
+    else finish();
+  };
+  raf = requestAnimationFrame(step);
+}
+
+function finish(){
+  running = false;
+  const btn = document.getElementById('drop');
+  btn.disabled = false; btn.textContent = 'もう一度落とす ▶';
+  if (mode === 'vacuum'){ ranVacuum = true; done.m1 = true; }
+  if (mode === 'air' && ranVacuum) done.m2 = true;
+  if (strobe) done.m3 = true;
+  updateMissions(true);
+}
+
+function reset(){
+  cancelAnimationFrame(raf); running = false; simT = 0;
+  const btn = document.getElementById('drop');
+  btn.disabled = false; btn.textContent = '落とす ▶';
+  drawStatic();
+  updateMissions(false);
+}
+
+/* ---- ナビ役のひとこと ---- */
+function updateMissions(justFinished){
+  ['m1','m2','m3'].forEach(id => {
+    const li = document.getElementById(id);
+    li.classList.toggle('done', done[id]);
+    li.querySelector('.box').textContent = done[id] ? '✓' : '';
+  });
+  let face = 'question', text;
+  if (!done.m1){
+    text = mode === 'air'
+      ? 'まずは「真空」の筒で落としてみるのじゃ。'
+      : 'まずは真空の筒で、鉄球と羽根を同時に落としてみよう。';
+  } else if (!done.m2){
+    face = justFinished && mode === 'vacuum' ? 'proud' : 'normal';
+    text = mode === 'vacuum'
+      ? '並んで落ちたじゃろう？ 次は「空気あり」に切りかえて、くらべてみるのじゃ。'
+      : '空気ありの筒じゃ。さて、羽根はどう落ちるかな？';
+    if (justFinished && mode === 'air') text = '空気があると、羽根が遅れたな。空気にじゃまされておるからじゃ。';
+  } else if (!done.m3){
+    face = 'think';
+    text = '次は「0.1秒ごとの記録」をオンにして落としてみよう。間隔はどうなるかな？';
+  } else {
+    face = 'happy';
+    text = '間隔がだんだん広がったじゃろう？ 加速度が一定の証拠じゃ。真空なら 0.5秒で 1.23 m。さあ、計算に挑戦じゃ！';
+  }
+  document.getElementById('bubble').textContent = text;
+  document.getElementById('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+
+/* ---- そうさ ---- */
+document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+  if (mode === b.dataset.mode) return;
+  mode = b.dataset.mode;
+  document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  reset();
+}));
+document.querySelectorAll('[data-speed]').forEach(b => b.addEventListener('click', () => {
+  speed = Number(b.dataset.speed);
+  document.querySelectorAll('[data-speed]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+}));
+document.getElementById('strobe').addEventListener('click', e => {
+  strobe = !strobe;
+  e.currentTarget.setAttribute('aria-checked', strobe ? 'true' : 'false');
+  place(simT);
+});
+document.getElementById('drop').addEventListener('click', drop);
+
+// 画像を先に読み込んでおく
+['question','normal','proud','think','happy'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+drawStatic();
+updateMissions(false);
+</script>
+</body>
+</html>
