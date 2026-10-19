@@ -4,23 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="page-title">力学ドリル - わくわく物理基礎</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app">
 
-    <header>
-      <a href="index.html" class="back-link">← ホーム</a>
-      <h1 id="drill-title">⚡ ドリル</h1>
+    <div class="top">
+      <a href="index.html" class="back-link">← 単元をえらぶ</a>
       <div class="header-right">
-        <div class="score-box">
+        <div class="score-box" aria-label="正解数">
           <span class="score-num" id="score">0</span>
           <span class="score-sep">/</span>
           <span class="score-total" id="total">0</span>
         </div>
-        <button class="sound-btn" id="sound-btn" onclick="cycleSoundMode()" title="サウンド切替">🎵</button>
+        <button class="sound-btn" id="sound-btn" onclick="cycleSoundMode()" title="サウンド切替" aria-label="サウンド切替">🎵</button>
       </div>
+    </div>
+
+    <header class="head">
+      <div class="tag">チャレンジモード</div>
+      <h1 id="drill-title">ドリル</h1>
     </header>
+
+    <!-- ガイド役：リカ -->
+    <div class="guide">
+      <p class="bubble" id="rika-line" aria-live="polite"></p>
+      <img id="rika-img" src="../story/img/rika_normal.webp" alt="リカ">
+    </div>
 
     <!-- 問題画面 -->
     <div id="problem-view">
@@ -32,10 +45,10 @@
         <canvas id="canvas" width="400" height="160"></canvas>
 
         <!-- モード選択バー -->
-        <div class="mode-bar">
-          <button class="mode-btn active" id="btn-easy"  onclick="setMode('easy')">⭐ かんたん</button>
-          <button class="mode-btn"        id="btn-calc"  onclick="setMode('calc')">🧮 計算</button>
-          <button class="mode-btn"        id="btn-test"  onclick="setMode('test')">📝 テスト</button>
+        <div class="mode-bar" role="group" aria-label="むずかしさ">
+          <button class="mode-btn active" id="btn-easy"  onclick="setMode('easy')">かんたん</button>
+          <button class="mode-btn"        id="btn-calc"  onclick="setMode('calc')">計算</button>
+          <button class="mode-btn"        id="btn-test"  onclick="setMode('test')">テスト</button>
         </div>
 
         <div class="formula-box">
@@ -67,7 +80,6 @@
     <!-- 結果画面 -->
     <div id="result-view" style="display:none">
       <div class="card result-card">
-        <div class="result-emoji" id="result-emoji"></div>
         <div class="result-title" id="result-title"></div>
         <div class="result-score">
           <span id="result-score-num"></span>
@@ -75,7 +87,7 @@
         </div>
         <p class="result-msg" id="result-msg"></p>
         <button class="btn-primary" onclick="retry()">もう一度挑戦！</button>
-        <a href="index.html" class="btn-home">← ほかのドリルを見る</a>
+        <a href="index.html" class="btn-home">← ほかの単元をえらぶ</a>
       </div>
     </div>
 

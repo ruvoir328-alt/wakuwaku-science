@@ -545,9 +545,9 @@ function txt(ctx, text, x, y, color, size, bold) {
 
 function drawGround(ctx) {
   ctx.save();
-  ctx.strokeStyle='#c7c7d9'; ctx.lineWidth=2;
+  ctx.strokeStyle='#c3cad8'; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(20,GY); ctx.lineTo(W-20,GY); ctx.stroke();
-  ctx.strokeStyle='#e0e0ee'; ctx.lineWidth=1;
+  ctx.strokeStyle='#dfe4ee'; ctx.lineWidth=1;
   for(let i=0;i<=8;i++){const x=20+(W-40)*i/8; ctx.beginPath(); ctx.moveTo(x,GY); ctx.lineTo(x+8,GY+10); ctx.stroke();}
   ctx.restore();
 }
@@ -558,36 +558,36 @@ function drawGround(ctx) {
 
 function drawUniform(ctx, t, p) {
   const prog = (t%2.8)/2.8;
-  ctx.fillStyle='#f0f4ff'; ctx.fillRect(0,0,W,H); drawGround(ctx);
+  ctx.fillStyle='#eef2f7'; ctx.fillRect(0,0,W,H); drawGround(ctx);
   const bx=26+prog*(W-52), by=GY-16;
-  drawBall(ctx,bx,by,14,'#5568e4');
+  drawBall(ctx,bx,by,14,'#34467e');
   const ae=bx+55; if(ae<W-10){arrow(ctx,bx+14,by,ae,by,'#ff6b35'); txt(ctx,'v',ae+4,by+4,'#ff6b35',13,true);}
-  txt(ctx,`v = ${p.v} m/s（一定）`,14,18,'#5568e4',12,true);
+  txt(ctx,`v = ${p.v} m/s（一定）`,14,18,'#34467e',12,true);
 }
 
 function drawAccel(ctx, t, p) {
   const {v0,a} = p, at=t%3.2;
   const maxX=v0*3.2+.5*a*3.2*3.2, scale=Math.min((W-60)/Math.max(maxX,1),4);
   const bx=Math.min(26+(v0*at+.5*a*at*at)*scale,W-26), by=GY-16;
-  ctx.fillStyle='#f0f4ff'; ctx.fillRect(0,0,W,H); drawGround(ctx);
-  drawBall(ctx,bx,by,14,'#5568e4');
+  ctx.fillStyle='#eef2f7'; ctx.fillRect(0,0,W,H); drawGround(ctx);
+  drawBall(ctx,bx,by,14,'#34467e');
   const al=Math.min(Math.max((v0+a*at)*3.5,6),85);
   if(bx+al+14<W-8) arrow(ctx,bx+14,by,bx+14+al,by,'#ff6b35');
   txt(ctx,`a = ${a} m/s²（加速中）`,14,18,'#27ae60',12,true);
-  txt(ctx,`v₀ = ${v0} m/s`,14,34,'#5568e4',11);
+  txt(ctx,`v₀ = ${v0} m/s`,14,34,'#34467e',11);
 }
 
 function drawFall(ctx, t, p) {
   const at=t%3.0, g=9.8;
   const scale=Math.min((H-55)/Math.max(.5*g*9,1),1.5);
   const bx=W/2, by=Math.min(18+.5*g*at*at*scale,H-22);
-  ctx.fillStyle='#f0f4ff'; ctx.fillRect(0,0,W,H);
-  ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='#c0c0e0'; ctx.lineWidth=1.5;
+  ctx.fillStyle='#eef2f7'; ctx.fillRect(0,0,W,H);
+  ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='#b8c1d4'; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(bx-24,18); ctx.lineTo(bx+24,18); ctx.stroke();
   ctx.setLineDash([]); ctx.restore();
-  for(let i=1;i<=3;i++){const tt=at-i*.22; if(tt>0){ctx.globalAlpha=.18*(4-i)/3; drawBall(ctx,bx,Math.min(18+.5*g*tt*tt*scale,H-22),12-i*2,'#5568e4');}}
+  for(let i=1;i<=3;i++){const tt=at-i*.22; if(tt>0){ctx.globalAlpha=.18*(4-i)/3; drawBall(ctx,bx,Math.min(18+.5*g*tt*tt*scale,H-22),12-i*2,'#34467e');}}
   ctx.globalAlpha=1;
-  drawBall(ctx,bx,by,14,'#5568e4');
+  drawBall(ctx,bx,by,14,'#34467e');
   const al=Math.min(g*at*1.8,44); if(al>5&&by+14+al<H-4) arrow(ctx,bx,by+14,bx,by+14+al,'#ff6b35');
   txt(ctx,'g = 9.8 m/s² ↓',W-128,18,'#27ae60',12,true);
 }
@@ -601,31 +601,31 @@ function drawThrowUp(ctx, t, p) {
   const v_phys=at<=tMax*2 ? v0-g*at : 0;
   const bx=W/2, by=GY-16-Math.max(0,y_phys)*scale;
 
-  ctx.fillStyle='#f0f4ff'; ctx.fillRect(0,0,W,H); drawGround(ctx);
+  ctx.fillStyle='#eef2f7'; ctx.fillRect(0,0,W,H); drawGround(ctx);
   // 最高点の破線
   const topY=GY-16-(v0*v0/(2*g))*scale;
-  ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='#c0c0e0'; ctx.lineWidth=1.2;
+  ctx.save(); ctx.setLineDash([5,4]); ctx.strokeStyle='#b8c1d4'; ctx.lineWidth=1.2;
   ctx.beginPath(); ctx.moveTo(bx-30,topY); ctx.lineTo(bx+30,topY); ctx.stroke();
   ctx.setLineDash([]); ctx.restore();
   txt(ctx,'最高点',bx+20,topY+4,'#aaa',10);
 
-  drawBall(ctx,bx,by,14,'#5568e4');
+  drawBall(ctx,bx,by,14,'#34467e');
   const al=Math.min(Math.abs(v_phys)*2,44);
   if(al>4){
     if(v_phys>0) arrow(ctx,bx,by-14,bx,by-14-al,'#ff6b35');  // 上向き
     else if(v_phys<0) arrow(ctx,bx,by+14,bx,by+14+al,'#ff6b35');  // 下向き
   }
-  txt(ctx,`v₀ = ${v0} m/s ↑`,14,18,'#5568e4',12,true);
+  txt(ctx,`v₀ = ${v0} m/s ↑`,14,18,'#34467e',12,true);
   txt(ctx,'g = 9.8 m/s² ↓',14,34,'#27ae60',12,true);
 }
 
 function drawForceAdd(ctx, t, p) {
   const { f1, f2 } = p;
-  ctx.fillStyle = '#f0f4ff'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
   const bw = 52, bh = 42, bx = W / 2 - bw / 2, by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#5568e4';
+  ctx.save(); ctx.fillStyle = '#34467e';
   ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#3a4cc2'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+  ctx.strokeStyle = '#22305a'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
   // 右向き矢印 F1
   const len1 = Math.min(f1 * 2.5, 90);
   arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 4 + len1, by + bh / 2, '#ff6b35');
@@ -639,11 +639,11 @@ function drawForceAdd(ctx, t, p) {
 
 function drawForceSub(ctx, t, p) {
   const { f1, f2 } = p;
-  ctx.fillStyle = '#f0f4ff'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
   const bw = 52, bh = 42, bx = W / 2 - bw / 2, by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#5568e4';
+  ctx.save(); ctx.fillStyle = '#34467e';
   ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#3a4cc2'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+  ctx.strokeStyle = '#22305a'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
   const len1 = Math.min(f1 * 2.2, 110);
   arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 4 + len1, by + bh / 2, '#ff6b35');
   txt(ctx, `→ ${f1}N`, bx + bw + 8, by + bh / 2 - 8, '#ff6b35', 11, true);
@@ -656,14 +656,14 @@ function drawForceSub(ctx, t, p) {
 function drawForceDecomp(ctx, t, p) {
   const { F, deg } = p;
   const rad = deg * Math.PI / 180;
-  ctx.fillStyle = '#f0f4ff'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
   const ox = 90, oy = GY - 20;
   const len = Math.min(F * 3, 110);
   arrow(ctx, ox, oy, ox + len * Math.cos(rad), oy - len * Math.sin(rad), '#ff6b35');
   txt(ctx, `F=${F}N`, ox + 6, oy - len * Math.sin(rad) - 8, '#ff6b35', 11, true);
   // 水平成分
-  arrow(ctx, ox, oy, ox + len * Math.cos(rad), oy, '#5568e4');
-  txt(ctx, `Fx`, ox + len * Math.cos(rad) + 4, oy + 4, '#5568e4', 11, true);
+  arrow(ctx, ox, oy, ox + len * Math.cos(rad), oy, '#34467e');
+  txt(ctx, `Fx`, ox + len * Math.cos(rad) + 4, oy + 4, '#34467e', 11, true);
   // 角度ラベル
   ctx.save(); ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(ox, oy, 28, -rad, 0); ctx.stroke(); ctx.restore();
@@ -672,11 +672,11 @@ function drawForceDecomp(ctx, t, p) {
 
 function drawEquil(ctx, t, p) {
   const { m, N } = p;
-  ctx.fillStyle = '#f0f4ff'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
   const bw = 52, bh = 42, bx = W / 2 - bw / 2, by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#5568e4';
+  ctx.save(); ctx.fillStyle = '#34467e';
   ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#3a4cc2'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.strokeStyle = '#22305a'; ctx.lineWidth = 2; ctx.stroke();
   ctx.fillStyle = 'white'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
   ctx.fillText(`${m} kg`, bx + bw / 2, by + bh / 2 + 5); ctx.textAlign = 'left'; ctx.restore();
   // 下向き重力
@@ -686,12 +686,12 @@ function drawEquil(ctx, t, p) {
   // 上向き垂直抗力
   arrow(ctx, bx + bw / 2, by - 2, bx + bw / 2, by - 2 - gLen, '#27ae60');
   txt(ctx, `N`, bx + bw / 2 + 4, by - gLen - 6, '#27ae60', 11, true);
-  txt(ctx, `静止（つりあい）`, 14, 18, '#5568e4', 12, true);
+  txt(ctx, `静止（つりあい）`, 14, 18, '#34467e', 12, true);
 }
 
 function drawFriction(ctx, t, p) {
   const { m, mu } = p, prog = (t % 2.8) / 2.8;
-  ctx.fillStyle = '#f0f4ff'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
   const bw = 52, bh = 42, bx = 26 + prog * (W - bw - 52), by = GY - bh;
   ctx.save(); ctx.fillStyle = '#e67e22';
   ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
@@ -699,7 +699,7 @@ function drawFriction(ctx, t, p) {
   ctx.fillStyle = 'white'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
   ctx.fillText(`${m} kg`, bx + bw / 2, by + bh / 2 + 5); ctx.textAlign = 'left'; ctx.restore();
   // 進行方向矢印
-  arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 44, by + bh / 2, '#5568e4');
+  arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 44, by + bh / 2, '#34467e');
   // 摩擦力（反対向き）
   arrow(ctx, bx - 4, by + bh / 2, Math.max(bx - 44, 8), by + bh / 2, '#e74c3c');
   txt(ctx, `f（摩擦力）`, 8, by + bh / 2 - 8, '#e74c3c', 10, true);
@@ -708,36 +708,36 @@ function drawFriction(ctx, t, p) {
 
 function drawPressure(ctx, t, p) {
   const { F } = p;
-  ctx.fillStyle = '#e8f4ff'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H);
   // 面
   ctx.save(); ctx.fillStyle = '#aac4e8';
   ctx.fillRect(60, GY - 20, W - 120, 20); ctx.restore();
   // 物体
   const bw = 80, bh = 50, bx = W / 2 - bw / 2, by = GY - 20 - bh;
-  ctx.save(); ctx.fillStyle = '#5568e4';
+  ctx.save(); ctx.fillStyle = '#34467e';
   ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
   ctx.restore();
   // 下向き力
   const fLen = Math.min(F / 5, 50);
   arrow(ctx, W / 2, by - 6, W / 2, by - 6 - fLen, '#ff6b35');
   txt(ctx, `F=${F}N`, W / 2 + 6, by - 10, '#ff6b35', 11, true);
-  txt(ctx, `P = F ÷ S`, 14, 18, '#5568e4', 12, true);
+  txt(ctx, `P = F ÷ S`, 14, 18, '#34467e', 12, true);
 }
 
 function drawNewton(ctx, t, p) {
   const {m,F}=p, prog=(t%2.5)/2.5;
-  ctx.fillStyle='#f0f4ff'; ctx.fillRect(0,0,W,H); drawGround(ctx);
+  ctx.fillStyle='#eef2f7'; ctx.fillRect(0,0,W,H); drawGround(ctx);
   const bw=52,bh=42,bx=90+prog*(W-bw-114),by=GY-bh;
-  ctx.save(); ctx.fillStyle='#5568e4';
+  ctx.save(); ctx.fillStyle='#34467e';
   ctx.beginPath(); ctx.roundRect?ctx.roundRect(bx,by,bw,bh,4):ctx.rect(bx,by,bw,bh); ctx.fill();
-  ctx.strokeStyle='#3a4cc2'; ctx.lineWidth=2; ctx.stroke();
+  ctx.strokeStyle='#22305a'; ctx.lineWidth=2; ctx.stroke();
   ctx.fillStyle='white'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center';
   ctx.fillText(`${m} kg`,bx+bw/2,by+bh/2+5); ctx.textAlign='left'; ctx.restore();
   const fLen=Math.min(F/2,62), sx=Math.max(bx-fLen-4,12);
   arrow(ctx,sx,by+bh/2,bx-2,by+bh/2,'#ff6b35');
   txt(ctx,`F=${F}N`,sx-42,by+bh/2+4,'#ff6b35',11,true);
   txt(ctx,'加速中 →',bx+bw/2-22,by-8,'#27ae60',11,true);
-  txt(ctx,`m = ${m} kg`,14,18,'#5568e4',12,true);
+  txt(ctx,`m = ${m} kg`,14,18,'#34467e',12,true);
 }
 
 // ========================================
@@ -964,11 +964,37 @@ function renderInputs(inputs) {
 }
 
 // ========================================
+// ガイド役：リカ
+// ========================================
+
+const RIKA_START = {
+  easy: 'いっしょに解こう！ まずは問題の数字を、公式の文字に入れてみてね。',
+  calc: '代入できたら、計算までやってみよう！',
+  test: 'テストモードだよ。メモ欄を使って、答えだけ入れてね。'
+};
+const RIKA_RIGHT = ['やった、正解！', 'すごい、ぴったり！', 'その調子！', 'ばっちりだね！'];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+function rika(face, text) {
+  const img = document.getElementById('rika-img');
+  const line = document.getElementById('rika-line');
+  if (img) img.src = `../story/img/rika_${face}.webp`;
+  if (line) line.textContent = text;
+}
+
+// 表情の画像を先に読み込んでおく
+['normal','confident','surprise','idea','question','confused','happy','oops']
+  .forEach(f => { new Image().src = `../story/img/rika_${f}.webp`; });
+
+// ========================================
 // UI ロジック
 // ========================================
 
 function loadProblem() {
   answered = false;
+  if (count === 0) rika('normal', RIKA_START[mode]);
+  else if (TOTAL - count <= 3) rika('confident', `あと ${TOTAL - count} 問！ ラストスパート！`);
+  else rika('normal', '次の問題、いってみよう！');
   current = activeGens[Math.floor(Math.random() * activeGens.length)]();
 
   document.getElementById('badge').textContent = current.badge;
@@ -996,6 +1022,7 @@ function checkAnswer() {
     if (!r || r.value === '') {
       document.getElementById('feedback').textContent = '答えを入力してください。';
       document.getElementById('feedback').className = 'feedback';
+      rika('question', 'あれ、答えの欄がまだ空いてるよ？');
       return;
     }
   } else {
@@ -1011,6 +1038,7 @@ function checkAnswer() {
     if (!allFilled) {
       document.getElementById('feedback').textContent = 'すべての欄に数値を入力してください。';
       document.getElementById('feedback').className = 'feedback';
+      rika('question', 'あれ、まだ空いてる欄があるよ？');
       return;
     }
   }
@@ -1049,12 +1077,16 @@ function checkAnswer() {
     else if (mode === 'calc') fb.textContent = '✓ 代入も計算も正解！';
     else                      fb.textContent = '✓ 正解！';
     fb.className = 'feedback correct';
+    rika('happy', pick(RIKA_RIGHT));
     triggerSparkle();
     playCorrect();
   } else {
     if (mode === 'test') fb.textContent = '✗ 不正解。計算を確認しよう。';
     else                 fb.textContent = '✗ 違います。赤い欄を確認しよう。';
     fb.className = 'feedback incorrect';
+    rika('oops', mode === 'test'
+      ? 'まちがえた〜。下の計算結果と、自分のメモをくらべてみよう！'
+      : 'まちがえた〜。赤い欄を、いっしょに見直そう！');
     playWrong();
   }
 
@@ -1095,12 +1127,11 @@ function showResult() {
   document.getElementById('problem-view').style.display = 'none';
   document.getElementById('result-view').style.display = 'block';
   const pct = score / TOTAL;
-  let emoji, title, msg;
-  if      (pct >= .9) { emoji='🎉'; title='完璧！すごい！';   msg=`${score}問正解！この単元はバッチリですね！`; }
-  else if (pct >= .7) { emoji='⭐'; title='よくできました！'; msg=`${score}問正解！あと少しで満点です！`; }
-  else if (pct >= .5) { emoji='📚'; title='もう少し！';       msg=`${score}問正解。もう一度公式を確認して再挑戦！`; }
-  else                { emoji='💪'; title='頑張ろう！';        msg=`${score}問正解。くり返し練習しよう！`; }
-  document.getElementById('result-emoji').textContent = emoji;
+  let title, msg;
+  if      (pct >= .9) { title='完璧！すごい！';   msg=`${score}問正解！この単元はバッチリですね！`;        rika('happy', 'すごすぎる！ わたしも見習わなきゃ！'); }
+  else if (pct >= .7) { title='よくできました！'; msg=`${score}問正解！あと少しで満点です！`;            rika('confident', 'いい感じ！ 次は満点ねらっちゃおう！'); }
+  else if (pct >= .5) { title='もう少し！';       msg=`${score}問正解。もう一度公式を確認して再挑戦！`; rika('idea', '公式を見直したら、きっとのびるよ！'); }
+  else                { title='頑張ろう！';        msg=`${score}問正解。くり返し練習しよう！`;          rika('oops', 'わたしも最初はまちがえてばっかりだったよ。もう一回やろう！'); }
   document.getElementById('result-title').textContent = title;
   document.getElementById('result-score-num').textContent = score;
   document.getElementById('result-msg').textContent = msg;
@@ -1124,7 +1155,7 @@ function retry() {
 document.addEventListener('DOMContentLoaded', () => {
   // タイトルを単元名に変更
   const titleEl = document.getElementById('drill-title');
-  if (titleEl) titleEl.textContent = `⚡ ${unitTitle}`;
+  if (titleEl) titleEl.textContent = unitInfo ? `${unitId}　${unitTitle}` : unitTitle;
   document.title = `${unitTitle} - わくわく物理基礎`;
 
   // Enter キー

@@ -1,206 +1,213 @@
 /* ================================
-   力学ドリル - スタイル
+   わくわく物理基礎 チャレンジモード（ドリル）
+   ストーリーモード・シミュレーションモードと同じ色味
    ================================ */
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+:root {
+  color-scheme: dark;
+  --coat: #22305a;       /* ニュートンくんの上着の紺 */
+  --coat-deep: #18223f;
+  --apple: #d93a3f;      /* リンゴの赤 */
+  --apple-deep: #a82a2f;
+  --rika: #a8343b;       /* リカの名札の色 */
+  --paper: #ffffff;
+  --ink: #1f2638;
+  --muted: #6b7488;
+  --line: #dfe4ee;
+  --soft: #f4f6fb;
+  --cream: #fff7e9;
+  --cream-line: #e9c48f;
+  --ok: #3f9a5c;
+  --ok-soft: #ecf7ef;
+  --ng-soft: #fff1f1;
 }
 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-               'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
-  background: linear-gradient(150deg, #4f46e5 0%, #7c3aed 100%);
+  font-family: 'Zen Maru Gothic', system-ui, sans-serif;
+  background: var(--coat);
+  color: var(--ink);
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 20px 16px 48px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .app {
-  width: 100%;
-  max-width: 440px;
+  max-width: 540px;
+  margin: 0 auto;
+  padding-block: 12px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* ---- ヘッダー ---- */
-header {
-  display: grid;
-  grid-template-columns: 60px 1fr auto;
+.top {
+  display: flex;
   align-items: center;
-  margin-bottom: 20px;
-  color: white;
+  justify-content: space-between;
   gap: 8px;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  justify-content: flex-end;
+.back-link {
+  color: #cfd7ee;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 0;
+  white-space: nowrap;
 }
+.back-link:hover { color: #fff; }
 
-/* ---- サウンドボタン ---- */
+.header-right { display: flex; align-items: center; gap: 6px; }
+
+.score-box {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 4px 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  font-weight: 900;
+  color: #fff;
+}
+.score-num { font-size: 20px; color: #ffd6d7; font-variant-numeric: tabular-nums; }
+.score-sep { font-size: 13px; color: rgba(255, 255, 255, 0.6); margin: 0 1px; }
+.score-total { font-size: 15px; font-variant-numeric: tabular-nums; }
+
 .sound-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
   border: none;
   border-radius: 50%;
   width: 34px;
   height: 34px;
-  font-size: 1rem;
+  font-size: 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(4px);
-  transition: background 0.15s;
   flex-shrink: 0;
 }
+.sound-btn:hover { background: rgba(255, 255, 255, 0.22); }
 
-.sound-btn:hover { background: rgba(255, 255, 255, 0.35); }
-
-header h1 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  text-align: center;
+.head { color: #fff; }
+.head .tag {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-size: 14px;
+  color: #ffd6d7;
+  letter-spacing: .04em;
 }
+.head h1 { font-weight: 900; font-size: 20px; line-height: 1.35; }
 
-.back-link {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  font-size: 0.78rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.back-link:hover { color: white; }
-
-.btn-home {
-  display: block;
-  text-align: center;
-  margin-top: 10px;
-  color: #7c3aed;
-  font-size: 0.88rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.btn-home:hover { text-decoration: underline; }
-
-.score-box {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  padding: 6px 16px;
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
+/* ---- ガイド役：リカ（右側） ---- */
+.guide { display: flex; align-items: flex-end; gap: 8px; }
+.guide img { width: 60px; height: auto; flex: none; }
+.bubble {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 14px;
   font-weight: 700;
-  backdrop-filter: blur(4px);
+  line-height: 1.6;
+  flex: 1;
+  min-height: 52px;
 }
-
-.score-num {
-  font-size: 1.3rem;
-  color: #fde68a;
-}
-
-.score-sep {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0 1px;
-}
-
-.score-total {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.9);
+.bubble::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  bottom: 14px;
+  border: 8px solid transparent;
+  border-left-color: #fff;
+  border-right: 0;
 }
 
 /* ---- カード ---- */
 .card {
-  background: white;
-  border-radius: 20px;
-  padding: 22px 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  background: var(--paper);
+  border-radius: 14px;
+  padding: 18px 16px;
 }
 
-/* ---- バッジ ---- */
 .badge {
   display: inline-block;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  font-size: 0.72rem;
+  background: var(--coat);
+  color: #fff;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 4px 14px;
+  padding: 3px 12px;
   border-radius: 999px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 /* ---- 問題文 ---- */
 .problem-text {
-  font-size: 0.95rem;
+  font-size: 16px;
   line-height: 1.8;
-  color: #1e1b4b;
-  margin-bottom: 14px;
-}
-
-.problem-text b {
-  color: #4f46e5;
   font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
 }
-
-.problem-text i {
-  color: #dc2626;
-  font-style: italic;
-  font-weight: 600;
-}
-
-.problem-text small {
-  font-size: 0.8rem;
-  color: #888;
-}
+.problem-text b { color: var(--coat); font-weight: 900; }
+.problem-text i { color: var(--apple); font-style: italic; font-weight: 700; }
+.problem-text small { font-size: 13px; color: var(--muted); }
 
 /* ---- Canvas ---- */
 #canvas {
   display: block;
   width: 100%;
   height: auto;
-  border-radius: 12px;
-  background: #f0f4ff;
+  border-radius: 10px;
+  background: #eef2f7;
   margin-bottom: 14px;
 }
 
-/* ---- モード選択バー ---- */
+/* ---- モード選択（シミュと同じ切りかえ） ---- */
 .mode-bar {
   display: flex;
-  gap: 6px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
   margin-bottom: 14px;
 }
-
 .mode-btn {
   flex: 1;
-  border: 2px solid #e0e0f0;
-  border-radius: 10px;
-  padding: 7px 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #888;
-  background: white;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 4px;
+  font: 700 14px 'Zen Maru Gothic', sans-serif;
+  color: var(--muted);
+  background: transparent;
   cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
   white-space: nowrap;
 }
+.mode-btn:hover { color: var(--coat); }
+.mode-btn.active { background: var(--coat); color: #fff; }
+.mode-btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.sound-btn:focus-visible,
+.back-link:focus-visible,
+.btn-home:focus-visible { outline: 3px solid var(--apple); outline-offset: 2px; }
 
-.mode-btn:hover {
-  border-color: #7c3aed;
-  color: #7c3aed;
+/* ---- 公式（ストーリーの「今日のポイント」と同じ紙） ---- */
+.formula-box {
+  background: var(--cream);
+  border: 2px dashed var(--cream-line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 16px;
 }
-
-.mode-btn.active {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  border-color: transparent;
-  color: white;
+.formula-title { font-size: 12px; font-weight: 900; color: #7e5129; margin-bottom: 2px; }
+.formula-text {
+  font-size: 18px;
+  color: var(--ink);
+  font-family: 'Times New Roman', serif;
+  font-style: italic;
 }
 
 /* ---- 計算モード・区切り線 ---- */
@@ -208,334 +215,146 @@ header h1 {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 8px 0;
-  color: #aaa;
-  font-size: 0.75rem;
-  font-weight: 600;
+  margin: 4px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
 }
-
 .result-divider::before,
-.result-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #e0e0f0;
-}
+.result-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 
 /* ---- テストモード・メモ欄 ---- */
+.memo-label { font-size: 12px; font-weight: 700; color: var(--muted); margin-top: 12px; margin-bottom: 4px; }
 .memo-area {
   width: 100%;
   min-height: 90px;
-  border: 2px dashed #d0d0e8;
+  border: 2px dashed #cdd4e2;
   border-radius: 10px;
   padding: 10px 12px;
-  font-size: 0.92rem;
-  color: #444;
+  font: 500 15px 'Zen Maru Gothic', sans-serif;
+  color: var(--ink);
   resize: vertical;
   outline: none;
-  font-family: inherit;
-  background: #fafafe;
-  margin-top: 12px;
-  transition: border-color 0.2s;
+  background: var(--soft);
 }
+.memo-area::placeholder { color: #aab2c4; }
+.memo-area:focus { border-color: var(--coat); background: #fff; }
 
-.memo-area::placeholder { color: #c0c0d8; }
-.memo-area:focus { border-color: #7c3aed; background: white; }
-
-.memo-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #aaa;
-  letter-spacing: 0.8px;
-  margin-top: 14px;
-  margin-bottom: 4px;
-}
-
-/* ---- 公式ボックス ---- */
-.formula-box {
-  background: #f5f3ff;
-  border-left: 4px solid #7c3aed;
-  border-radius: 0 10px 10px 0;
-  padding: 10px 14px;
-  margin-bottom: 18px;
-}
-
-.formula-title {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #7c3aed;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.formula-text {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #1e1b4b;
-  font-family: 'Georgia', 'Times New Roman', serif;
-}
-
-/* ---- 入力コンテナ（複数入力） ---- */
-#inputs-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-/* ---- 入力行 ---- */
-.input-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+/* ---- 入力 ---- */
+#inputs-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.input-row { display: flex; align-items: center; gap: 8px; }
 .input-label {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #1e1b4b;
+  font-size: 18px;
+  color: var(--ink);
   white-space: nowrap;
-  min-width: 36px;
-  font-family: 'Georgia', serif;
+  min-width: 40px;
+  font-family: 'Times New Roman', serif;
   font-style: italic;
 }
-
 .answer-input {
   flex: 1;
-  border: 2px solid #e0e0e0;
+  min-width: 0;
+  border: 2px solid var(--line);
   border-radius: 10px;
-  padding: 11px 14px;
-  font-size: 1.15rem;
-  font-weight: 600;
+  padding: 10px 12px;
+  font: 900 18px 'Zen Maru Gothic', sans-serif;
   text-align: center;
-  color: #1e1b4b;
+  color: var(--ink);
+  background: var(--soft);
   outline: none;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   -moz-appearance: textfield;
 }
-
 .answer-input::-webkit-inner-spin-button,
-.answer-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-}
+.answer-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.answer-input:focus { border-color: var(--coat); background: #fff; box-shadow: 0 0 0 3px rgba(34, 48, 90, .12); }
+.answer-input.correct { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
+.answer-input.incorrect { border-color: var(--apple); background: var(--ng-soft); color: var(--apple); }
+.unit { font-size: 14px; color: var(--muted); white-space: nowrap; min-width: 42px; font-weight: 700; }
 
-.answer-input:focus {
-  border-color: #7c3aed;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
-}
-
-.answer-input.correct {
-  border-color: #10b981;
-  background: #ecfdf5;
-  color: #059669;
-}
-
-.answer-input.incorrect {
-  border-color: #ef4444;
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.unit {
-  font-size: 0.9rem;
-  color: #666;
-  white-space: nowrap;
-  min-width: 42px;
-}
-
-/* ---- 計算結果リビール ---- */
+/* ---- 計算結果 ---- */
 #result-reveal {
-  background: #f0f4ff;
-  border: 2px solid #4f46e5;
-  border-radius: 12px;
-  padding: 12px 16px;
+  background: var(--soft);
+  border: 2px solid var(--coat);
+  border-radius: 10px;
+  padding: 10px 14px;
   margin-bottom: 12px;
 }
-
-.reveal-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #4f46e5;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.reveal-calc {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 5px;
-  font-family: 'Georgia', 'Times New Roman', serif;
-}
-
-.reveal-var {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #dc2626;
-  font-style: italic;
-}
-
-.reveal-eq {
-  color: #555;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.reveal-expr {
-  color: #333;
-  font-size: 0.95rem;
-}
-
-.reveal-value {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #059669;
-}
-
-.reveal-unit {
-  font-size: 0.88rem;
-  color: #666;
-}
+.reveal-label { font-size: 12px; font-weight: 900; color: var(--coat); margin-bottom: 4px; }
+.reveal-calc { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; font-family: 'Times New Roman', serif; }
+.reveal-var { font-size: 18px; color: var(--apple); font-style: italic; }
+.reveal-eq { color: var(--muted); font-size: 16px; }
+.reveal-expr { color: var(--ink); font-size: 16px; }
+.reveal-value { font: 900 20px 'Zen Maru Gothic', sans-serif; color: var(--ok); }
+.reveal-unit { font-size: 14px; color: var(--muted); }
 
 /* ---- ボタン ---- */
 .btn-primary {
   display: block;
   width: 100%;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  border: none;
-  border-radius: 12px;
+  font: 900 17px 'Zen Maru Gothic', sans-serif;
+  background: var(--apple);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
   padding: 13px;
-  font-size: 1rem;
-  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  margin-bottom: 10px;
+  box-shadow: 0 4px 0 var(--apple-deep);
+  margin-bottom: 12px;
 }
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.4);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
+.btn-primary:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--apple-deep); }
 
 .btn-secondary {
   display: none;
   width: 100%;
-  background: white;
-  color: #4f46e5;
-  border: 2px solid #4f46e5;
-  border-radius: 12px;
-  padding: 11px;
-  font-size: 1rem;
-  font-weight: 700;
+  font: 900 16px 'Zen Maru Gothic', sans-serif;
+  background: var(--coat);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
 }
+.btn-secondary:hover { background: var(--coat-deep); }
 
-.btn-secondary:hover {
-  background: #4f46e5;
-  color: white;
+.btn-home {
+  display: block;
+  text-align: center;
+  margin-top: 4px;
+  color: var(--coat);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px;
 }
+.btn-home:hover { text-decoration: underline; }
 
 /* ---- フィードバック ---- */
 .feedback {
   text-align: center;
-  font-size: 0.92rem;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 900;
   min-height: 28px;
   padding: 6px 4px;
   border-radius: 8px;
   margin-bottom: 8px;
-  transition: all 0.3s;
   line-height: 1.5;
 }
+.feedback:empty { min-height: 0; padding: 0; margin: 0; }
+.feedback.correct { color: var(--ok); background: var(--ok-soft); }
+.feedback.incorrect { color: var(--apple); background: var(--ng-soft); }
 
-.feedback.correct {
-  color: #059669;
-  background: #ecfdf5;
-}
+/* ---- 進み具合 ---- */
+.progress-container { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.progress-bar { flex: 1; height: 4px; background: rgba(255, 255, 255, 0.15); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--apple); width: 0%; transition: width 0.3s; }
+.progress-text { color: #cfd7ee; font-size: 13px; font-weight: 700; white-space: nowrap; }
 
-.feedback.incorrect {
-  color: #dc2626;
-  background: #fef2f2;
-}
-
-/* ---- プログレス ---- */
-.progress-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: white;
-  border-radius: 999px;
-  width: 0%;
-  transition: width 0.4s ease;
-}
-
-.progress-text {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* ---- 結果カード ---- */
-.result-card {
-  text-align: center;
-  padding: 40px 24px;
-}
-
-.result-emoji {
-  font-size: 3.5rem;
-  margin-bottom: 12px;
-  line-height: 1;
-}
-
-.result-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #1e1b4b;
-  margin-bottom: 16px;
-}
-
-.result-score {
-  font-size: 3rem;
-  font-weight: 800;
-  color: #4f46e5;
-  margin-bottom: 4px;
-  line-height: 1.1;
-}
-
-.result-score-denom {
-  font-size: 1.2rem;
-  color: #888;
-  font-weight: 600;
-}
-
-.result-msg {
-  font-size: 0.92rem;
-  color: #555;
-  line-height: 1.7;
-  margin: 16px 0 28px;
-}
+/* ---- 結果 ---- */
+.result-card { text-align: center; padding: 28px 20px 18px; }
+.result-title { font-family: 'Dela Gothic One', sans-serif; font-size: 26px; color: var(--ink); margin-bottom: 10px; line-height: 1.3; }
+.result-score { font-family: 'Dela Gothic One', sans-serif; font-size: 52px; color: var(--apple); line-height: 1.1; margin-bottom: 4px; }
+.result-score-denom { font-family: 'Zen Maru Gothic', sans-serif; font-size: 18px; color: var(--muted); font-weight: 700; }
+.result-msg { font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.7; margin: 12px 0 22px; }
 
 /* ---- 正解エフェクト ---- */
 .sparkle-particle {
@@ -546,20 +365,19 @@ header h1 {
   animation: sparkle-burst 0.9s ease-out forwards;
   user-select: none;
 }
-
 @keyframes sparkle-burst {
   0%   { transform: translate(-50%, -50%) translate(0, 0) scale(0.2); opacity: 1; }
   60%  { opacity: 1; }
   100% { transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(1.1); opacity: 0; }
 }
-
-/* カード正解バウンス */
 @keyframes card-bounce {
   0%, 100% { transform: translateY(0); }
-  30%       { transform: translateY(-10px); }
-  60%       { transform: translateY(-4px); }
+  30%      { transform: translateY(-10px); }
+  60%      { transform: translateY(-4px); }
 }
+.card.bounce { animation: card-bounce 0.45s ease; }
 
-.card.bounce {
-  animation: card-bounce 0.45s ease;
+@media (prefers-reduced-motion: reduce) {
+  .sparkle-particle, .card.bounce { animation: none; }
+  .progress-fill { transition: none; }
 }
