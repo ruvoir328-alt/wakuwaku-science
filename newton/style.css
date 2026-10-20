@@ -53,6 +53,7 @@ a{color:inherit}
   color:var(--lemon);letter-spacing:.02em;
 }
 .lead{color:var(--muted);font-size:14px}
+.subjects{font-family:'M PLUS Rounded 1c',sans-serif;font-weight:800;font-size:13px;color:var(--navy);background:var(--lemon);border-radius:999px;padding:2px 14px;margin-top:4px}
 
 .notice{
   background:var(--navy-2);border:2px solid var(--lemon);

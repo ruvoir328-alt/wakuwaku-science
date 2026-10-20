@@ -16,7 +16,7 @@ const DEVICE_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 // ヒントの段階ごとに、その回で出してよい内容
 const HINT_GUIDE = {
   1: "ヒント1：何がわかっていて、何を求める問題かを生徒に整理させる。法則や公式の名前はまだ出さない。",
-  2: "ヒント2：使えそうな法則・公式を生徒に考えさせる。法則の名前や公式を示してよいが、数値を代入した式はまだ書かない。",
+  2: "ヒント2：使えそうな法則・公式・定理・考え方を生徒に考えさせる。名前や公式を示してよいが、数値を代入した式はまだ書かない。",
   3: "ヒント3：式の立て方を示す。数値を代入した式までは書いてよいが、計算結果と最終的な答えは言わず、計算は生徒にやらせる。",
 };
 
@@ -32,7 +32,7 @@ function turnInstruction({ mode, action, hintLevel }) {
   const limit = `ヒント${Math.min(hintLevel + 1, 3)}以降の内容（${hintLevel >= 3 ? "最終的な答え" : "次の段階のヒントや答え"}）は出さない。`;
   switch (action) {
     case "start":
-      return "【今のモード】問題の写真。写真から問題文を読み取って短くまとめ、「ふむ、この問題で合っておるかな？」と確認するだけにする。ヒントや解き方はまだ言わない。写真が物理の問題でなければ、そのことをやさしく伝える。";
+      return "【今のモード】問題の写真。写真から問題文を読み取って短くまとめ、「ふむ、この問題で合っておるかな？」と確認するだけにする。ヒントや解き方はまだ言わない。写真が理科や数学の問題でなければ、そのことをやさしく伝える。";
     case "hint":
       return `【今のモード】問題の写真。生徒が「もうちょっとヒント」を押した。今回は次のヒントだけを出す。\n${HINT_GUIDE[hintLevel]}\n${hintLevel >= 3 ? "これが最後のヒント。答えは言わず、「あと一歩じゃ、一緒にやってみよう！」と励ます。" : "それより先の内容は出さない。"}`;
     case "answer":
@@ -157,7 +157,7 @@ async function handleChat(request, env, cors) {
   const remaining = Math.max(0, limit - nowUsed);
 
   if (response.stop_reason === "refusal") {
-    return json({ reply: "ふむ、それはわしには答えられんのう。物理のことなら何でも聞いておくれ。", remaining }, 200, cors);
+    return json({ reply: "ふむ、それはわしには答えられんのう。理科や数学のことなら何でも聞いておくれ。", remaining }, 200, cors);
   }
   const reply = response.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
   return json({ reply: reply || "ふむ……うまく言葉にできんかった。もう一度聞いてくれるかな？", remaining }, 200, cors);
