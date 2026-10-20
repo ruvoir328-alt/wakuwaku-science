@@ -140,7 +140,7 @@ a { text-decoration: none; color: inherit; }
 /* Characters */
 .hero-chars {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   gap: 16px;
   margin-top: 40px;
@@ -154,6 +154,7 @@ a { text-decoration: none; color: inherit; }
   border-radius: 20px;
   padding: 10px 20px 10px 14px;
   flex: 0 1 380px;
+  min-width: 0;
   text-align: left;
 }
 .char-card img {
@@ -633,6 +634,8 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 599px) {
   .header-nav { display: none; }
   .hero { padding: 72px 20px 88px; min-height: 0; }
+  .hero-chars { flex-wrap: wrap; }
+  .char-card { flex-basis: 100%; }
   .hero-title { letter-spacing: -0.5px; }
   .cards-grid { grid-template-columns: 1fr; }
   .users-grid { grid-template-columns: 1fr; }
