@@ -148,17 +148,17 @@ a { text-decoration: none; color: inherit; }
 .char-card {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.16);
   border-radius: 20px;
-  padding: 10px 20px 10px 14px;
+  padding: 10px 16px 10px 12px;
   flex: 0 1 380px;
   min-width: 0;
   text-align: left;
 }
 .char-card img {
-  width: 76px;
+  width: 70px;
   height: 104px;
   object-fit: contain;
   flex-shrink: 0;
@@ -174,7 +174,8 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 6px;
 }
 .char-line {
-  font-size: 15px;
+  font-size: 14px;
+  white-space: nowrap;
   font-weight: 700;
   line-height: 1.5;
   color: var(--col-white);
@@ -631,11 +632,14 @@ a { text-decoration: none; color: inherit; }
 .modal-skip:hover { color: var(--col-text); }
 
 /* ===== Responsive ===== */
+@media (max-width: 809px) {
+  .hero-chars { flex-wrap: wrap; }
+  .char-card { flex: 0 1 380px; }
+}
 @media (max-width: 599px) {
   .header-nav { display: none; }
   .hero { padding: 72px 20px 88px; min-height: 0; }
-  .hero-chars { flex-wrap: wrap; }
-  .char-card { flex-basis: 100%; }
+  .char-line { font-size: clamp(12px, 3.6vw, 14px); }
   .hero-title { letter-spacing: -0.5px; }
   .cards-grid { grid-template-columns: 1fr; }
   .users-grid { grid-template-columns: 1fr; }
@@ -643,6 +647,7 @@ a { text-decoration: none; color: inherit; }
   .section-wrap { padding: 48px 20px; }
 }
 @media (min-width: 600px) and (max-width: 899px) {
+  .char-line { font-size: 13px; }
   .cards-grid { grid-template-columns: repeat(2, 1fr); }
   .users-grid { grid-template-columns: 1fr; }
   .teaser-grid { grid-template-columns: repeat(2, 1fr); }
@@ -697,14 +702,14 @@ a { text-decoration: none; color: inherit; }
         <img src="images/newton.webp" alt="ニュートンくん">
         <div>
           <span class="char-name">ニュートンくん</span>
-          <p class="char-line">「ようこそ、わくわくサイエンスへ！」</p>
+          <p class="char-line">ようこそ、わくわくサイエンスへ！</p>
         </div>
       </div>
       <div class="char-card">
         <img src="images/rika.webp" alt="リカ">
         <div>
           <span class="char-name">リカ</span>
-          <p class="char-line">「いっしょにがんばろうね！」</p>
+          <p class="char-line">いっしょにがんばろうね！</p>
         </div>
       </div>
     </div>
