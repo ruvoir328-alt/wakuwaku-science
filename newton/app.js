@@ -61,6 +61,28 @@
   }
   var DEVICE = deviceId();
 
+  // ---------- 合言葉（この端末に覚えておく） ----------
+  function getCode() {
+    try { return localStorage.getItem('newton-code') || ''; } catch (e) { return state.code || ''; }
+  }
+  function setCode(c) {
+    state.code = c;
+    try { if (c) localStorage.setItem('newton-code', c); else localStorage.removeItem('newton-code'); } catch (e) {}
+  }
+  function apiHeaders(extra) {
+    var h = extra || {};
+    var c = getCode();
+    if (c) h['X-Newton-Code'] = encodeURIComponent(c);
+    return h;
+  }
+  function needCode(on, msg) {
+    state.locked = on;
+    $('codeForm').hidden = !on;
+    $('quota').hidden = on;
+    $('codeErr').textContent = msg || '';
+    for (var i = 0; i < menuItems.length; i++) menuItems[i].disabled = on;
+  }
+
   // ---------- 残り回数 ----------
   function showQuota() {
     var q = $('quota');
@@ -77,10 +99,17 @@
   }
   function loadQuota() {
     showQuota();
-    if (!API) return;
-    fetch(API + '/quota?deviceId=' + encodeURIComponent(DEVICE))
+    if (!API) return Promise.resolve();
+    return fetch(API + '/quota?deviceId=' + encodeURIComponent(DEVICE), { headers: apiHeaders() })
       .then(function (r) { return r.json(); })
       .then(function (d) {
+        if (d.error === 'code') {
+          var had = !!getCode();
+          setCode('');
+          needCode(true, had ? d.message : '');
+          return;
+        }
+        needCode(false);
         if (typeof d.remaining === 'number') { state.remaining = d.remaining; state.limit = d.limit; showQuota(); }
       })
       .catch(function () {});
@@ -288,7 +317,7 @@
 
     fetch(API + '/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: apiHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         deviceId: DEVICE, mode: state.mode, action: action,
         hintLevel: state.hintLevel, messages: payloadMessages()
@@ -298,6 +327,16 @@
     }).then(function (res) {
       typing.remove();
       if (typeof res.d.remaining === 'number') state.remaining = res.d.remaining;
+      if (res.d.error === 'code') {
+        // 合言葉が変わった：ホームにもどって入れ直してもらう
+        setCode('');
+        state.history = [];
+        alert(res.d.message);
+        location.hash = '';
+        showHome();
+        needCode(true, '');
+        return;
+      }
       if (!res.ok) throw res.d;
       state.history.push({ role: 'assistant', text: res.d.reply });
       addNewton(res.d.reply, faceFor(action, res.d.reply));
@@ -350,6 +389,18 @@
     state.answering = !state.answering;
     renderComposer();
     if (state.answering) input.focus();
+  });
+
+  $('codeForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var c = $('codeInput').value.trim();
+    if (!c) return;
+    setCode(c);
+    $('codeErr').textContent = '確かめておるぞ…';
+    loadQuota().then(function () {
+      if (state.locked) $('codeErr').textContent = '合言葉がちがうようじゃ。先生に聞いてみておくれ。';
+      else $('codeInput').value = '';
+    });
   });
 
   // ---------- はじめに ----------

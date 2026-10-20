@@ -48,7 +48,7 @@ function corsHeaders(origin, env) {
   return {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-Newton-Code",
     "Access-Control-Max-Age": "86400",
     Vary: "Origin",
   };
@@ -59,6 +59,18 @@ function json(data, status, cors) {
     status,
     headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...cors },
   });
+}
+
+// 合言葉（シークレット ACCESS_CODES にカンマ区切りで登録）。未登録ならだれでも使える
+function normalizeCode(s) {
+  return String(s || "").normalize("NFKC").trim().toLowerCase();
+}
+function codeOk(request, env) {
+  const codes = String(env.ACCESS_CODES || "").split(",").map(normalizeCode).filter(Boolean);
+  if (codes.length === 0) return true;
+  let given = request.headers.get("X-Newton-Code") || "";
+  try { given = decodeURIComponent(given); } catch {}
+  return codes.includes(normalizeCode(given));
 }
 
 // 日本時間の日付（0時にリセット）
@@ -169,6 +181,9 @@ export default {
     const cors = corsHeaders(request.headers.get("Origin"), env);
     if (!cors) return new Response("Forbidden", { status: 403 });
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+    if (!codeOk(request, env)) {
+      return json({ error: "code", message: "合言葉がちがうようじゃ。先生に聞いてみておくれ。" }, 401, cors);
+    }
 
     if (url.pathname === "/quota" && request.method === "GET") {
       const deviceId = url.searchParams.get("deviceId") || "";

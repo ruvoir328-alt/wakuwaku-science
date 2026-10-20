@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="理科と数学の問題をニュートンくんと一緒に考えるAIチャット">
+<meta name="robots" content="noindex">
 <title>お助けニュートンくん | わくわくサイエンス</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,6 +29,15 @@
     人ではなく、コンピューターが返事をしています。まちがえることもあるので、大事なことは先生に確かめてね。
   </div>
 
+  <form class="codebox" id="codeForm" hidden autocomplete="off">
+    <label for="codeInput"><b>🔑 合言葉を入れてね</b><small>先生から教えてもらった合言葉だよ（1回入れれば、次からは入れなくてOK）</small></label>
+    <div class="row">
+      <input id="codeInput" type="text" maxlength="50" autocapitalize="off" spellcheck="false" placeholder="合言葉">
+      <button type="submit" class="send">入る</button>
+    </div>
+    <p class="code-err" id="codeErr" aria-live="polite"></p>
+  </form>
+
   <nav class="menu" aria-label="メニュー">
     <button type="button" class="menu-item" data-mode="photo">
       <span class="menu-icon" aria-hidden="true">📷</span>
@@ -44,6 +54,7 @@
   </nav>
 
   <p class="quota" id="quota" aria-live="polite">今日あと <b>–</b> 回 質問できるよ</p>
+
 
   <ul class="privacy">
     <li>📷 送った写真は保存されません</li>
