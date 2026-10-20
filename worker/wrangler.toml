@@ -20,7 +20,7 @@ ALLOWED_ORIGINS = "https://ruvoir328-alt.github.io,http://localhost:8000"
 # 1端末あたり1日に質問できる回数
 DAILY_LIMIT = "20"
 
-# 回数カウンター用の KV（SETUP.md の手順4で作った id に書きかえる）
+# 回数カウンター用の KV（Cloudflare のダッシュボードで作った「QUOTA」）
 [[kv_namespaces]]
 binding = "QUOTA"
-id = "ここにKVのidを貼る"
+id = "0e6979dee72747dfbc3beeb62dd96883"
