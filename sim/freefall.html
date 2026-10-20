@@ -96,6 +96,9 @@ body{
 @media (prefers-reduced-motion: reduce){
   .switch .knob,.switch .knob::after{transition:none}
 }
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
 </style>
 </head>
 <body>
@@ -103,6 +106,7 @@ body{
   <div class="top">
     <a href="../story/?ep=06">← 第6話 ストーリーにもどる</a>
     <span>1章 直線運動の世界</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
   </div>
   <div class="head">
     <div class="tag">シミュレーションモード</div>

@@ -1,0 +1,26 @@
+# お助けニュートンくん 中継サーバー（Cloudflare Workers）の設定
+name = "newton-worker"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+# 会話の中身がログに残らないよう、Workers のログ機能は使わない
+[observability]
+enabled = false
+
+# newton-prompt.md をテキストとして読み込めるようにする
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true
+
+[vars]
+# このサイトからのリクエストだけ受け付ける（カンマ区切りで複数書ける）
+ALLOWED_ORIGINS = "https://ruvoir328-alt.github.io,http://localhost:8000"
+# 1端末あたり1日に質問できる回数
+DAILY_LIMIT = "20"
+
+# 回数カウンター用の KV（SETUP.md の手順4で作った id に書きかえる）
+[[kv_namespaces]]
+binding = "QUOTA"
+id = "ここにKVのidを貼る"

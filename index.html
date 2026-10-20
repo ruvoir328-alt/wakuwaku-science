@@ -277,6 +277,7 @@ a { text-decoration: none; color: inherit; }
 .card--chemistry .card-bar { background: linear-gradient(90deg, #2563eb, #60a5fa); }
 .card--sim      .card-bar { background: linear-gradient(90deg, #059669, #34d399); }
 .card--soon     .card-bar { background: linear-gradient(90deg, #d1d5db, #e5e7eb); }
+.card--newton   .card-bar { background: linear-gradient(90deg, #232d55, #ffe14a); }
 
 .card-body {
   padding: 24px;
@@ -347,6 +348,10 @@ a { text-decoration: none; color: inherit; }
 .card--soon     .card-link { background: var(--col-soon-bg);   color: #6b7280; cursor: default; }
 .card--physics  .card-link:hover { background: #b91c1c; }
 .card--chemistry .card-link:hover { background: #1d4ed8; }
+.card--newton   .card-icon { background: var(--col-lemon-light); color: var(--col-brand); }
+.card--newton   .card-badge { background: var(--col-lemon-light); color: var(--col-brand); }
+.card--newton   .card-link { background: var(--col-brand); color: var(--col-lemon); }
+.card--newton   .card-link:hover { background: var(--col-brand-dark); }
 /* わくわく実験: subject entrances */
 .sim-links {
   display: flex;
@@ -773,6 +778,22 @@ a { text-decoration: none; color: inherit; }
             <a href="./sim/#physics" class="sim-link sim-link--physics"><span>物理の実験</span><span aria-hidden="true">&rarr;</span></a>
             <a href="./sim/#chemistry" class="sim-link sim-link--chemistry"><span>化学の実験</span><span aria-hidden="true">&rarr;</span></a>
           </div>
+        </div>
+      </article>
+
+      <!-- お助けニュートンくん（AIチャット） -->
+      <article class="card card--newton">
+        <div class="card-bar"></div>
+        <div class="card-body">
+          <div class="card-icon" aria-hidden="true">AI</div>
+          <span class="card-badge">AIチャット</span>
+          <h3 class="card-title">お助けニュートンくん</h3>
+          <p class="card-desc">問題の写真を送ると、ニュートンくんがヒントを少しずつ出してくれる。用語や「なんで？」も聞ける。※ニュートンくんはAIです。</p>
+        </div>
+        <div class="card-footer">
+          <a href="./newton/" class="card-link">
+            聞いてみる &rarr;
+          </a>
         </div>
       </article>
 

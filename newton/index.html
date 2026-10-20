@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="物理基礎の問題をニュートンくんと一緒に考えるAIチャット">
+<title>お助けニュートンくん | わくわくサイエンス</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;800&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== ホーム ===== -->
+<div class="view" id="home">
+  <div class="top"><a href="../">← わくわくサイエンス</a><span class="ai-badge">AI</span></div>
+
+  <header class="hero">
+    <img class="hero-img" src="../story/img/newton_happy.webp" alt="" width="132" height="132">
+    <h1 class="title">お助け<br>ニュートンくん</h1>
+    <p class="lead">物理基礎のわからないを、<br>ニュートンくんと一緒に考えよう</p>
+  </header>
+
+  <div class="notice" role="note">
+    <strong>ニュートンくんはAIです。</strong>
+    人ではなく、コンピューターが返事をしています。まちがえることもあるので、大事なことは先生に確かめてね。
+  </div>
+
+  <nav class="menu" aria-label="メニュー">
+    <button type="button" class="menu-item" data-mode="photo">
+      <span class="menu-icon" aria-hidden="true">📷</span>
+      <span class="menu-text"><b>問題の写真を送る</b><small>ヒントを少しずつ出すよ</small></span>
+    </button>
+    <button type="button" class="menu-item" data-mode="term">
+      <span class="menu-icon" aria-hidden="true">📖</span>
+      <span class="menu-text"><b>用語を聞く</b><small>「加速度」「慣性」ってなに？</small></span>
+    </button>
+    <button type="button" class="menu-item" data-mode="why">
+      <span class="menu-icon" aria-hidden="true">❓</span>
+      <span class="menu-text"><b>「なんで？」を聞く</b><small>ふしぎに思ったことを聞いてみよう</small></span>
+    </button>
+  </nav>
+
+  <p class="quota" id="quota" aria-live="polite">今日あと <b>–</b> 回 質問できるよ</p>
+
+  <ul class="privacy">
+    <li>📷 送った写真は保存されません</li>
+    <li>💬 会話も記録されません（ページを閉じると消えます）</li>
+    <li>🙅 名前や学校名は書かないでね</li>
+  </ul>
+
+  <p class="about-link"><a href="about.html">ご利用にあたって（生徒・先生・保護者の方へ）</a></p>
+</div>
+
+<!-- ===== チャット ===== -->
+<div class="view chat" id="chat" hidden>
+  <header class="chat-head">
+    <button type="button" class="back" id="backBtn" aria-label="ホームにもどる">←</button>
+    <div class="chat-title">
+      <span id="chatTitle">問題の写真を送る</span>
+      <small id="chatQuota"></small>
+    </div>
+    <span class="ai-badge" title="ニュートンくんはAIです">AI</span>
+  </header>
+
+  <div class="hint-progress" id="hintProgress" hidden>
+    <span class="hint-label">ヒント</span>
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="hint-count" id="hintCount">0/3</span>
+  </div>
+
+  <div class="ai-note">ニュートンくんはAIです。まちがえることもあるよ。名前や学校名は書かないでね。</div>
+
+  <main class="log" id="log" aria-live="polite"></main>
+
+  <div class="actions" id="actions" hidden>
+    <button type="button" class="act" id="hintBtn">もうちょっとヒント</button>
+    <button type="button" class="act act--answer" id="answerBtn">答えを言ってみる</button>
+  </div>
+
+  <form class="composer" id="composer" autocomplete="off">
+    <div class="pending" id="pending" hidden>
+      <img id="pendingImg" alt="送る写真">
+      <span id="pendingLabel">この写真を送るよ</span>
+      <button type="button" class="pending-x" id="pendingX" aria-label="取り消す">×</button>
+    </div>
+    <div class="row">
+      <label class="photo-btn" aria-label="写真を撮る・選ぶ">
+        📷<input type="file" id="fileInput" accept="image/*" hidden>
+      </label>
+      <textarea id="input" rows="1" maxlength="500" placeholder="メッセージを書いてね" aria-label="メッセージ"></textarea>
+      <button type="submit" class="send" id="sendBtn" aria-label="送信">送信</button>
+    </div>
+  </form>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -112,6 +112,9 @@ body{
   .card.leaving{transition:none}
   .progress span{transition:none}
 }
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
 </style>
 </head>
 <body>
@@ -119,6 +122,7 @@ body{
   <div class="top">
     <a href="../">← わくわくサイエンス</a>
     <span id="chapter"></span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
   </div>
   <div class="ep-head"><span class="ep-no" id="epNo"></span><h1 class="ep-title" id="epTitle"></h1></div>
   <div class="progress" aria-hidden="true"><span id="bar"></span></div>
