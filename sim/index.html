@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>わくわく実験 | わくわくサイエンス</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coat:#232d55;
+  --lemon:#ffe14a;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --muted:#6b7488;
+  --physics:#d24b45;
+  --physics-bg:#fbeae9;
+  --chemistry:#3e6fd8;
+  --chemistry-bg:#e8effc;
+  --soft:#f2f3f7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--coat);color:var(--ink);font-family:'Zen Maru Gothic',system-ui,sans-serif;font-weight:500;min-height:100vh}
+a{text-decoration:none;color:inherit}
+.app{max-width:640px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:18px}
+.top a{color:#cfd7ee;font-size:13px;padding:6px 0;display:inline-block}
+.top a:focus-visible,.sim:focus-visible{outline:3px solid var(--lemon);outline-offset:2px;border-radius:8px}
+h1{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(28px,7vw,40px);color:var(--lemon)}
+.guide{display:flex;align-items:flex-end;gap:10px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 14px;font-size:15px;font-weight:700;line-height:1.6;flex:1}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+.subject{background:var(--paper);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px}
+.subject h2{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:22px;display:flex;align-items:center;gap:10px}
+.subject h2 .icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px}
+#physics{border-top:6px solid var(--physics)}
+#physics h2{color:#b0352c}
+#physics .icon{background:var(--physics-bg)}
+#chemistry{border-top:6px solid var(--chemistry)}
+#chemistry h2{color:#2a53b0}
+#chemistry .icon{background:var(--chemistry-bg)}
+.sim{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:12px;transition:background .18s,color .18s}
+.sim .t{font-weight:900;font-size:16px}
+.sim .d{font-size:13px;color:var(--muted);margin-top:2px}
+.sim .arrow{font-weight:900;flex:none}
+#physics a.sim{background:var(--physics-bg)}
+#physics a.sim:hover{background:var(--physics);color:#fff}
+#physics a.sim:hover .d{color:#fff}
+.sim.soon{background:var(--soft);color:var(--muted)}
+.sim.soon .arrow{font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><a href="../">← わくわくサイエンス</a></div>
+  <h1>わくわく実験</h1>
+
+  <div class="guide">
+    <img src="../images/newton.webp" alt="ニュートンくん">
+    <p class="bubble">やってみたい実験をえらぼう！</p>
+  </div>
+
+  <section class="subject" id="physics" aria-labelledby="physics-title">
+    <h2 id="physics-title"><span class="icon" aria-hidden="true">力</span>物理の実験</h2>
+    <a class="sim" href="freefall.html">
+      <div><div class="t">自由落下</div><div class="d">重いほうが先に落ちる？を確かめよう</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="../inclined-plane-simulator.html">
+      <div><div class="t">斜面台車</div><div class="d">角度を変えて、記録テープを分析しよう</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <div class="sim soon">
+      <div><div class="t">波動</div><div class="d">波の重ね合わせ・反射・屈折</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <div class="sim soon">
+      <div><div class="t">電気回路</div><div class="d">抵抗をつないで電流・電圧を調べよう</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+  </section>
+
+  <section class="subject" id="chemistry" aria-labelledby="chemistry-title">
+    <h2 id="chemistry-title"><span class="icon" aria-hidden="true">化</span>化学の実験</h2>
+    <div class="sim soon">
+      <div><div class="t">化学反応</div><div class="d">反応のようすを目で見てみよう</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+  </section>
+</div>
+</body>
+</html>

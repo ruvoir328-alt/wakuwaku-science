@@ -5,13 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="高校物理・化学の学習コンテンツとシミュレーションが集まる学習プラットフォーム">
 <title>わくわくサイエンス - 高校理科学習プラットフォーム</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 /* ===== Variables ===== */
 :root {
-  --col-brand:       #6d28d9;
-  --col-brand-dark:  #4c1d95;
-  --col-brand-light: #ede9fe;
+  --col-brand:       #232d55;
+  --col-brand-dark:  #161d3a;
+  --col-brand-light: #e8eaf3;
+  --col-lemon:       #ffe14a;
+  --col-lemon-light: #fff8d6;
   --col-physics:     #dc2626;
   --col-physics-bg:  #fef2f2;
   --col-chemistry:   #2563eb;
@@ -34,7 +38,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-weight: 500;
   background: var(--col-bg);
   color: var(--col-text);
   line-height: 1.6;
@@ -61,14 +66,20 @@ a { text-decoration: none; color: inherit; }
   align-items: center;
   justify-content: space-between;
 }
+/* Display font for headings */
+.logo, .hero-title, .section-title, .card-title, .user-card-title, .card-icon, .user-icon, .teaser-icon {
+  font-family: 'Dela Gothic One', sans-serif;
+  font-weight: 400;
+}
 .logo {
-  font-size: 19px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  background: linear-gradient(130deg, var(--col-brand), #a855f7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: var(--col-lemon);
+  text-shadow:
+    2px 0 0 var(--col-brand), -2px 0 0 var(--col-brand), 0 2px 0 var(--col-brand), 0 -2px 0 var(--col-brand),
+    2px 2px 0 var(--col-brand), -2px -2px 0 var(--col-brand), 2px -2px 0 var(--col-brand), -2px 2px 0 var(--col-brand),
+    1px 2px 0 var(--col-brand), 2px 1px 0 var(--col-brand), -1px 2px 0 var(--col-brand), -2px 1px 0 var(--col-brand),
+    1px -2px 0 var(--col-brand), 2px -1px 0 var(--col-brand), -1px -2px 0 var(--col-brand), -2px -1px 0 var(--col-brand);
 }
 .header-nav {
   display: flex;
@@ -96,11 +107,11 @@ a { text-decoration: none; color: inherit; }
   justify-content: center;
   text-align: center;
   padding: 96px 24px 112px;
-  background: linear-gradient(140deg, #1e1047 0%, #3b1280 35%, #5b21b6 70%, #6d28d9 100%);
+  background: var(--col-brand);
   color: var(--col-white);
   overflow: hidden;
 }
-/* Floating science symbols */
+/* Floating science symbols — slow random "thermal motion" */
 .hero-symbols {
   position: absolute;
   inset: 0;
@@ -109,24 +120,69 @@ a { text-decoration: none; color: inherit; }
 }
 .sym {
   position: absolute;
-  bottom: -60px;
   font-weight: 700;
-  color: rgba(255,255,255,0.10);
-  animation: sym-float linear infinite;
+  color: rgba(255,255,255,0.14);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
   white-space: nowrap;
   user-select: none;
 }
-@keyframes sym-float {
-  0%   { transform: translateY(0) rotate(0deg);    opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
-  100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+.m1 { animation-name: m1; animation-duration: 38s; }
+.m2 { animation-name: m2; animation-duration: 44s; }
+.m3 { animation-name: m3; animation-duration: 50s; }
+.m4 { animation-name: m4; animation-duration: 41s; }
+@keyframes m1 { 0%{transform:translate(0,0) rotate(0)} 14%{transform:translate(120px,-60px) rotate(8deg)} 29%{transform:translate(60px,90px) rotate(-6deg)} 43%{transform:translate(-110px,40px) rotate(10deg)} 57%{transform:translate(-40px,-100px) rotate(-4deg)} 71%{transform:translate(140px,20px) rotate(6deg)} 86%{transform:translate(-80px,70px) rotate(-8deg)} 100%{transform:translate(0,0) rotate(0)} }
+@keyframes m2 { 0%{transform:translate(0,0) rotate(0)} 12%{transform:translate(-90px,80px) rotate(-7deg)} 27%{transform:translate(100px,110px) rotate(5deg)} 41%{transform:translate(150px,-40px) rotate(-9deg)} 56%{transform:translate(-30px,-90px) rotate(4deg)} 70%{transform:translate(-140px,10px) rotate(8deg)} 85%{transform:translate(50px,60px) rotate(-5deg)} 100%{transform:translate(0,0) rotate(0)} }
+@keyframes m3 { 0%{transform:translate(0,0) rotate(0)} 16%{transform:translate(70px,100px) rotate(6deg)} 31%{transform:translate(-120px,60px) rotate(-8deg)} 47%{transform:translate(-60px,-80px) rotate(5deg)} 62%{transform:translate(110px,-110px) rotate(-6deg)} 78%{transform:translate(160px,50px) rotate(9deg)} 90%{transform:translate(-20px,30px) rotate(-3deg)} 100%{transform:translate(0,0) rotate(0)} }
+@keyframes m4 { 0%{transform:translate(0,0) rotate(0)} 13%{transform:translate(-130px,-50px) rotate(7deg)} 28%{transform:translate(-50px,100px) rotate(-5deg)} 44%{transform:translate(90px,70px) rotate(9deg)} 59%{transform:translate(130px,-80px) rotate(-7deg)} 74%{transform:translate(-20px,-120px) rotate(4deg)} 88%{transform:translate(-100px,40px) rotate(-6deg)} 100%{transform:translate(0,0) rotate(0)} }
+@media (prefers-reduced-motion: reduce) { .sym { animation: none; } }
+
+/* Characters */
+.hero-chars {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+}
+.char-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 20px;
+  padding: 10px 20px 10px 14px;
+  flex: 0 1 380px;
+  text-align: left;
+}
+.char-card img {
+  width: 76px;
+  height: 104px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.char-name {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--col-brand);
+  background: var(--col-lemon);
+  padding: 2px 12px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+}
+.char-line {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--col-white);
 }
 /* Hero content */
 .hero-content {
   position: relative;
   z-index: 1;
-  max-width: 680px;
+  max-width: 860px;
 }
 .hero-eyebrow {
   display: inline-block;
@@ -141,14 +197,12 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 20px;
 }
 .hero-title {
-  font-size: clamp(40px, 9vw, 76px);
-  font-weight: 900;
-  line-height: 1.08;
-  letter-spacing: -1.5px;
+  font-size: clamp(38px, 8.5vw, 76px);
+  line-height: 1.15;
   margin-bottom: 20px;
 }
 .hero-title .gradient-text {
-  background: linear-gradient(130deg, #f0abfc, #c4b5fd, #93c5fd);
+  background: linear-gradient(90deg, #fff37a, #ffe14a 50%, #ffd12e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -183,9 +237,9 @@ a { text-decoration: none; color: inherit; }
 }
 .section-head { margin-bottom: 36px; }
 .section-title {
-  font-size: 26px;
-  font-weight: 900;
+  font-size: 28px;
   line-height: 1.3;
+  color: var(--col-brand);
 }
 .section-sub {
   font-size: 14px;
@@ -196,7 +250,7 @@ a { text-decoration: none; color: inherit; }
 /* ===== Content cards ===== */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
 }
 .card {
@@ -261,9 +315,8 @@ a { text-decoration: none; color: inherit; }
 .card--soon     .card-badge { background: var(--col-soon-bg);     color: var(--col-soon-fg); }
 
 .card-title {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--col-text);
+  font-size: 19px;
+  color: var(--col-brand);
 }
 .card-desc {
   font-size: 13px;
@@ -286,13 +339,33 @@ a { text-decoration: none; color: inherit; }
   transition: background 0.18s, color 0.18s;
   width: 100%;
 }
-.card--physics  .card-link { background: var(--col-physics-bg);  color: var(--col-physics); }
-.card--chemistry .card-link { background: var(--col-chemistry-bg); color: var(--col-chemistry); }
-.card--sim      .card-link { background: var(--col-sim-bg);      color: var(--col-sim); }
-.card--soon     .card-link { background: var(--col-soon-bg);     color: var(--col-soon-fg); cursor: default; }
-.card--physics  .card-link:hover { background: var(--col-physics);  color: var(--col-white); }
-.card--chemistry .card-link:hover { background: var(--col-chemistry); color: var(--col-white); }
-.card--sim      .card-link:hover { background: var(--col-sim);      color: var(--col-white); }
+.card-link { font-size: 14px; padding: 11px 0; }
+.card--physics  .card-link { background: var(--col-physics);   color: var(--col-white); }
+.card--chemistry .card-link { background: var(--col-chemistry); color: var(--col-white); }
+.card--soon     .card-link { background: var(--col-soon-bg);   color: #6b7280; cursor: default; }
+.card--physics  .card-link:hover { background: #b91c1c; }
+.card--chemistry .card-link:hover { background: #1d4ed8; }
+/* わくわく実験: subject entrances */
+.sim-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+.sim-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 13px 16px;
+  border-radius: 12px;
+  transition: background 0.18s, color 0.18s;
+}
+.sim-link--physics   { background: var(--col-physics-bg);   color: #b91c1c; }
+.sim-link--chemistry { background: var(--col-chemistry-bg); color: #1d4ed8; }
+.sim-link--physics:hover   { background: var(--col-physics);   color: var(--col-white); }
+.sim-link--chemistry:hover { background: var(--col-chemistry); color: var(--col-white); }
 
 /* ===== For Users section ===== */
 .users-bg {
@@ -311,8 +384,8 @@ a { text-decoration: none; color: inherit; }
   gap: 14px;
 }
 .user-card--student {
-  background: linear-gradient(140deg, #fdf4ff, #ede9fe);
-  border: 1px solid #ddd6fe;
+  background: var(--col-lemon-light);
+  border: 1px solid #f5e48f;
 }
 .user-card--teacher {
   background: linear-gradient(140deg, #f0f9ff, #dbeafe);
@@ -328,11 +401,11 @@ a { text-decoration: none; color: inherit; }
   font-size: 18px;
   font-weight: 900;
 }
-.user-card--student .user-icon { background: var(--col-brand-light); color: var(--col-brand); }
+.user-card--student .user-icon { background: var(--col-lemon); color: var(--col-brand); }
 .user-card--teacher .user-icon { background: #dbeafe; color: var(--col-chemistry); }
 .user-card-title {
   font-size: 21px;
-  font-weight: 900;
+  color: var(--col-brand);
 }
 .user-card-desc {
   font-size: 13px;
@@ -361,7 +434,7 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== Teaser section ===== */
 .teaser-bg {
-  background: linear-gradient(140deg, #f5f0ff, #f5f0e8);
+  background: var(--col-bg);
 }
 .teaser-grid {
   display: grid;
@@ -373,7 +446,7 @@ a { text-decoration: none; color: inherit; }
   border-radius: 12px;
   padding: 22px 18px;
   text-align: center;
-  border: 1px solid rgba(109,40,217,0.11);
+  border: 1px solid rgba(35,45,85,0.10);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -409,8 +482,8 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== Footer ===== */
 .site-footer {
-  background: #1a0e3d;
-  color: rgba(255,255,255,0.55);
+  background: var(--col-brand);
+  color: rgba(255,255,255,0.7);
   text-align: center;
   padding: 36px 24px;
   font-size: 13px;
@@ -589,30 +662,49 @@ a { text-decoration: none; color: inherit; }
 <!-- ===== Hero ===== -->
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-symbols" aria-hidden="true">
-    <span class="sym" style="left:4%;font-size:18px;animation-duration:20s;animation-delay:0s">F = ma</span>
-    <span class="sym" style="left:13%;font-size:28px;animation-duration:25s;animation-delay:4s">∑</span>
-    <span class="sym" style="left:22%;font-size:17px;animation-duration:18s;animation-delay:1s">H₂O</span>
-    <span class="sym" style="left:33%;font-size:30px;animation-duration:22s;animation-delay:6s">λ</span>
-    <span class="sym" style="left:46%;font-size:16px;animation-duration:17s;animation-delay:2.5s">E = mc²</span>
-    <span class="sym" style="left:57%;font-size:32px;animation-duration:26s;animation-delay:8s">π</span>
-    <span class="sym" style="left:67%;font-size:17px;animation-duration:19s;animation-delay:3.5s">NaCl</span>
-    <span class="sym" style="left:77%;font-size:26px;animation-duration:23s;animation-delay:1s">Δ</span>
-    <span class="sym" style="left:87%;font-size:28px;animation-duration:21s;animation-delay:7s">∫</span>
-    <span class="sym" style="left:9%;font-size:14px;animation-duration:30s;animation-delay:12s">v = v₀ + at</span>
-    <span class="sym" style="left:41%;font-size:18px;animation-duration:16s;animation-delay:10s">CO₂</span>
-    <span class="sym" style="left:73%;font-size:24px;animation-duration:28s;animation-delay:5s">φ</span>
+    <span class="sym m1" style="left:5%;top:62%;font-size:26px;animation-delay:0s">F = ma</span>
+    <span class="sym m3" style="left:14%;top:12%;font-size:28px;animation-delay:-17s">∑</span>
+    <span class="sym m2" style="left:23%;top:30%;font-size:22px;animation-delay:-11s">H₂O</span>
+    <span class="sym m4" style="left:33%;top:78%;font-size:30px;animation-delay:-6s">λ</span>
+    <span class="sym m3" style="left:45%;top:88%;font-size:22px;animation-delay:-23s">E = mc²</span>
+    <span class="sym m1" style="left:57%;top:6%;font-size:30px;animation-delay:-29s">π</span>
+    <span class="sym m2" style="left:68%;top:70%;font-size:22px;animation-delay:-35s">NaCl</span>
+    <span class="sym m4" style="left:78%;top:14%;font-size:28px;animation-delay:-19s">Δ</span>
+    <span class="sym m1" style="left:88%;top:52%;font-size:28px;animation-delay:-13s">∫</span>
+    <span class="sym m2" style="left:8%;top:38%;font-size:20px;animation-delay:-3s">v = v₀ + at</span>
+    <span class="sym m3" style="left:38%;top:46%;font-size:20px;animation-delay:-40s">CO₂</span>
+    <span class="sym m4" style="left:72%;top:42%;font-size:24px;animation-delay:-27s">φ</span>
+    <span class="sym m1" style="left:84%;top:84%;font-size:20px;animation-delay:-21s">PV = nRT</span>
+    <span class="sym m3" style="left:18%;top:86%;font-size:20px;animation-delay:-8s">x = ½gt²</span>
   </div>
 
   <div class="hero-content">
     <div class="hero-eyebrow">高校理科学習プラットフォーム</div>
     <h1 id="hero-title" class="hero-title">
-      <span class="gradient-text">わくわく</span>サイエンス
+      <span class="gradient-text">わくわくサイエンス</span>
     </h1>
     <p class="hero-sub">
       物理・化学の「なぜ？」を、楽しく探ろう。<br>
       実験シミュレーションと学習コンテンツが、ここに集まる。
     </p>
     <a href="#contents" class="hero-cta">コンテンツを見る &rarr;</a>
+
+    <div class="hero-chars">
+      <div class="char-card">
+        <img src="images/newton.webp" alt="ニュートンくん">
+        <div>
+          <span class="char-name">ニュートンくん</span>
+          <p class="char-line">「ようこそ、わくわくサイエンスへ！」</p>
+        </div>
+      </div>
+      <div class="char-card">
+        <img src="images/rika.webp" alt="リカ">
+        <div>
+          <span class="char-name">リカ</span>
+          <p class="char-line">「いっしょにがんばろうね！」</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -624,7 +716,7 @@ a { text-decoration: none; color: inherit; }
   <div class="section-wrap">
     <div class="section-head">
       <h2 id="contents-title" class="section-title">コンテンツ一覧</h2>
-      <p class="section-sub">公開中のコンテンツと、近日公開予定のコンテンツです。</p>
+      <p class="section-sub">科目を選んで、ストーリー・シミュレーション・チャレンジで学ぼう。</p>
     </div>
 
     <div class="cards-grid">
@@ -661,47 +753,18 @@ a { text-decoration: none; color: inherit; }
         </div>
       </article>
 
-      <!-- 斜面台車シミュレーター -->
+      <!-- わくわく実験（各科目のシミュレーションへの近道） -->
       <article class="card card--sim">
         <div class="card-bar"></div>
         <div class="card-body">
           <div class="card-icon" aria-hidden="true">実</div>
-          <span class="card-badge">実験シミュレーション</span>
-          <h3 class="card-title">斜面台車シミュレーター</h3>
-          <p class="card-desc">斜面を下る台車の実験をバーチャル体験。角度を自由に変えて、記録テープを分析しよう。</p>
-        </div>
-        <div class="card-footer">
-          <a href="./inclined-plane-simulator.html" class="card-link">
-            開く &rarr;
-          </a>
-        </div>
-      </article>
-
-      <!-- Coming soon: 波動 -->
-      <article class="card card--soon">
-        <div class="card-bar"></div>
-        <div class="card-body">
-          <div class="card-icon" aria-hidden="true">波</div>
-          <span class="card-badge">近日公開予定</span>
-          <h3 class="card-title">波動シミュレーター</h3>
-          <p class="card-desc">波の重ね合わせ・反射・屈折を視覚的に体験できるシミュレーター。</p>
-        </div>
-        <div class="card-footer">
-          <span class="card-link" aria-label="準備中">準備中</span>
-        </div>
-      </article>
-
-      <!-- Coming soon: 回路 -->
-      <article class="card card--soon">
-        <div class="card-bar"></div>
-        <div class="card-body">
-          <div class="card-icon" aria-hidden="true">電</div>
-          <span class="card-badge">近日公開予定</span>
-          <h3 class="card-title">電気回路シミュレーター</h3>
-          <p class="card-desc">抵抗・コンデンサーを組み合わせて回路を組み、電流・電圧の変化を確認できるツール。</p>
-        </div>
-        <div class="card-footer">
-          <span class="card-link" aria-label="準備中">準備中</span>
+          <span class="card-badge">シミュレーションへ直行</span>
+          <h3 class="card-title">わくわく実験</h3>
+          <p class="card-desc">実験シミュレーションにすぐ入れる近道。</p>
+          <div class="sim-links">
+            <a href="./sim/#physics" class="sim-link sim-link--physics"><span>物理の実験</span><span aria-hidden="true">&rarr;</span></a>
+            <a href="./sim/#chemistry" class="sim-link sim-link--chemistry"><span>化学の実験</span><span aria-hidden="true">&rarr;</span></a>
+          </div>
         </div>
       </article>
 
@@ -710,7 +773,7 @@ a { text-decoration: none; color: inherit; }
         <div class="card-bar"></div>
         <div class="card-body">
           <div class="card-icon" aria-hidden="true">績</div>
-          <span class="card-badge">近日公開予定</span>
+          <span class="card-badge">先生向け・準備中</span>
           <h3 class="card-title">成績管理ツール</h3>
           <p class="card-desc">テスト結果を記録・可視化して、学習の進捗を先生と生徒が共有できるダッシュボード。</p>
         </div>
