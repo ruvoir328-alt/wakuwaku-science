@@ -22,8 +22,6 @@
   --col-chemistry-bg:#eff6ff;
   --col-sim:         #059669;
   --col-sim-bg:      #ecfdf5;
-  --col-story:       #c2410c;
-  --col-story-bg:    #fff7ed;
   --col-soon-fg:     #9ca3af;
   --col-soon-bg:     #f3f4f6;
   --col-bg:          #f5f0e8;
@@ -278,7 +276,6 @@ a { text-decoration: none; color: inherit; }
 .card--physics  .card-bar { background: linear-gradient(90deg, #dc2626, #f87171); }
 .card--chemistry .card-bar { background: linear-gradient(90deg, #2563eb, #60a5fa); }
 .card--sim      .card-bar { background: linear-gradient(90deg, #059669, #34d399); }
-.card--story    .card-bar { background: linear-gradient(90deg, #ea580c, #fdba74); }
 .card--soon     .card-bar { background: linear-gradient(90deg, #d1d5db, #e5e7eb); }
 .card--newton   .card-bar { background: linear-gradient(90deg, #232d55, #ffe14a); }
 
@@ -305,7 +302,6 @@ a { text-decoration: none; color: inherit; }
 .card--physics  .card-icon { background: var(--col-physics-bg);  color: var(--col-physics); }
 .card--chemistry .card-icon { background: var(--col-chemistry-bg); color: var(--col-chemistry); }
 .card--sim      .card-icon { background: var(--col-sim-bg);      color: var(--col-sim); }
-.card--story    .card-icon { background: var(--col-story-bg);    color: var(--col-story); }
 .card--soon     .card-icon { background: var(--col-soon-bg);     color: var(--col-soon-fg); }
 
 .card-badge {
@@ -319,7 +315,6 @@ a { text-decoration: none; color: inherit; }
 .card--physics  .card-badge { background: var(--col-physics-bg);  color: var(--col-physics); }
 .card--chemistry .card-badge { background: var(--col-chemistry-bg); color: var(--col-chemistry); }
 .card--sim      .card-badge { background: var(--col-sim-bg);      color: var(--col-sim); }
-.card--story    .card-badge { background: var(--col-story-bg);    color: var(--col-story); }
 .card--soon     .card-badge { background: var(--col-soon-bg);     color: var(--col-soon-fg); }
 
 .card-title {
@@ -770,35 +765,6 @@ a { text-decoration: none; color: inherit; }
           <a href="./chemistry/" class="card-link">
             開く &rarr;
           </a>
-        </div>
-      </article>
-
-      <!-- わくわくストーリー（各科目のストーリーモードへの近道） -->
-      <article class="card card--story">
-        <div class="card-bar"></div>
-        <div class="card-body">
-          <div class="card-icon" aria-hidden="true">話</div>
-          <span class="card-badge">ストーリーへ直行</span>
-          <h3 class="card-title">わくわくストーリー</h3>
-          <p class="card-desc">ニュートンくんとリカの紙芝居で、「なんで？」をつかもう。謎を予想してから、答えを確かめる。</p>
-          <div class="sim-links">
-            <a href="./story/list.html#physics" class="sim-link sim-link--physics"><span>物理のストーリー</span><span aria-hidden="true">&rarr;</span></a>
-          </div>
-        </div>
-      </article>
-
-      <!-- わくわく実験（各科目のシミュレーションへの近道） -->
-      <article class="card card--sim">
-        <div class="card-bar"></div>
-        <div class="card-body">
-          <div class="card-icon" aria-hidden="true">実</div>
-          <span class="card-badge">シミュレーションへ直行</span>
-          <h3 class="card-title">わくわく実験</h3>
-          <p class="card-desc">実験シミュレーションにすぐ入れる近道。</p>
-          <div class="sim-links">
-            <a href="./sim/#physics" class="sim-link sim-link--physics"><span>物理の実験</span><span aria-hidden="true">&rarr;</span></a>
-            <a href="./sim/#chemistry" class="sim-link sim-link--chemistry"><span>化学の実験</span><span aria-hidden="true">&rarr;</span></a>
-          </div>
         </div>
       </article>
 
