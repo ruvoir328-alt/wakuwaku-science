@@ -377,6 +377,8 @@ a { text-decoration: none; color: inherit; }
 .sim-link--physics   { background: var(--col-physics-bg);   color: #b91c1c; }
 .sim-link--chemistry { background: var(--col-chemistry-bg); color: #1d4ed8; }
 .sim-link--physics:hover   { background: var(--col-physics);   color: var(--col-white); }
+.mode-link span:first-child { display: flex; flex-direction: column; gap: 2px; }
+.mode-link small { font-size: 11px; font-weight: 500; opacity: 0.8; }
 .sim-link--chemistry:hover { background: var(--col-chemistry); color: var(--col-white); }
 
 /* ===== For Users section ===== */
@@ -747,11 +749,11 @@ a { text-decoration: none; color: inherit; }
           <span class="card-badge">物理基礎</span>
           <h3 class="card-title">わくわく物理基礎</h3>
           <p class="card-desc">力・運動・エネルギーを、インタラクティブに学べるコンテンツ。授業の予習・復習に活用できる。</p>
-        </div>
-        <div class="card-footer">
-          <a href="./physics/" class="card-link">
-            開く &rarr;
-          </a>
+          <div class="sim-links">
+            <a href="./story/list.html#physics" class="sim-link sim-link--physics mode-link"><span><b>ストーリー</b><small>紙芝居で「なんで？」をつかむ</small></span><span aria-hidden="true">&rarr;</span></a>
+            <a href="./physics/" class="sim-link sim-link--physics mode-link"><span><b>チャレンジ</b><small>問題を解いて力をつける</small></span><span aria-hidden="true">&rarr;</span></a>
+            <a href="./sim/#physics" class="sim-link sim-link--physics mode-link"><span><b>シミュレーション</b><small>実験で確かめる</small></span><span aria-hidden="true">&rarr;</span></a>
+          </div>
         </div>
       </article>
 
