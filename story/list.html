@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>わくわくストーリー | わくわくサイエンス</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coat:#232d55;
+  --lemon:#ffe14a;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --muted:#6b7488;
+  --physics:#d24b45;
+  --physics-bg:#fbeae9;
+  --soft:#f2f3f7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--coat);color:var(--ink);font-family:'Zen Maru Gothic',system-ui,sans-serif;font-weight:500;min-height:100vh}
+a{text-decoration:none;color:inherit}
+.app{max-width:640px;margin:0 auto;padding:16px 16px 40px;display:flex;flex-direction:column;gap:18px}
+.top a{color:#cfd7ee;font-size:13px;padding:6px 0;display:inline-block}
+.top a:focus-visible,.ep:focus-visible{outline:3px solid var(--lemon);outline-offset:2px;border-radius:8px}
+h1{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(28px,7vw,40px);color:var(--lemon)}
+.guide{display:flex;align-items:flex-end;gap:10px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 14px;font-size:15px;font-weight:700;line-height:1.6;flex:1}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+.subject{background:var(--paper);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;scroll-margin-top:16px;border-top:6px solid var(--physics)}
+.subject h2{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:22px;display:flex;align-items:center;gap:10px;color:#b0352c}
+.subject h2 .icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--physics-bg)}
+.chapter{font-size:14px;font-weight:900;color:var(--muted);margin-top:4px}
+.ep{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;transition:background .18s,color .18s}
+.ep .no{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;line-height:1.1;text-align:center}
+.ep .body{flex:1;min-width:0}
+.ep .t{font-weight:900;font-size:16px}
+.ep .d{font-size:13px;color:var(--muted);margin-top:2px}
+.ep .arrow{font-weight:900;flex:none}
+a.ep{background:var(--physics-bg)}
+a.ep .no{background:var(--physics);color:#fff}
+a.ep:hover{background:var(--physics);color:#fff}
+a.ep:hover .d{color:#fff}
+a.ep:hover .no{background:#fff;color:var(--physics)}
+.ep.soon{background:var(--soft);color:var(--muted)}
+.ep.soon .no{background:#e2e5ee;color:var(--muted)}
+.ep.soon .arrow{font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><a href="../">← わくわくサイエンス</a></div>
+  <h1>わくわくストーリー</h1>
+
+  <div class="guide">
+    <img src="img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble">ふむ、どの謎から解いてみるかの？</p>
+  </div>
+
+  <section class="subject" id="physics" aria-labelledby="physics-title">
+    <h2 id="physics-title"><span class="icon" aria-hidden="true">力</span>物理のストーリー</h2>
+    <p class="chapter">1章　直線運動の世界</p>
+
+    <div class="ep soon">
+      <span class="no">第1話</span>
+      <div class="body"><div class="t">どっちが速い？</div><div class="d">運動の表し方</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <div class="ep soon">
+      <span class="no">第2話</span>
+      <div class="body"><div class="t">たくさん歩いたのに、進んでない？</div><div class="d">変位と速度</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <div class="ep soon">
+      <span class="no">第3話</span>
+      <div class="body"><div class="t">グラフがまっすぐになる運動</div><div class="d">等速直線運動</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <div class="ep soon">
+      <span class="no">第4話</span>
+      <div class="body"><div class="t">電車の中で走ると？</div><div class="d">合成速度と相対速度</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <div class="ep soon">
+      <span class="no">第5話</span>
+      <div class="body"><div class="t">記録テープの暗号</div><div class="d">速度が変わる運動</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <a class="ep" href="index.html?ep=06">
+      <span class="no">第6話</span>
+      <div class="body"><div class="t">重いほうが先に落ちる？</div><div class="d">自由落下運動</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <div class="ep soon">
+      <span class="no">第7話</span>
+      <div class="body"><div class="t">てっぺんで、リンゴは止まる？</div><div class="d">鉛直投射</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+    <div class="ep soon">
+      <span class="no">第8話</span>
+      <div class="body"><div class="t">横に投げたら、遅く落ちる？</div><div class="d">水平投射</div></div>
+      <span class="arrow">準備中</span>
+    </div>
+  </section>
+</div>
+</body>
+</html>
