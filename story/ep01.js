@@ -156,6 +156,7 @@ window.EPISODE = {
   chapter: '1章 直線運動の世界',
   topic: '運動の表し方',
   title: 'どっちが速い？',
+  simUrl: '../sim/speed-race.html',
   drillUrl: '../physics/drill.html?unit=1-1',
   scenes: [
     { bg: 'title' },

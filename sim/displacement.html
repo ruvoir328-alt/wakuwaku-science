@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>変位シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=02">← 第2話 ストーリーにもどる</a>
+    <span>1章 直線運動の世界</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　第2話</div>
+    <h1>数直線の上を、行ったり来たりしよう</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 210" role="img" aria-label="数直線の上の位置と、変位の矢印"></svg>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>いまの位置 x</div><div id="xOut"></div>
+      <div>移動距離（歩いた道のり）</div><div id="dOut"></div>
+      <div>変位（スタートからの位置の変化）</div><div id="sOut"></div>
+      <div>速度</div><div id="vOut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <div class="btns2">
+        <button type="button" class="sub" id="west">◀ 西へ 10 m</button>
+        <button type="button" class="sub" id="east">東へ 10 m ▶</button>
+      </div>
+      <div class="btns">
+        <button type="button" class="drop" id="go">第2話の動きを見る ▶</button>
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>「第2話の動き」を見て、移動距離と変位をくらべる</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>自分で動かして、変位をマイナスにする</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>移動距離 40 m で、変位が 0 m になる動きをつくる</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>変位 ＝ どこからどこへ動いたか（向きをもつ）。移動距離とはちがう</li><li>正の向きを決めて、＋と−で表す</li><li>速度 ＝ 向きをもつ速さ。東へ 1.5 m/s なら ＋1.5 m/s、西へなら −1.5 m/s</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <span class="soon">チャレンジモード（準備中）</span>
+    <a class="back" href="../story/?ep=02">第2話のストーリーを見る</a>
+  </div>
+</div>
+
+<script>
+/* ---- 第2話 変位と移動距離 ----
+   教室を原点 0、東向きを正の向きとする。1回の移動は 10 m、歩く速さは 1.5 m/s。
+   第2話の動き：+30 m → −30 m で、移動距離 60 m、変位 0 m
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+const STEP = 10, V = 1.5, XMAX = 50;       // 1回の移動（m）、歩く速さ（m/s）、数直線のはし（m）
+const RATE = 5;                            // 5倍の速さで再生（10 m を 約1.3秒）
+const X0 = 160, S = 2.8;                   // 原点の位置と、1 m あたりの px
+const svg = $('svg');
+let x = 0, dist = 0, moves = [], v = 0, busy = false;   // moves：これまでの移動 [{from, to}]
+
+function draw(){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 210, fill: '#eef2f7' }, svg);
+  el('rect', { y: 64, width: 320, height: 34, fill: '#e9c48f' }, svg);       // 廊下
+  // 数直線
+  const AY = 120;
+  el('line', { x1: 8, x2: 312, y1: AY, y2: AY, stroke: '#1f2638', 'stroke-width': 2 }, svg);
+  el('path', { d: 'M314 ' + AY + ' l-10 -6 v12z', fill: '#1f2638' }, svg);
+  for (let m = -XMAX; m <= XMAX; m += 10){
+    const px = X0 + m * S;
+    el('line', { x1: px, x2: px, y1: AY - 5, y2: AY + 5, stroke: '#1f2638', 'stroke-width': 1.5 }, svg);
+    txt(svg, px, AY + 19, (m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m), 11, m === 0 ? '#d93a3f' : '#4b5568');
+  }
+  txt(svg, 312, AY - 10, 'x〔m〕', 11, '#4b5568', 'end');
+  txt(svg, X0, 58, '教室（x = 0）', 11, '#7e5129');
+  txt(svg, 312, 22, '東（正の向き）→', 12, '#d93a3f', 'end');
+  txt(svg, 8, 22, '← 西', 12, '#4b5568', 'start');
+  // これまでの移動（細い矢印）
+  moves.forEach((mv, i) => arrow(svg, X0 + mv.from * S, 150 + (i % 4) * 8, X0 + mv.to * S, 150 + (i % 4) * 8, '#9aa3b1', 2));
+  if (moves.length) txt(svg, 8, 200, '灰色の矢印＝歩いたあと', 10, '#6b7488', 'start');
+  // 変位の矢印（スタート 0 → いまの位置）
+  if (Math.abs(x) > 0.05){
+    arrow(svg, X0, 40, X0 + x * S, 40, '#d93a3f', 5);
+    txt(svg, X0 + x * S / 2, 34 - 2, '変位 ' + sgn(x, 0) + ' m', 12, '#d93a3f');
+  } else if (dist > 0) txt(svg, X0, 40, '変位 0 m（もとの場所）', 12, '#d93a3f');
+  // 速度の矢印（歩いているとき）
+  const gy = 81;
+  if (v) arrow(svg, X0 + x * S, gy, X0 + x * S + v * 14, gy, '#22305a', 3);
+  el('circle', { cx: X0 + x * S, cy: gy, r: 10, fill: '#d93a3f' }, svg);
+  txt(svg, X0 + x * S, gy + 4, 'リカ', 8, '#fff');
+  show();
+}
+
+function show(){
+  $('xOut').textContent = sgn(x, 0) + ' m';
+  $('dOut').textContent = Math.round(dist) + ' m';
+  $('sOut').textContent = sgn(x, 0) + ' m';
+  $('vOut').textContent = v ? sgn(v, 1) + ' m/s' + (v > 0 ? '（東へ）' : '（西へ）') : '0 m/s';
+  const parts = moves.map(mv => sgn(mv.to - mv.from, 0));
+  $('formula').innerHTML = moves.length
+    ? '移動距離：' + moves.map(mv => Math.abs(mv.to - mv.from)).join(' + ') + ' = <b>' + Math.round(dist) + ' m</b><br>' +
+      '変位：' + parts.map(p => '(' + p + ')').join(' + ') + ' = <b>' + sgn(x, 0) + ' m</b>'
+    : 'ボタンでリカを動かすと、ここに計算が出るよ。<br>東向きを正（＋）、西向きを負（−）とする。';
+  const lock = busy;
+  $('east').disabled = lock || x + STEP > XMAX + 1e-9;
+  $('west').disabled = lock || x - STEP < -XMAX - 1e-9;
+  $('go').disabled = lock;
+}
+
+// to まで歩く（1.5 m/s）。終わったら next()
+function walk(to, next){
+  const from = x, d = to - from, T = Math.abs(d) / V;
+  const startDist = dist;
+  busy = true; v = Math.sign(d) * V;
+  play(T, t => { x = from + Math.sign(d) * V * t; dist = startDist + V * t; draw(); }, () => {
+    x = to; dist = startDist + Math.abs(d); v = 0;
+    moves.push({ from, to });
+    busy = false; next ? next() : (check(), draw());
+  }, RATE);
+}
+
+function check(){
+  if (x < 0) done.m2 = true;
+  if (Math.round(dist) === 40 && Math.abs(x) < 1e-9) done.m3 = true;
+  showMissions(); talk();
+}
+function talk(){
+  if (busy) return;
+  if (!dist) return say('question', '教室を0、東向きを正にした数直線じゃ。まずは「第2話の動き」で、移動距離と変位をくらべてみよう。');
+  if (!done.m1) return say('normal', '移動距離は歩いた道のりの合計、変位はスタートからどれだけ位置が変わったかじゃ。');
+  if (!done.m2) return say('think', '次は、自分で動かして、変位をマイナスにしてみよう。西に行くとどうなるかな？');
+  if (!done.m3) return say('think', 'では、移動距離 40 m なのに、変位が 0 m になる動きをつくれるかな？');
+  say('happy', 'そのとおり！ 変位は向きつきで、移動距離とはちがうのじゃ。');
+}
+
+function demo(){
+  stopPlay(); x = 0; dist = 0; moves = []; v = 0;
+  walk(30, () => walk(0, () => {
+    done.m1 = true; check(); draw();
+    say('proud', '60 m歩いたのに、変位は 0 m。＋30 m と −30 m で打ち消し合ったのじゃ。');
+  }));
+  $('go').textContent = 'もう一度見る ▶';
+}
+function reset(){
+  stopPlay(); x = 0; dist = 0; moves = []; v = 0; busy = false;
+  $('go').textContent = '第2話の動きを見る ▶';
+  draw(); talk();
+}
+
+$('east').addEventListener('click', () => walk(x + STEP));
+$('west').addEventListener('click', () => walk(x - STEP));
+$('go').addEventListener('click', demo);
+$('reset').addEventListener('click', reset);
+draw(); talk();
+</script>
+</body>
+</html>
