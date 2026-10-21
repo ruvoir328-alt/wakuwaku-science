@@ -352,6 +352,19 @@ a { text-decoration: none; color: inherit; }
 .card--newton   .card-badge { background: var(--col-lemon-light); color: var(--col-brand); }
 .card--newton   .card-link { background: var(--col-brand); color: var(--col-lemon); }
 .card--newton   .card-link:hover { background: var(--col-brand-dark); }
+.card--newton   .card-desc { flex: none; }
+.newton-art {
+  display: block;
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  margin: auto auto 0;
+  padding-top: 12px;
+  filter: drop-shadow(0 6px 10px rgba(35, 45, 85, 0.18));
+  transition: transform 0.25s;
+}
+.card--newton:hover .newton-art { transform: translateY(-6px) rotate(-3deg); }
+@media (prefers-reduced-motion: reduce) { .card--newton:hover .newton-art { transform: none; } }
 /* わくわく実験: subject entrances */
 .sim-links {
   display: flex;
@@ -776,6 +789,7 @@ a { text-decoration: none; color: inherit; }
           <span class="card-badge">AIチャット</span>
           <h3 class="card-title">お助けニュートンくん</h3>
           <p class="card-desc">物理・化学・生物・地学・数学の問題の写真を送ると、ニュートンくんがヒントを少しずつ出してくれる。用語や「なんで？」も聞ける。※ニュートンくんはAIです。</p>
+          <img class="newton-art" src="./story/img/newton_happy.webp" alt="" width="160" height="160" loading="lazy">
         </div>
         <div class="card-footer">
           <a href="./newton/" class="card-link">
