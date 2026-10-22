@@ -18,7 +18,8 @@ Claude Code にこう送るだけ：
 - 「さわる場所」に書いてあるファイルは、公開中のもの（チャレンジモード、既存シミュ、プレイヤーなど）でも変更してよい。ただし今ある問題・動き・見た目はこわさない。それ以外のファイルはさわらない
 - 問題やシミュの数値は、スッキリ割り切れるものにする。答えは全部計算して確かめ、報告に表で書く
 - 向きがある量は、必ず問題文（画面）で「正の向き」を決めてから＋/−を使う
-- 脚本の原本 `docs/story-ch1.md` の該当する話を読んでから作る（場面・数値・言葉をそろえる）
+- 脚本の原本 `docs/story-chN.md`（1章は `docs/story-ch1.md`）の該当する話を読んでから作る（場面・数値・言葉をそろえる）
+- 1つの話ごとに、ストーリー・シミュ・ドリルの3つをそろえてつなぐ（くわしくは `CLAUDE.md`）
 - スマホ幅（390px）で実際に操作して確かめる。ドリルなら10問くらい解いてみる。変えた画面のスクショを `docs/reports/T-○○/` に置く
 
 ## サイズのめやす
@@ -95,6 +96,11 @@ Claude Code にこう送るだけ：
   - 問題の動く絵をストーリー・シミュとそろえる／1章の問題文を話の場面に／単元一覧に話と記録／メダル・トロフィーのアニメとジングル
   - 本物はさわらず、試作ページ（`physics/drill-proto.html` `physics/index-proto.html`）で見られるようにする
   - さわる場所：`physics/proto.js` `physics/proto.css` `physics/drill-proto.html` `physics/index-proto.html`（どれも新しく作る）
+
+- [x] **T-09　チャレンジモードを試作どおりに本番へ＋ルールの見直し** 📘
+  - T-08 の試作を本物（`physics/app.js` など）に入れて、試作ページは消す。メダルは4問以上（40%）、トロフィーは全問正解
+  - `CLAUDE.md` を、今の作り方（三本柱のつなぎ方・シミュの形・ドリルの書き方・章立て・色）に合わせて書きなおす
+  - さわる場所：`physics/app.js` `physics/drill.html` `physics/index.html` `physics/mypage.html` `physics/style.css` `physics/home.css` `physics/proto.*` `physics/*-proto.html`（消す） `CLAUDE.md` `docs/tasks.md`
 
 ---
 

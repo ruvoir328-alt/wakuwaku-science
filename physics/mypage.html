@@ -30,7 +30,7 @@
       <!-- 凡例 -->
       <div class="mp-legend">
         <div class="mp-legend-item"><span>🏆</span>全問正解</div>
-        <div class="mp-legend-item"><span>🥇</span>クリア済</div>
+        <div class="mp-legend-item"><span>🥇</span>メダル（4問以上）</div>
         <div class="mp-legend-item"><span class="legend-empty">⊙</span>未挑戦</div>
       </div>
 
@@ -83,7 +83,7 @@
       // ── サマリー ──
       let cleared = 0, trophies = 0;
       UNITS.forEach(u => {
-        if (data[u.id]) {
+        if (data[u.id] && data[u.id].bestScore >= 4) {   // メダル（4問以上）でクリア
           cleared++;
           if (data[u.id].perfect) trophies++;
         }
@@ -126,7 +126,7 @@
       UNITS.forEach(unit => {
         const prog = data[unit.id];
         const perfect = prog && prog.perfect;
-        const done    = prog && !perfect;
+        const done    = prog && !perfect && prog.bestScore >= 4;   // メダルは 4問以上
 
         const card = document.createElement('a');
         card.href = `drill.html?unit=${unit.id}`;

@@ -194,3 +194,13 @@ main {
 
 /* ---- フッター ---- */
 .site-footer { order: 4; text-align: center; margin-top: 28px; color: #9aa6c6; font-size: 12px; padding: 0 16px; }
+
+/* ---- 単元一覧：話のつながりと記録 ---- */
+.unit-story { font-size: 12px; font-weight: 700; color: #7e5129; margin-top: 2px; }
+.unit-medal {
+  flex: none; min-width: 44px; text-align: center; font-size: 22px; line-height: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.unit-medal small { font-size: 10px; font-weight: 700; color: #6b7488; }
+.unit-medal:not(.got) { opacity: .7; }
+
