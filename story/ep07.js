@@ -192,7 +192,7 @@ window.EPISODE = {
       byChoice: { id: 'q1', options: {
         zero: { face: 'think',    text: '半分正解じゃ。秒速19.6 mで投げ上げたときのコマ送りを見てみよう。' },
         down: { face: 'proud',    text: 'ほう、自信がありそうじゃな。秒速19.6 mで投げ上げたときのコマ送りを見てみよう。' },
-        up:   { face: 'question', text: 'ふむ、よい問いだ。秒速19.6 mで投げ上げたときのコマ送りを見てみよう。' }
+        up:   { face: 'question', text: 'ふむ、よい問いじゃ。秒速19.6 mで投げ上げたときのコマ送りを見てみよう。' }
       } } },
 
     /* ---- アニメで確かめる ---- */

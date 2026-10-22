@@ -83,6 +83,10 @@ Claude Code にこう送るだけ：
   - **直さずに報告だけ**する。各画面のスクショを `docs/reports/T-05/` に置く
   - さわる場所：`docs/reports/` だけ（ほかと並行OK）
 
+- [x] **T-06　1章の仕上げ（T-05 の答えを反映）** 📘
+  - T-05 の報告の 1・2・3・4・5・9・10 を直す（6・7・8・11・12 はこのまま）
+  - さわる場所：`inclined-plane-simulator.html` `physics/app.js` `physics/style.css` `physics/index.html` `physics/mypage.html` `story/ep01.js` `story/ep02.js` `story/ep03.js` `story/ep04.js` `story/ep07.js`
+
 ---
 
 ## C. 2章「運動の法則」の準備と実装

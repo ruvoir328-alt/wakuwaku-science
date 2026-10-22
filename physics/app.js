@@ -38,7 +38,7 @@ function probVelocity() {
   const x = v * t;
   return {
     badge: '速度と変位',
-    text: `物体が <b>${t} 秒間</b> に <b>${x} m</b> 移動した。<br>速度 <i>v</i> を求めよ。`,
+    text: `物体が <b>${t} 秒間</b>に <b>${x} m</b>移動した。<br>速度 <i>v</i> を求めよ。`,
     formula: 'v = x ÷ t',
     inputs: [
       { variable: 'x', unit: 'm', answer: x, tol: 0 },
@@ -55,7 +55,7 @@ function probUniform() {
   const t = ri(2, 10);
   return {
     badge: '等速直線運動',
-    text: `物体が <b>${v} m/s</b> の速度で <b>${t} 秒間</b> 直線運動した。<br>移動距離 <i>x</i> を求めよ。`,
+    text: `物体が <b>${v} m/s</b>の速度で <b>${t} 秒間</b>直線運動した。<br>移動距離 <i>x</i> を求めよ。`,
     formula: 'x = v × t',
     inputs: [
       { variable: 'v', unit: 'm/s', answer: v, tol: 0 },
@@ -71,7 +71,7 @@ function probAccelV() {
   const v0 = ri(0, 10), a = ri(1, 5), t = ri(2, 6);
   return {
     badge: '等加速度運動',
-    text: `初速度 <b>${v0} m/s</b>、加速度 <b>${a} m/s²</b> の物体の <b>${t} 秒後</b> の速度 <i>v</i> を求めよ。`,
+    text: `初速度 <b>${v0} m/s</b>、加速度 <b>${a} m/s²</b>の物体の <b>${t} 秒後</b>の速度 <i>v</i> を求めよ。`,
     formula: 'v = v₀ + a × t',
     inputs: [
       { variable: 'v₀', unit: 'm/s',  answer: v0, tol: 0 },
@@ -89,7 +89,7 @@ function probAccelX() {
   const v0t = v0 * t, halfAt2 = 0.5 * a * t * t;
   return {
     badge: '等加速度運動',
-    text: `初速度 <b>${v0} m/s</b>、加速度 <b>${a} m/s²</b> で <b>${t} 秒間</b> 動いた物体の移動距離 <i>x</i> を求めよ。`,
+    text: `初速度 <b>${v0} m/s</b>、加速度 <b>${a} m/s²</b>で <b>${t} 秒間</b>動いた物体の移動距離 <i>x</i> を求めよ。`,
     formula: 'x = v₀t + ½at²',
     inputs: [
       { variable: 'v₀', unit: 'm/s',  answer: v0, tol: 0 },
@@ -109,7 +109,7 @@ function probFreeFall() {
   const t = ri(1, 5);
   return {
     badge: '自由落下',
-    text: `静止状態から自由落下した物体の <b>${t} 秒後</b> の速度 <i>v</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `静止状態から自由落下した物体の <b>${t} 秒後</b>の速度 <i>v</i> を求めよ。<br><small>（下向きを正とする。g = 9.8 m/s²）</small>`,
     formula: 'v = g × t',
     inputs: [
       { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 },
@@ -126,7 +126,7 @@ function probVerticalDown() {
   const v = round1(v0 + 9.8 * t);
   return {
     badge: '鉛直投げおろし',
-    text: `初速度 <b>${v0} m/s</b> で真下に投げ下ろした。<br><b>${t} 秒後</b> の速度 <i>v</i> を求めよ。<br><small>（下向き正、g = 9.8 m/s²）</small>`,
+    text: `初速度 <b>${v0} m/s</b>で真下に投げ下ろした。<br><b>${t} 秒後</b>の速度 <i>v</i> を求めよ。<br><small>（下向きを正とする。g = 9.8 m/s²）</small>`,
     formula: 'v = v₀ + g × t',
     inputs: [
       { variable: 'v₀', unit: 'm/s',  answer: v0,  tol: 0    },
@@ -146,7 +146,7 @@ function probThrowUpV() {
   const v = round1(v0 - 9.8 * t);
   return {
     badge: '鉛直投げ上げ',
-    text: `初速度 <b>${v0} m/s</b> で真上に投げ上げた。<br><b>${t} 秒後</b> の速度 <i>v</i> を求めよ。<br><small>（上向き正、g = 9.8 m/s²）</small>`,
+    text: `初速度 <b>${v0} m/s</b>で真上に投げ上げた。<br><b>${t} 秒後</b>の速度 <i>v</i> を求めよ。<br><small>（上向きを正とする。g = 9.8 m/s²）</small>`,
     formula: 'v = v₀ − g × t',
     inputs: [
       { variable: 'v₀', unit: 'm/s',  answer: v0,  tol: 0.05 },
@@ -164,7 +164,7 @@ function probThrowUpMaxT() {
   const v0 = round1(9.8 * tMax);
   return {
     badge: '鉛直投げ上げ',
-    text: `初速度 <b>${v0} m/s</b> で真上に投げ上げた。<br>最高点に達するまでの時間 <i>t</i> を求めよ。<br><small>（最高点では v = 0）</small>`,
+    text: `初速度 <b>${v0} m/s</b>で真上に投げ上げた。<br>最高点に達するまでの時間 <i>t</i> を求めよ。<br><small>（最高点では v = 0）</small>`,
     formula: 'v = 0 になるとき  →  t = v₀ ÷ g',
     inputs: [
       { variable: 'v₀', unit: 'm/s',  answer: v0,  tol: 0.05 },
@@ -181,7 +181,7 @@ function probNewton() {
   const F = m * a_ans;
   return {
     badge: 'ニュートンの第二法則',
-    text: `質量 <b>${m} kg</b> の物体に <b>${F} N</b> の力を加えたときの加速度 <i>a</i> を求めよ。`,
+    text: `質量 <b>${m} kg</b>の物体に <b>${F} N</b>の力を加えたときの加速度 <i>a</i> を求めよ。`,
     formula: 'F = ma  →  a = F ÷ m',
     inputs: [
       { variable: 'F', unit: 'N',  answer: F, tol: 0 },
@@ -270,7 +270,7 @@ function probForceAdd() {
   const f1 = ri(2, 20), f2 = ri(2, 20);
   return {
     badge: '力の合成',
-    text: `同じ向きに <b>${f1} N</b> と <b>${f2} N</b> の力がはたらいている。<br>合力 <i>F</i> を求めよ。`,
+    text: `同じ向きに <b>${f1} N</b>と <b>${f2} N</b>の力がはたらいている。<br>合力 <i>F</i> を求めよ。`,
     formula: 'F = F₁ + F₂',
     inputs: [
       { variable: 'F₁', unit: 'N', answer: f1, tol: 0 },
@@ -286,8 +286,8 @@ function probForceSub() {
   const f1 = ri(5, 25), f2 = ri(2, f1 - 1);
   return {
     badge: '力の合成',
-    text: `右向きに <b>${f1} N</b>、左向きに <b>${f2} N</b> の力がはたらいている。<br>合力 <i>F</i> の大きさと向きを答えよ（右向き正）。`,
-    formula: 'F = F₁ − F₂（右向き正）',
+    text: `右向きに <b>${f1} N</b>、左向きに <b>${f2} N</b>の力がはたらいている。<br>合力 <i>F</i> の大きさと向きを答えよ（右向きを正とする）。`,
+    formula: 'F = F₁ − F₂（右向きを正とする）',
     inputs: [
       { variable: 'F₁', unit: 'N', answer: f1, tol: 0 },
       { variable: 'F₂', unit: 'N', answer: f2, tol: 0 }
@@ -307,7 +307,7 @@ function probForceDecomp() {
   const fy = round1(F * Math.sin(rad));
   return {
     badge: '力の分解',
-    text: `大きさ <b>${F} N</b> の力が水平から <b>${deg}°</b> の向きにはたらいている。<br>水平成分 <i>Fx</i> を求めよ。`,
+    text: `大きさ <b>${F} N</b>の力が水平から <b>${deg}°</b>の向きにはたらいている。<br>水平成分 <i>Fx</i> を求めよ。`,
     formula: `Fx = F × cos${deg}°`,
     inputs: [
       { variable: 'F',  unit: 'N', answer: F,   tol: 0 },
@@ -324,7 +324,7 @@ function probEquilNormal() {
   const N = round1(m * 9.8);
   return {
     badge: '力のつりあい',
-    text: `質量 <b>${m} kg</b> の物体が水平面上で静止している。<br>垂直抗力 <i>N</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `質量 <b>${m} kg</b>の物体が水平面上で静止している。<br>垂直抗力 <i>N</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
     formula: 'つりあい → N = mg',
     inputs: [
       { variable: 'm', unit: 'kg',  answer: m,   tol: 0    },
@@ -342,7 +342,7 @@ function probEquil3() {
   const f2 = w - f1;
   return {
     badge: '力のつりあい',
-    text: `重力 <b>${w} N</b> の物体が2本のひもで支えられ静止している。<br>一方のひもの張力が <b>${f1} N</b> のとき、もう一方の張力 <i>T</i> を求めよ。`,
+    text: `重力 <b>${w} N</b>の物体が2本のひもで支えられ静止している。<br>一方のひもの張力が <b>${f1} N</b>のとき、もう一方の張力 <i>T</i> を求めよ。`,
     formula: 'ΣF = 0 → T = W − T₁',
     inputs: [
       { variable: 'W',  unit: 'N', answer: w,  tol: 0 },
@@ -359,7 +359,7 @@ function probEqAccel() {
   const F = m * a;
   return {
     badge: '運動方程式',
-    text: `質量 <b>${m} kg</b> の物体に <b>${F} N</b> の力を加えた。<br>加速度 <i>a</i> を求めよ。`,
+    text: `質量 <b>${m} kg</b>の物体に <b>${F} N</b>の力を加えた。<br>加速度 <i>a</i> を求めよ。`,
     formula: 'F = ma  →  a = F ÷ m',
     inputs: [
       { variable: 'F', unit: 'N',  answer: F, tol: 0 },
@@ -376,7 +376,7 @@ function probEqForce() {
   const F = m * a;
   return {
     badge: '運動方程式',
-    text: `質量 <b>${m} kg</b> の物体に力を加えたら加速度 <b>${a} m/s²</b> が生じた。<br>力 <i>F</i> を求めよ。`,
+    text: `質量 <b>${m} kg</b>の物体に力を加えたら加速度 <b>${a} m/s²</b>が生じた。<br>力 <i>F</i> を求めよ。`,
     formula: 'F = m × a',
     inputs: [
       { variable: 'm', unit: 'kg',  answer: m, tol: 0 },
@@ -393,7 +393,7 @@ function probEqMass() {
   const F = m * a;
   return {
     badge: '運動方程式',
-    text: `<b>${F} N</b> の力を加えたら加速度 <b>${a} m/s²</b> が生じた。<br>物体の質量 <i>m</i> を求めよ。`,
+    text: `<b>${F} N</b>の力を加えたら加速度 <b>${a} m/s²</b>が生じた。<br>物体の質量 <i>m</i> を求めよ。`,
     formula: 'F = ma  →  m = F ÷ a',
     inputs: [
       { variable: 'F', unit: 'N',   answer: F, tol: 0 },
@@ -412,7 +412,7 @@ function probFriction() {
   const f   = round1(mu * N);
   return {
     badge: '摩擦力',
-    text: `動摩擦係数 <b>μ' = ${mu}</b>、質量 <b>${m} kg</b> の物体が水平面を滑っている。<br>動摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `動摩擦係数 <b>μ' = ${mu}</b>、質量 <b>${m} kg</b>の物体が水平面を滑っている。<br>動摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
     formula: "f = μ'N = μ'mg",
     inputs: [
       { variable: "μ'", unit: '',    answer: mu,  tol: 0.001 },
@@ -432,7 +432,7 @@ function probStaticFriction() {
   const f   = round1(mu * N);
   return {
     badge: '摩擦力',
-    text: `静止摩擦係数 <b>μ = ${mu}</b>、質量 <b>${m} kg</b> の物体に水平の力を加え続ける。<br>最大静止摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `静止摩擦係数 <b>μ = ${mu}</b>、質量 <b>${m} kg</b>の物体に水平の力を加え続ける。<br>最大静止摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
     formula: 'f = μN = μmg',
     inputs: [
       { variable: 'μ', unit: '',    answer: mu,  tol: 0.001 },
@@ -451,7 +451,7 @@ function probPressure() {
   const P = round1(F / S);
   return {
     badge: '圧力',
-    text: `面積 <b>${S} m²</b> の面に <b>${F} N</b> の力が垂直にはたらいている。<br>圧力 <i>P</i> を求めよ。`,
+    text: `面積 <b>${S} m²</b>の面に <b>${F} N</b>の力が垂直にはたらいている。<br>圧力 <i>P</i> を求めよ。`,
     formula: 'P = F ÷ S',
     inputs: [
       { variable: 'F', unit: 'N',  answer: F, tol: 0    },
@@ -469,7 +469,7 @@ function probBuoyancy() {
   const F   = round1(rho * V * 9.8);
   return {
     badge: '浮力',
-    text: `水（密度 1000 kg/m³）に体積 <b>${V} m³</b> の物体が完全に沈んでいる。<br>浮力 <i>F</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `水（密度 1000 kg/m³）に体積 <b>${V} m³</b>の物体が完全に沈んでいる。<br>浮力 <i>F</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
     formula: 'F = ρVg',
     inputs: [
       { variable: 'ρ', unit: 'kg/m³', answer: rho, tol: 0   },
@@ -495,7 +495,7 @@ function probRelCompSame() {
   const vA = ri(10, 30), w = ri(1, 3);
   return {
     badge: '合成速度',
-    text: `東へ <b>${vA} m/s</b> で走る電車の中を、リカが進行方向（東）へ <b>${w} m/s</b> で歩いている。<br>ホームから見たリカの速度 <i>v</i> を求めよ。${EAST}`,
+    text: `東へ <b>${vA} m/s</b>で走る電車の中を、リカが進行方向（東）へ <b>${w} m/s</b>で歩いている。<br>ホームから見たリカの速度 <i>v</i> を求めよ。${EAST}`,
     formula: 'v = v₁ + v₂（電車 ＋ 歩く）',
     signed: true,
     inputs: [
@@ -512,7 +512,7 @@ function probRelCompOpp() {
   const vA = ri(10, 30), w = ri(1, 3);
   return {
     badge: '合成速度',
-    text: `東へ <b>${vA} m/s</b> で走る電車の中を、リカが進行方向と逆向き（西）へ <b>${w} m/s</b> で歩いている。<br>ホームから見たリカの速度 <i>v</i> を求めよ。${EAST}`,
+    text: `東へ <b>${vA} m/s</b>で走る電車の中を、リカが進行方向と逆向き（西）へ <b>${w} m/s</b>で歩いている。<br>ホームから見たリカの速度 <i>v</i> を求めよ。${EAST}`,
     formula: 'v = v₁ + v₂（電車 ＋ 歩く）',
     signed: true,
     inputs: [
@@ -531,7 +531,7 @@ function probRelSame() {
   const vB = vA + d;
   return {
     badge: '相対速度',
-    text: `リカの乗った電車 A が東へ <b>${vA} m/s</b>、隣の線路の電車 B が東へ <b>${vB} m/s</b> で走っている。<br>A から見た B の速度（相対速度）<i>v</i><sub>AB</sub> を求めよ。${EAST}`,
+    text: `リカの乗った電車 A が東へ <b>${vA} m/s</b>、隣の線路の電車 B が東へ <b>${vB} m/s</b>で走っている。<br>A から見た B の速度（相対速度）<i>v</i><sub>AB</sub> を求めよ。${EAST}`,
     formula: 'v<sub>AB</sub> = v<sub>B</sub> − v<sub>A</sub>（相手 − 自分）',
     signed: true,
     inputs: [
@@ -549,7 +549,7 @@ function probRelPass() {
   const vB = -sB;
   return {
     badge: '相対速度',
-    text: `リカの乗った電車 A が東へ <b>${vA} m/s</b> で走っている。向こうから電車 B が西へ <b>${sB} m/s</b> で走ってきて、すれちがう。<br>A から見た B の速度（相対速度）<i>v</i><sub>AB</sub> を求めよ。${EAST}`,
+    text: `リカの乗った電車 A が東へ <b>${vA} m/s</b>で走っている。向こうから電車 B が西へ <b>${sB} m/s</b>で走ってきて、すれちがう。<br>A から見た B の速度（相対速度）<i>v</i><sub>AB</sub> を求めよ。${EAST}`,
     formula: 'v<sub>AB</sub> = v<sub>B</sub> − v<sub>A</sub>（相手 − 自分）',
     signed: true,
     inputs: [
@@ -576,7 +576,7 @@ function probHThrowTime() {
   const [y, t] = htPick(), v0 = ri(1, 10);
   return {
     badge: '水平投射（縦）',
-    text: `高さ <b>${y} m</b> の台の上から、リンゴを真横に <b>${v0} m/s</b> で投げた。<br>床に着くまでの時間 <i>t</i> を求めよ。${HT_NOTE}`,
+    text: `高さ <b>${y} m</b>の台の上から、リンゴを真横に <b>${v0} m/s</b>で投げた。<br>床に着くまでの時間 <i>t</i> を求めよ。${HT_NOTE}`,
     formula: 'y = ½gt²  →  t = √(2y ÷ g)',
     inputs: [
       { variable: 'y', unit: 'm',    answer: y,   tol: 0.05 },
@@ -592,7 +592,7 @@ function probHThrowHeight() {
   const [y, t] = htPick(), v0 = ri(1, 10);
   return {
     badge: '水平投射（縦）',
-    text: `台の上から、リンゴを真横に <b>${v0} m/s</b> で投げたら、<b>${t} 秒後</b> に床に着いた。<br>台の高さ <i>y</i> を求めよ。${HT_NOTE}`,
+    text: `台の上から、リンゴを真横に <b>${v0} m/s</b>で投げたら、<b>${t} 秒後</b>に床に着いた。<br>台の高さ <i>y</i> を求めよ。${HT_NOTE}`,
     formula: 'y = ½ × g × t²',
     inputs: [
       { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 },
@@ -608,7 +608,7 @@ function probHThrowDist() {
   const [y, t] = htPick(), v0 = ri(1, 10);
   return {
     badge: '水平投射（横）',
-    text: `台の上から、リンゴを真横に <b>${v0} m/s</b> で投げたら、<b>${t} 秒後</b> に床に着いた。<br>台から水平に何 m はなれたところに落ちたか。水平距離 <i>x</i> を求めよ。${HT_NOTE}`,
+    text: `台の上から、リンゴを真横に <b>${v0} m/s</b>で投げたら、<b>${t} 秒後</b>に床に着いた。<br>台から水平に何 m はなれたところに落ちたか。水平距離 <i>x</i> を求めよ。${HT_NOTE}`,
     formula: 'x = v₀ × t（横は等速直線運動）',
     inputs: [
       { variable: 'v₀', unit: 'm/s', answer: v0, tol: 0 },
@@ -625,7 +625,7 @@ function probHThrowV0() {
   const x = v0 * t;
   return {
     badge: '水平投射（横）',
-    text: `台の上から、リンゴを真横に投げたら、<b>${t} 秒後</b> に、台から水平に <b>${x} m</b> はなれた床に落ちた。<br>投げた速さ <i>v</i>₀ を求めよ。${HT_NOTE}`,
+    text: `台の上から、リンゴを真横に投げたら、<b>${t} 秒後</b>に、台から水平に <b>${x} m</b>はなれた床に落ちた。<br>投げた速さ <i>v</i>₀ を求めよ。${HT_NOTE}`,
     formula: 'x = v₀t  →  v₀ = x ÷ t',
     inputs: [
       { variable: 'x', unit: 'm', answer: x, tol: 0 },
@@ -641,7 +641,7 @@ function probHThrowFull() {
   const [y, t] = htPick(), v0 = ri(1, 10);
   return {
     badge: '水平投射（縦と横）',
-    text: `高さ <b>${y} m</b> の台の上から、リンゴを真横に <b>${v0} m/s</b> で投げた。<br>台から水平に何 m はなれたところに落ちるか。水平距離 <i>x</i> を求めよ。<br><small>（まず縦の式で、着地までの時間 t を求めよう）</small>${HT_NOTE}`,
+    text: `高さ <b>${y} m</b>の台の上から、リンゴを真横に <b>${v0} m/s</b>で投げた。<br>台から水平に何 m はなれたところに落ちるか。水平距離 <i>x</i> を求めよ。<br><small>（まず縦の式で、着地までの時間 t を求めよう）</small>${HT_NOTE}`,
     formula: '縦：t = √(2y ÷ g)　横：x = v₀ × t',
     inputs: [
       { variable: 'v₀', unit: 'm/s', answer: v0, tol: 0 },
@@ -1384,7 +1384,47 @@ function retry() {
 // 初期化
 // ========================================
 
+// ========================================
+// ストーリーやシミュから来たときは「第◯話にもどる」リンクを出す
+// ========================================
+
+const SIM_EP = {
+  'speed-race.html': 1, 'displacement.html': 2, 'uniform-motion.html': 3, 'relative-velocity.html': 4,
+  'inclined-plane-simulator.html': 5, 'freefall.html': 6, 'vertical-throw.html': 7, 'horizontal-throw.html': 8
+};
+function cameFrom() {
+  try {
+    const r = new URL(document.referrer);
+    if (r.origin !== location.origin) return null;
+    const file = r.pathname.split('/').pop();
+    if (/\/story\/(index\.html)?$/.test(r.pathname) && r.searchParams.get('ep'))
+      return { href: r.href, label: `第${Number(r.searchParams.get('ep'))}話のストーリーにもどる` };
+    if (SIM_EP[file]) return { href: r.href, label: `第${SIM_EP[file]}話のシミュにもどる` };
+  } catch (e) { /* referrer がないとき */ }
+  return null;
+}
+function showCameFrom() {
+  const from = cameFrom();
+  if (!from) return;
+  const back = document.querySelector('.top .back-link');
+  if (back) {
+    const box = document.createElement('div');
+    box.className = 'back-links';
+    back.replaceWith(box);
+    const a = document.createElement('a');
+    a.className = 'back-link'; a.href = from.href; a.textContent = '← ' + from.label;
+    box.append(a, back);
+  }
+  const home = document.querySelector('#result-view .btn-home');
+  if (home) {
+    const a = document.createElement('a');
+    a.className = 'btn-home'; a.href = from.href; a.textContent = '← ' + from.label;
+    home.before(a);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  showCameFrom();
   // タイトルを単元名に変更
   const titleEl = document.getElementById('drill-title');
   if (titleEl) titleEl.textContent = unitInfo ? `${unitId}　${unitTitle}` : unitTitle;
