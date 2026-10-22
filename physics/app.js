@@ -561,6 +561,97 @@ function probRelPass() {
   };
 }
 
+// ========================================
+// 1-8「水平投射」（第8話：台から真横に投げたリンゴ）
+//   水平方向は等速直線運動（x = v₀t）、鉛直方向は自由落下（y = ½gt²）を分けて考える
+//   台の高さは、着地時間がちょうど整数秒になる 4.9 m（1 s）・19.6 m（2 s）・44.1 m（3 s）
+// ========================================
+
+const HT_NOTE = '<br><small>（水平方向は投げた向き、鉛直方向は下向きを正とする。g = 9.8 m/s²）</small>';
+const HT_TABLE = [[4.9, 1], [19.6, 2], [44.1, 3]];       // [台の高さ m, 着地までの時間 s]
+const htPick = () => HT_TABLE[ri(0, 2)];
+
+/** 1-8a: 着地までの時間（縦だけ）  y = ½gt² → t = √(2y ÷ g) */
+function probHThrowTime() {
+  const [y, t] = htPick(), v0 = ri(1, 10);
+  return {
+    badge: '水平投射（縦）',
+    text: `高さ <b>${y} m</b> の台の上から、リンゴを真横に <b>${v0} m/s</b> で投げた。<br>床に着くまでの時間 <i>t</i> を求めよ。${HT_NOTE}`,
+    formula: 'y = ½gt²  →  t = √(2y ÷ g)',
+    inputs: [
+      { variable: 'y', unit: 'm',    answer: y,   tol: 0.05 },
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 }
+    ],
+    result: { variable: 't', value: t, unit: 's', expression: `√(2 × ${y} ÷ 9.8) = √${t * t}` },
+    anim: 'hthrow', ap: { y, v0 }
+  };
+}
+
+/** 1-8b: 台の高さ（縦だけ）  y = ½gt² */
+function probHThrowHeight() {
+  const [y, t] = htPick(), v0 = ri(1, 10);
+  return {
+    badge: '水平投射（縦）',
+    text: `台の上から、リンゴを真横に <b>${v0} m/s</b> で投げたら、<b>${t} 秒後</b> に床に着いた。<br>台の高さ <i>y</i> を求めよ。${HT_NOTE}`,
+    formula: 'y = ½ × g × t²',
+    inputs: [
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 },
+      { variable: 't', unit: 's',    answer: t,   tol: 0 }
+    ],
+    result: { variable: 'y', value: y, unit: 'm', expression: `½ × 9.8 × ${t}²` },
+    anim: 'hthrow', ap: { y, v0 }
+  };
+}
+
+/** 1-8c: 水平距離（横だけ）  x = v₀t */
+function probHThrowDist() {
+  const [y, t] = htPick(), v0 = ri(1, 10);
+  return {
+    badge: '水平投射（横）',
+    text: `台の上から、リンゴを真横に <b>${v0} m/s</b> で投げたら、<b>${t} 秒後</b> に床に着いた。<br>台から水平に何 m はなれたところに落ちたか。水平距離 <i>x</i> を求めよ。${HT_NOTE}`,
+    formula: 'x = v₀ × t（横は等速直線運動）',
+    inputs: [
+      { variable: 'v₀', unit: 'm/s', answer: v0, tol: 0 },
+      { variable: 't',  unit: 's',   answer: t,  tol: 0 }
+    ],
+    result: { variable: 'x', value: v0 * t, unit: 'm', expression: `${v0} × ${t}` },
+    anim: 'hthrow', ap: { y, v0 }
+  };
+}
+
+/** 1-8d: 投げた速さ（横だけ）  v₀ = x ÷ t */
+function probHThrowV0() {
+  const [y, t] = htPick(), v0 = ri(1, 10);
+  const x = v0 * t;
+  return {
+    badge: '水平投射（横）',
+    text: `台の上から、リンゴを真横に投げたら、<b>${t} 秒後</b> に、台から水平に <b>${x} m</b> はなれた床に落ちた。<br>投げた速さ <i>v</i>₀ を求めよ。${HT_NOTE}`,
+    formula: 'x = v₀t  →  v₀ = x ÷ t',
+    inputs: [
+      { variable: 'x', unit: 'm', answer: x, tol: 0 },
+      { variable: 't', unit: 's', answer: t, tol: 0 }
+    ],
+    result: { variable: 'v₀', value: v0, unit: 'm/s', expression: `${x} ÷ ${t}` },
+    anim: 'hthrow', ap: { y, v0 }
+  };
+}
+
+/** 1-8e: 縦と横を分けて（高さ → 時間 → 水平距離）  t = √(2y ÷ g)、x = v₀t */
+function probHThrowFull() {
+  const [y, t] = htPick(), v0 = ri(1, 10);
+  return {
+    badge: '水平投射（縦と横）',
+    text: `高さ <b>${y} m</b> の台の上から、リンゴを真横に <b>${v0} m/s</b> で投げた。<br>台から水平に何 m はなれたところに落ちるか。水平距離 <i>x</i> を求めよ。<br><small>（まず縦の式で、着地までの時間 t を求めよう）</small>${HT_NOTE}`,
+    formula: '縦：t = √(2y ÷ g)　横：x = v₀ × t',
+    inputs: [
+      { variable: 'v₀', unit: 'm/s', answer: v0, tol: 0 },
+      { variable: 't',  unit: 's',   answer: t,  tol: 0 }
+    ],
+    result: { variable: 'x', value: v0 * t, unit: 'm', expression: `${v0} × ${t}（t = √(2 × ${y} ÷ 9.8) = ${t}）` },
+    anim: 'hthrow', ap: { y, v0 }
+  };
+}
+
 // ── 全単元のデフォルト（URL パラメータなしの場合）──
 const allGenerators = [probUniform, probAccelV, probAccelX, probFreeFall, probNewton];
 
@@ -574,6 +665,7 @@ const unitMap = {
   '1-5': { name: '鉛直投げおろし',   gens: [probVerticalDown] },
   '1-6': { name: '鉛直投げ上げ',     gens: [probThrowUpV, probThrowUpMaxT] },
   '1-7': { name: '合成速度・相対速度', gens: [probRelCompSame, probRelCompOpp, probRelSame, probRelPass] },
+  '1-8': { name: '水平投射', gens: [probHThrowTime, probHThrowHeight, probHThrowDist, probHThrowV0, probHThrowFull] },
   // 2節: 力と運動の法則
   '2-1': { name: '力の合成・分解',   gens: [probForceAdd, probForceSub, probForceDecomp] },
   '2-2': { name: '力のつりあい',     gens: [probEquilNormal, probEquil3] },
@@ -850,6 +942,27 @@ function drawTrain(ctx, t, p) {
   txt(ctx, 'ホームから見たようす', 14, 36, '#6b7488', 10);
 }
 
+// 1-8：台から真横に投げたリンゴ A と、そっと手放したリンゴ B。縦横同じ縮尺、0.1×着地時間ごとに残像
+function drawHThrow(ctx, t, p) {
+  const g = 9.8, tl = Math.sqrt(2 * p.y / g), X0 = 48, DUR = 1.6;
+  const k = Math.min(96 / p.y, 300 / Math.max(p.v0 * tl, 0.5));     // 1 m あたりの px
+  const top = GY - p.y * k;
+  const s = t % (DUR + 0.9), tau = Math.min(tl, s / DUR * tl);       // 実際の時間 τ（s）
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
+  ctx.fillStyle = '#c3cad8'; ctx.fillRect(X0 - 30, top, 30, GY - top);
+  txt(ctx, `高さ ${p.y} m　v₀ = ${p.v0} m/s　g = 9.8 m/s² ↓`, 14, 18, '#34467e', 11, true);
+  const ay = tt => top + g * tt * tt / 2 * k, ax = tt => X0 + p.v0 * tt * k;
+  for (let n = 1; n <= 10; n++) {
+    const tn = tl * n / 10; if (tn > tau + 1e-9) break;
+    ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = '#cdd4e2'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X0 + 6, ay(tn)); ctx.lineTo(ax(tn), ay(tn)); ctx.stroke(); ctx.restore();
+    ctx.globalAlpha = .25; drawBall(ctx, ax(tn), ay(tn), 5, '#d93a3f'); drawBall(ctx, X0 + 6, ay(tn), 5, '#34467e'); ctx.globalAlpha = 1;
+  }
+  drawBall(ctx, ax(tau), ay(tau), 7, '#d93a3f'); drawBall(ctx, X0 + 6, ay(tau), 7, '#34467e');
+  txt(ctx, 'A', ax(tau) + 9, ay(tau) - 6, '#d93a3f', 11, true);
+  txt(ctx, 'B', X0 - 4, ay(tau) - 8, '#34467e', 11, true);
+}
+
 // ========================================
 // アニメーションループ
 // ========================================
@@ -872,6 +985,7 @@ function draw(ts) {
     case 'friction':     drawFriction(ctx,t,current.ap);     break;
     case 'pressure':     drawPressure(ctx,t,current.ap);     break;
     case 'train':        drawTrain(ctx,t,current.ap);        break;
+    case 'hthrow':       drawHThrow(ctx,t,current.ap);       break;
   }
   animId = requestAnimationFrame(draw);
 }
