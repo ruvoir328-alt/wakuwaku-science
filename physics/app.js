@@ -313,6 +313,7 @@ function probForceDecomp() {
       { variable: 'F',  unit: 'N', answer: F,   tol: 0 },
     ],
     result: { variable: 'Fx', value: fx, unit: 'N', expression: `${F} × cos${deg}° = ${F} × ${round1(Math.cos(rad))}` },
+    exact: false,   // cos の値を四捨五入した答えなので、整数でも「ぴったり判定」にしない
     anim: 'force-decomp', ap: { F, deg }
   };
 }
@@ -1175,7 +1176,12 @@ function checkAnswer() {
   if (mode === 'calc' || mode === 'test') {
     const el  = document.getElementById('inp-result');
     const val = parseFloat(el.value);
-    const ok  = Math.abs(val - current.result.value) <= 0.05 * Math.max(Math.abs(current.result.value), 1) + 0.05;
+    // 整数だけで計算できる問題（入れる数も答えも整数）は、ぴったりだけ正解にする
+    // （答えを四捨五入して作る問題は exact: false で外す）
+    const intProb = current.exact !== false && Number.isInteger(current.result.value) && current.inputs.every(inp => Number.isInteger(inp.answer));
+    const ok  = intProb
+      ? Math.abs(val - current.result.value) < 1e-9
+      : Math.abs(val - current.result.value) <= 0.05 * Math.max(Math.abs(current.result.value), 1) + 0.05;
     el.classList.add(ok ? 'correct' : 'incorrect');
     el.disabled = true;
     if (!ok) allCorrect = false;
