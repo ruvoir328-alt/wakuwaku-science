@@ -346,7 +346,7 @@ function probEquilNormal() {
 /** 2-2b: 3力のつりあい（未知の力） */
 function probEquil3() {
   const w  = ri(2, 15) * 10;   // 重力 [N]
-  const f1 = ri(1, w - 10 > 0 ? Math.floor(w / 2) : 5) * 5;
+  const f1 = ri(1, w / 10) * 5;     // 一方の張力 T₁：5 N 〜 W の半分（W より大きくならないように）
   const f2 = w - f1;
   return {
     badge: '力のつりあい',
