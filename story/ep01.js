@@ -186,8 +186,8 @@ window.EPISODE = {
       speaker: 'newton',
       byChoice: { id: 'q1', options: {
         rika:    { face: 'think',    text: 'ふむ、長く走ったほうが速いとは限らんぞ。では『1秒あたり』にそろえてみよう。' },
-        teacher: { face: 'question', text: 'ふむ、よい問いだ。では『1秒あたり』にそろえてみよう。' },
-        same:    { face: 'proud',    text: 'ふむ、よい問いだ。では『1秒あたり』にそろえてみよう。' }
+        teacher: { face: 'question', text: 'ふむ、よい問いじゃ。では『1秒あたり』にそろえてみよう。' },
+        same:    { face: 'proud',    text: 'ふむ、よい問いじゃ。では『1秒あたり』にそろえてみよう。' }
       } } },
 
     /* ---- アニメで確かめる ---- */
@@ -212,7 +212,7 @@ window.EPISODE = {
       speaker: 'newton', text: '1秒で進む距離、これが『速さ』じゃ。単位は m/s、メートル毎秒と読む。' },
 
     { bg: 'e1-hill', chars: [{ who: 'rika', face: 'question', side: 'right' }],
-      speaker: 'rika', text: 'でも私、ずっと秒速5 mじゃなかったよ？ 上り坂はゆっくりで、下り坂はスピードアップ！' },
+      speaker: 'rika', text: 'でもわたし、ずっと秒速5 mじゃなかったよ？ 上り坂はゆっくりで、下り坂はスピードアップ！' },
 
     { bg: 'e1-hill', chars: [{ who: 'newton', face: 'proud', side: 'left' }, { who: 'rika', face: 'normal', side: 'right' }],
       speaker: 'newton', text: 'そのとおり。全体をまとめたのが『平均の速さ』じゃ。' },

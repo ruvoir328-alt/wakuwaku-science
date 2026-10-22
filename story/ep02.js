@@ -207,7 +207,7 @@ window.EPISODE = {
       speaker: 'rika', text: 'じゃあ、速さにも向きがあるの？' },
 
     { bg: 'e2-velocity', chars: [{ who: 'newton', face: 'proud', side: 'left' }, { who: 'rika', face: 'normal', side: 'right' }],
-      speaker: 'newton', text: 'よい問いだ。向きも含めた速さが『速度』じゃ。' },
+      speaker: 'newton', text: 'よい問いじゃ。向きも含めた速さが『速度』じゃ。' },
 
     { bg: 'e2-velocity', chars: [{ who: 'newton', face: 'normal', side: 'left' }, { who: 'rika', face: 'idea', side: 'right' }],
       speaker: 'newton', text: '東へ秒速1.5 mなら＋1.5 m/s、西へなら−1.5 m/sじゃ。' },

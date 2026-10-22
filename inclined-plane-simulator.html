@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>斜面台車実験シミュレーター</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<title>斜面台車実験シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body {
@@ -163,10 +165,82 @@ body {
   border: 1px solid #c4944a; background: linear-gradient(to top, #f8d56b, #f5c518);
   opacity: 0.85; display: none;
 }
+/* ---- ほかのシミュ（sim/freefall.html など）と同じ見た目にそろえる ---- */
+:root{
+  color-scheme:dark;
+  --coat:#22305a; --paper:#ffffff; --ink:#1f2638; --apple:#d93a3f;
+  --muted:#6b7488; --line:#dfe4ee; --soft:#f4f6fb;
+}
+body{font-family:'Zen Maru Gothic',system-ui,sans-serif;background:var(--coat);color:var(--ink)}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+.bench{background:var(--paper);border-radius:14px;overflow:hidden}
+#step-indicator{position:static;box-shadow:none;border-bottom:1px solid var(--line);padding:12px 6px 10px}
+.step-item{font-size:12px;gap:4px;color:#aab2c4;white-space:nowrap}
+.step-item .step-num{width:24px;height:24px;font-size:12px;border-color:#cdd4e2}
+.step-connector{width:14px;margin:0 3px;background:var(--line)}
+.step-item.active,.step-item.active .step-num{border-color:var(--apple)}
+.step-item.active{color:var(--apple)}
+.step-item.active .step-num{background:var(--apple)}
+.step-item.done{color:#3f9a5c}
+.step-item.done .step-num{background:#3f9a5c;border-color:#3f9a5c}
+.step-connector.done{background:#3f9a5c}
+.phase{padding:14px 12px}
+#phase1 h2,#phase2 h2,#phase3 h2{font-size:18px;font-weight:900;color:var(--ink)}
+#phase1 .subtitle,#phase2 .subtitle,#phase3 .subtitle,.angle-hint{color:var(--muted);font-weight:700}
+.angle-display{font-family:'Dela Gothic One',sans-serif;font-weight:400;color:var(--apple)}
+#btn-start{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);border-radius:999px;box-shadow:0 4px 0 #a82a2f;padding:14px 48px}
+#btn-start:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+#btn-to-graph{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--coat);border-radius:999px;box-shadow:none}
+#btn-undo-cut{color:var(--apple);border-color:var(--apple);border-radius:999px}
+#btn-reset{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;margin:16px auto 8px}
+.cut-instruction{color:#7e5129;background:#fff7e9;border:2px dashed #e9c48f}
+#tray-label,#graph-tray-label{color:var(--muted);font-weight:900}
+#tray,#graph-tray{border-color:#cdd4e2}
+#result-box{border:1px solid var(--line);box-shadow:none}
+.result-label{color:var(--muted);font-weight:700}
+.result-value{color:var(--apple)}
+.result-theory{color:var(--coat)}
+#btn-start:focus-visible,#btn-to-graph:focus-visible,#btn-undo-cut:focus-visible,#btn-reset:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
 </style>
 </head>
 <body>
+<div class="app">
+  <div class="top">
+    <a href="story/?ep=05">← 第5話 ストーリーにもどる</a>
+    <span>1章 直線運動の世界</span>
+    <a class="ask-newton" href="newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　第5話</div>
+    <h1>斜面台車で、記録テープを調べよう</h1>
+  </div>
 
+  <div class="guide">
+    <img id="guideImg" src="story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
 <div id="step-indicator">
   <div class="step-item active" id="si-1"><div class="step-num">①</div><div>角度設定</div></div>
   <div class="step-connector" id="sc-1"></div>
@@ -226,6 +300,22 @@ body {
     <button id="btn-reset">🔄 最初からやり直す</button>
   </div>
 </div>
+  </div><!-- /bench -->
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>加速度 ＝ 速度の変化 ÷ かかった時間（単位 m/s²）</li>
+      <li>記録テープの間隔が一定の割合で増える ＝ 加速度が一定（等加速度直線運動）</li>
+      <li>v = v₀ + at、x = v₀t + ½at²、v² − v₀² = 2ax</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <a class="go" href="physics/drill.html?unit=1-3">チャレンジモードで計算する →</a>
+    <a class="back" href="story/?ep=05">第5話のストーリーを見る</a>
+  </div>
+</div><!-- /app -->
 
 <div id="drag-ghost"></div>
 
@@ -246,7 +336,15 @@ const CUT_ZONES = [];
 let cutsMade = new Set();
 
 // ── Helpers ──────────────────────────────────────────────────
+// ナビ役のひとこと（ステップごとに変える）
+const GUIDE = {
+  1: ['question', '斜面の角度を決めて、台車を走らせるのじゃ。記録テープの打点の間隔は、どうなるかな？'],
+  2: ['normal', '記録テープを、5打点ごとに切りわけよう。切ったテープの長さをくらべてごらん。'],
+  3: ['proud', '切ったテープを、グラフ用紙に順に並べるのじゃ。上のはしがまっすぐ並んだら、加速度が一定の証拠じゃ。']
+};
 function setStep(n) {
+  document.getElementById('bubble').textContent = GUIDE[n][1];
+  document.getElementById('guideImg').src = 'story/img/newton_' + GUIDE[n][0] + '.webp';
   [1,2,3].forEach(i => {
     const si = document.getElementById('si-' + i);
     si.classList.remove('active','done');
@@ -342,7 +440,7 @@ function drawIncline() {
 
   const midA = -angleDeg * Math.PI / 360;
   incCtx.fillStyle = '#e74c3c';
-  incCtx.font = `bold ${Math.round(W*0.035)}px Noto Sans JP, sans-serif`;
+  incCtx.font = `bold ${Math.round(W*0.035)}px Zen Maru Gothic, sans-serif`;
   incCtx.fillText(`${Math.round(angleDeg)}°`, bx + 42*Math.cos(midA)-10, by + 42*Math.sin(midA)+4);
 
   incCtx.beginPath(); incCtx.arc(tp.x, tp.y, 13, 0, Math.PI*2);
@@ -514,7 +612,7 @@ function drawTape() {
   // Segment labels
   tapeData.forEach((seg, i) => {
     const mx = (CUT_ZONES[i] + CUT_ZONES[i + 1]) / 2;
-    tapeCtx.fillStyle = '#888'; tapeCtx.font = '9px Noto Sans JP, sans-serif';
+    tapeCtx.fillStyle = '#888'; tapeCtx.font = '9px Zen Maru Gothic, sans-serif';
     tapeCtx.textAlign = 'center';
     tapeCtx.fillText((seg.lengthM * 100).toFixed(2) + 'cm', mx, 32);
     tapeCtx.textAlign = 'left';
@@ -659,13 +757,13 @@ function drawGraph() {
   graphCtx.strokeStyle = '#2c3e50'; graphCtx.lineWidth = 2;
   graphCtx.beginPath(); graphCtx.moveTo(pl, pt); graphCtx.lineTo(pl, pt+ph); graphCtx.lineTo(pl+pw, pt+ph); graphCtx.stroke();
 
-  graphCtx.fillStyle = '#2c3e50'; graphCtx.font = `bold ${Math.round(GW*0.03)}px Noto Sans JP, sans-serif`;
+  graphCtx.fillStyle = '#2c3e50'; graphCtx.font = `bold ${Math.round(GW*0.03)}px Zen Maru Gothic, sans-serif`;
   graphCtx.textAlign = 'center'; graphCtx.fillText('時間 t →', pl + pw/2, pt + ph + 36);
   graphCtx.save(); graphCtx.translate(16, pt + ph/2); graphCtx.rotate(-Math.PI/2);
   graphCtx.fillText('速さ v →', 0, 0); graphCtx.restore();
 
   if (!placedPieces.length) {
-    graphCtx.fillStyle = '#aaa'; graphCtx.font = `${Math.round(GW*0.034)}px Noto Sans JP, sans-serif`;
+    graphCtx.fillStyle = '#aaa'; graphCtx.font = `${Math.round(GW*0.034)}px Zen Maru Gothic, sans-serif`;
     graphCtx.textAlign = 'center';
     graphCtx.fillText('テープ片をここにドラッグしよう', pl + pw/2, pt + ph/2);
     return;
@@ -700,9 +798,9 @@ function drawGraph() {
     }
     graphCtx.restore();
 
-    graphCtx.fillStyle = '#555'; graphCtx.font = `${Math.round(GW*0.022)}px Noto Sans JP, sans-serif`;
+    graphCtx.fillStyle = '#555'; graphCtx.font = `${Math.round(GW*0.022)}px Zen Maru Gothic, sans-serif`;
     graphCtx.textAlign = 'center'; graphCtx.fillText(p.lengthCm.toFixed(2), bx, by - 3);
-    graphCtx.fillStyle = '#666'; graphCtx.font = `${Math.round(GW*0.024)}px Noto Sans JP, sans-serif`;
+    graphCtx.fillStyle = '#666'; graphCtx.font = `${Math.round(GW*0.024)}px Zen Maru Gothic, sans-serif`;
     graphCtx.fillText(`t${item.col + 1}`, bx, pt + ph + 16);
   });
 
@@ -905,6 +1003,7 @@ document.getElementById('btn-reset').addEventListener('click', () => {
 });
 
 resizeIncline();
+setStep(1);
 </script>
 </body>
 </html>

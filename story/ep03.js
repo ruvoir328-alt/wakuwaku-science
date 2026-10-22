@@ -181,7 +181,7 @@ window.EPISODE = {
       byChoice: { id: 'q1', options: {
         m60:     { face: 'question', text: 'ほう、自信がありそうじゃな。では、1秒ごとにシールを貼って確かめてみよう。' },
         m61:     { face: 'think',    text: 'ふむ、1つずれておらんかな？ 1秒ごとにシールを貼って確かめてみよう。' },
-        unknown: { face: 'proud',    text: 'ふむ、よい問いだ。1秒ごとにシールを貼って確かめてみよう。' }
+        unknown: { face: 'proud',    text: 'ふむ、よい問いじゃ。1秒ごとにシールを貼って確かめてみよう。' }
       } } },
 
     /* ---- アニメで確かめる ---- */

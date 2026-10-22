@@ -59,6 +59,8 @@ body {
   white-space: nowrap;
 }
 .back-link:hover { color: #fff; }
+.back-links { display: flex; flex-direction: column; }   /* ストーリー・シミュから来たときの2行 */
+.back-links .back-link { padding: 3px 0; }
 
 .header-right { display: flex; align-items: center; gap: 6px; }
 

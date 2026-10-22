@@ -172,7 +172,7 @@ window.EPISODE = {
     { bg: 'e4-train', chars: [{ who: 'newton', face: 'normal', side: 'left' }, { who: 'rika', face: 'confident', side: 'right' }],
       speaker: 'rika',
       byChoice: { id: 'q1', options: {
-        v2:  { face: 'confident', text: '2 m/sでしょ？ 私は秒速2 mでしか歩いてないよ？' },
+        v2:  { face: 'confident', text: '2 m/sでしょ？ わたしは秒速2 mでしか歩いてないよ？' },
         v20: { face: 'question',  text: '電車と同じ20 m/s…かな？' },
         v22: { face: 'idea',      text: '電車の20と、わたしの2で、22 m/s？' },
         v18: { face: 'question',  text: '電車の中だから、引き算して18 m/s…？' }
