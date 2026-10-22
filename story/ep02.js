@@ -56,17 +56,6 @@ function answerCard(word, sub, size){
   };
 }
 const SKY = '<defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#e9f6fc"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky1)"/>';
-// ドリルがまだないので、ドリルのボタンを「準備中」にする
-function soonEnds(){
-  const box = document.getElementById('choices');
-  new MutationObserver(() => {
-    const go = box.querySelector('.ends a[href="undefined"]');
-    if (!go) return;
-    const b = document.createElement('button');
-    b.className = 'soon'; b.disabled = true; b.textContent = 'チャレンジモード（準備中）';
-    go.replaceWith(b);
-  }).observe(box, { childList: true });
-}
 
 /* ---- この話の絵 ---- */
 // 数直線：教室 = 0、東向きを正。1 m = 5 px
@@ -150,8 +139,6 @@ SCENES['e2-velocity'] = () => svg(
 
 SCENES['e2-answer'] = answerCard('0 m！', '教室から進んだのは');
 
-soonEnds();
-
 /* ---- 脚本 ---- */
 window.EPISODE = {
   id: '02',
@@ -159,6 +146,7 @@ window.EPISODE = {
   topic: '変位と速度',
   title: 'たくさん歩いたのに、進んでない？',
   simUrl: '../sim/displacement.html',
+  drillUrl: '../physics/drill.html?unit=1-1',
   scenes: [
     { bg: 'title' },
 
