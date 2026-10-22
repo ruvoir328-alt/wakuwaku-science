@@ -56,17 +56,6 @@ function answerCard(word, sub, size){
   };
 }
 const SKY = '<defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#e9f6fc"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky1)"/>';
-// ドリルがまだないので、ドリルのボタンを「準備中」にする
-function soonEnds(){
-  const box = document.getElementById('choices');
-  new MutationObserver(() => {
-    const go = box.querySelector('.ends a[href="undefined"]');
-    if (!go) return;
-    const b = document.createElement('button');
-    b.className = 'soon'; b.disabled = true; b.textContent = 'チャレンジモード（準備中）';
-    go.replaceWith(b);
-  }).observe(box, { childList: true });
-}
 
 /* ---- この話の絵 ---- */
 function train(x, y, w, color, label){
@@ -152,8 +141,6 @@ SCENES['e4-relative'] = () => board([
 
 SCENES['e4-answer'] = answerCard('22 m/s！', 'ホームから見ると', 'clamp(28px,9vw,44px)');
 
-soonEnds();
-
 /* ---- 脚本 ---- */
 window.EPISODE = {
   id: '04',
@@ -161,6 +148,7 @@ window.EPISODE = {
   topic: '合成速度と相対速度',
   title: '電車の中で走ると？',
   simUrl: '../sim/relative-velocity.html',
+  drillUrl: '../physics/drill.html?unit=1-7',
   scenes: [
     { bg: 'title' },
 
