@@ -56,17 +56,6 @@ function answerCard(word, sub, size){
   };
 }
 const SKY = '<defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#e9f6fc"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky1)"/>';
-// ドリルがまだないので、ドリルのボタンを「準備中」にする
-function soonEnds(){
-  const box = document.getElementById('choices');
-  new MutationObserver(() => {
-    const go = box.querySelector('.ends a[href="undefined"]');
-    if (!go) return;
-    const b = document.createElement('button');
-    b.className = 'soon'; b.disabled = true; b.textContent = 'チャレンジモード（準備中）';
-    go.replaceWith(b);
-  }).observe(box, { childList: true });
-}
 
 /* ---- この話の絵 ---- */
 // 高さ 4.9 m の台から、A を秒速3 m で真横に投げ、B をそっと手放す
@@ -137,8 +126,6 @@ SCENES['e8-calc'] = () => svg(
 
 SCENES['e8-answer'] = answerCard('同時！', 'どちらも1秒で床に着く');
 
-soonEnds();
-
 /* ---- 脚本 ---- */
 window.EPISODE = {
   id: '08',
@@ -146,6 +133,7 @@ window.EPISODE = {
   topic: '水平投射',
   title: '横に投げたら、遅く落ちる？',
   simUrl: '../sim/horizontal-throw.html',
+  drillUrl: '../physics/drill.html?unit=1-8',
   scenes: [
     { bg: 'title' },
 
