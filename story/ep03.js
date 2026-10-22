@@ -150,6 +150,7 @@ window.EPISODE = {
   chapter: '1章 直線運動の世界',
   topic: '等速直線運動',
   title: 'グラフがまっすぐになる運動',
+  simUrl: '../sim/uniform-motion.html',
   drillUrl: '../physics/drill.html?unit=1-2',
   scenes: [
     { bg: 'title' },

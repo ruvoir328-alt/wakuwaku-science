@@ -56,12 +56,12 @@ function answerCard(word, sub, size){
   };
 }
 const SKY = '<defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#e9f6fc"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky1)"/>';
-// ドリルもシミュもまだないので、最後のボタンを「準備中」にする
+// ドリルがまだないので、ドリルのボタンを「準備中」にする
 function soonEnds(){
   const box = document.getElementById('choices');
   new MutationObserver(() => {
-    const go = box.querySelector('.ends a.go');
-    if (!go || EPISODE.drillUrl) return;
+    const go = box.querySelector('.ends a[href="undefined"]');
+    if (!go) return;
     const b = document.createElement('button');
     b.className = 'soon'; b.disabled = true; b.textContent = 'チャレンジモード（準備中）';
     go.replaceWith(b);
@@ -160,6 +160,7 @@ window.EPISODE = {
   chapter: '1章 直線運動の世界',
   topic: '合成速度と相対速度',
   title: '電車の中で走ると？',
+  simUrl: '../sim/relative-velocity.html',
   scenes: [
     { bg: 'title' },
 
@@ -228,7 +229,7 @@ window.EPISODE = {
 
     /* ---- まとめ ---- */
     { bg: 'end', end: true, chars: [{ who: 'newton', face: 'happy', side: 'left' }, { who: 'rika', face: 'happy', side: 'right' }],
-      speaker: 'newton', text: '向きが逆のときはどうなるかな？ その問題は、いま準備中じゃ。楽しみにしておれ！',
+      speaker: 'newton', text: '向きが逆のときも試してみるかね？',
       points: [
         '合成速度：速度は足し算できる',
         '相対速度：相手の速度 − 自分の速度',

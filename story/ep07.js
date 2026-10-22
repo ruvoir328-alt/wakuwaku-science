@@ -60,12 +60,12 @@ const SKY = '<defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop o
 function twoDrills(){
   const box = document.getElementById('choices');
   new MutationObserver(() => {
-    const go = box.querySelector('.ends a.go');
+    const go = box.querySelector('.ends a[href*="drill.html"]');
     if (!go || go.dataset.two) return;
     go.dataset.two = '1';
     go.href = '../physics/drill.html?unit=1-5'; go.textContent = 'チャレンジモード（投げ下ろし）';
     const up = document.createElement('a');
-    up.className = 'next'; up.href = '../physics/drill.html?unit=1-6'; up.textContent = 'チャレンジモード（投げ上げ）';
+    up.className = go.className; up.href = '../physics/drill.html?unit=1-6'; up.textContent = 'チャレンジモード（投げ上げ）';
     go.after(up);
   }).observe(box, { childList: true });
 }
@@ -158,6 +158,7 @@ window.EPISODE = {
   chapter: '1章 直線運動の世界',
   topic: '鉛直投射',
   title: 'てっぺんで、リンゴは止まる？',
+  simUrl: '../sim/vertical-throw.html',
   drillUrl: '../physics/drill.html?unit=1-6',
   scenes: [
     { bg: 'title' },
