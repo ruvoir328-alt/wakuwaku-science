@@ -91,6 +91,11 @@ Claude Code にこう送るだけ：
   - 前からある斜面台車シミュを、ほかの1章のシミュと同じ作りで一から作り直す（`sim/inclined-plane.html`）
   - さわる場所：`sim/inclined-plane.html`（新しく作る） `inclined-plane-simulator.html`（新しいページへ案内） `sim/index.html` `story/ep05.js` `physics/app.js`
 
+- [x] **T-08　チャレンジモードのデザイン試作** 🌙
+  - 問題の動く絵をストーリー・シミュとそろえる／1章の問題文を話の場面に／単元一覧に話と記録／メダル・トロフィーのアニメとジングル
+  - 本物はさわらず、試作ページ（`physics/drill-proto.html` `physics/index-proto.html`）で見られるようにする
+  - さわる場所：`physics/proto.js` `physics/proto.css` `physics/drill-proto.html` `physics/index-proto.html`（どれも新しく作る）
+
 ---
 
 ## C. 2章「力と運動の法則」の準備と実装
