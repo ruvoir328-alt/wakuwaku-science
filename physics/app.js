@@ -480,6 +480,86 @@ function probBuoyancy() {
   };
 }
 
+// ========================================
+// 1-7「合成速度・相対速度」（第4話：電車の中を歩く、すれちがう電車）
+//   どの問題も、問題文で「東向きを正」と決めてから ＋/− を使う
+//   合成速度 v = v₁ + v₂、相対速度 v_AB = v_B − v_A（相手 − 自分）
+// ========================================
+
+const EAST = '<br><small>（東向きを正とする。西向きの速度には − をつけて入力）</small>';
+const sgnTxt = n => n < 0 ? `(−${-n})` : `${n}`;      // 式の中の負の数は（−○）と書く
+
+/** 1-7a: 合成速度（進行方向に歩く）  v = v₁ + v₂ */
+function probRelCompSame() {
+  const vA = ri(10, 30), w = ri(1, 3);
+  return {
+    badge: '合成速度',
+    text: `東へ <b>${vA} m/s</b> で走る電車の中を、リカが進行方向（東）へ <b>${w} m/s</b> で歩いている。<br>ホームから見たリカの速度 <i>v</i> を求めよ。${EAST}`,
+    formula: 'v = v₁ + v₂（電車 ＋ 歩く）',
+    signed: true,
+    inputs: [
+      { variable: 'v₁（電車）', unit: 'm/s', answer: vA, tol: 0 },
+      { variable: 'v₂（歩く）', unit: 'm/s', answer: w,  tol: 0 }
+    ],
+    result: { variable: 'v', value: vA + w, unit: 'm/s', expression: `${vA} + ${w}` },
+    anim: 'train', ap: { kind: 'comp', vA, v2: w }
+  };
+}
+
+/** 1-7b: 合成速度（進行方向と逆向きに歩く）  v = v₁ + v₂（v₂ < 0） */
+function probRelCompOpp() {
+  const vA = ri(10, 30), w = ri(1, 3);
+  return {
+    badge: '合成速度',
+    text: `東へ <b>${vA} m/s</b> で走る電車の中を、リカが進行方向と逆向き（西）へ <b>${w} m/s</b> で歩いている。<br>ホームから見たリカの速度 <i>v</i> を求めよ。${EAST}`,
+    formula: 'v = v₁ + v₂（電車 ＋ 歩く）',
+    signed: true,
+    inputs: [
+      { variable: 'v₁（電車）', unit: 'm/s', answer: vA, tol: 0 },
+      { variable: 'v₂（歩く）', unit: 'm/s', answer: -w, tol: 0 }
+    ],
+    result: { variable: 'v', value: vA - w, unit: 'm/s', expression: `${vA} + ${sgnTxt(-w)}` },
+    anim: 'train', ap: { kind: 'comp', vA, v2: -w }
+  };
+}
+
+/** 1-7c: 相対速度（同じ向きに走る隣の電車）  v_AB = v_B − v_A */
+function probRelSame() {
+  const vA = ri(10, 25);
+  let d = 0; while (d === 0) d = ri(-8, 8);             // 速さのちがい（0 はなし）
+  const vB = vA + d;
+  return {
+    badge: '相対速度',
+    text: `リカの乗った電車 A が東へ <b>${vA} m/s</b>、隣の線路の電車 B が東へ <b>${vB} m/s</b> で走っている。<br>A から見た B の速度（相対速度）<i>v</i><sub>AB</sub> を求めよ。${EAST}`,
+    formula: 'v<sub>AB</sub> = v<sub>B</sub> − v<sub>A</sub>（相手 − 自分）',
+    signed: true,
+    inputs: [
+      { variable: 'v<sub>B</sub>（相手）', unit: 'm/s', answer: vB, tol: 0 },
+      { variable: 'v<sub>A</sub>（自分）', unit: 'm/s', answer: vA, tol: 0 }
+    ],
+    result: { variable: 'v<sub>AB</sub>', value: vB - vA, unit: 'm/s', expression: `${vB} − ${vA}` },
+    anim: 'train', ap: { kind: 'rel', vA, vB }
+  };
+}
+
+/** 1-7d: 相対速度（すれちがう電車）  v_AB = v_B − v_A（v_B < 0） */
+function probRelPass() {
+  const vA = ri(10, 25), sB = ri(10, 25);
+  const vB = -sB;
+  return {
+    badge: '相対速度',
+    text: `リカの乗った電車 A が東へ <b>${vA} m/s</b> で走っている。向こうから電車 B が西へ <b>${sB} m/s</b> で走ってきて、すれちがう。<br>A から見た B の速度（相対速度）<i>v</i><sub>AB</sub> を求めよ。${EAST}`,
+    formula: 'v<sub>AB</sub> = v<sub>B</sub> − v<sub>A</sub>（相手 − 自分）',
+    signed: true,
+    inputs: [
+      { variable: 'v<sub>B</sub>（相手）', unit: 'm/s', answer: vB, tol: 0 },
+      { variable: 'v<sub>A</sub>（自分）', unit: 'm/s', answer: vA, tol: 0 }
+    ],
+    result: { variable: 'v<sub>AB</sub>', value: vB - vA, unit: 'm/s', expression: `${sgnTxt(vB)} − ${vA}` },
+    anim: 'train', ap: { kind: 'rel', vA, vB }
+  };
+}
+
 // ── 全単元のデフォルト（URL パラメータなしの場合）──
 const allGenerators = [probUniform, probAccelV, probAccelX, probFreeFall, probNewton];
 
@@ -492,6 +572,7 @@ const unitMap = {
   '1-4': { name: '自由落下',         gens: [probFreeFall] },
   '1-5': { name: '鉛直投げおろし',   gens: [probVerticalDown] },
   '1-6': { name: '鉛直投げ上げ',     gens: [probThrowUpV, probThrowUpMaxT] },
+  '1-7': { name: '合成速度・相対速度', gens: [probRelCompSame, probRelCompOpp, probRelSame, probRelPass] },
   // 2節: 力と運動の法則
   '2-1': { name: '力の合成・分解',   gens: [probForceAdd, probForceSub, probForceDecomp] },
   '2-2': { name: '力のつりあい',     gens: [probEquilNormal, probEquil3] },
@@ -740,6 +821,34 @@ function drawNewton(ctx, t, p) {
   txt(ctx,`m = ${m} kg`,14,18,'#34467e',12,true);
 }
 
+// 1-7：地面（ホーム）から見た電車。1 m/s = 3 px/s、画面のはしまで行ったら反対から出てくる
+function drawTrainCar(ctx, x, y, color, label) {
+  ctx.save();
+  ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, 120, 26, 6) : ctx.rect(x, y, 120, 26); ctx.fill();
+  ctx.fillStyle = '#dfe4ee';
+  for (let k = 0; k < 6; k++) ctx.fillRect(x + 8 + k * 19, y + 5, 12, 9);
+  ctx.restore();
+  if (label) txt(ctx, label, x + 8, y + 23, '#fff', 9, true);
+}
+function drawTrain(ctx, t, p) {
+  const S = 3, L = 120, span = W + L;
+  const wrap = x => ((x % span) + span) % span - L;
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#c3cad8'; ctx.fillRect(0, 84, W, 3); ctx.fillRect(0, 136, W, 3);
+  txt(ctx, '東（正の向き）→', W - 112, 18, '#d93a3f', 12, true);
+  const xa = wrap(60 + p.vA * S * t);
+  drawTrainCar(ctx, xa, 108, '#34467e', p.kind === 'rel' ? 'A（リカ）' : '');
+  if (p.kind === 'comp') {
+    const off = (((20 + p.v2 * S * t) % 100) + 100) % 100;   // 電車の中を歩く
+    drawBall(ctx, xa + 10 + off, 120, 6, '#d93a3f');
+    txt(ctx, `電車 ${p.vA} m/s　リカ（電車の中で）${p.v2 > 0 ? '東' : '西'}へ ${Math.abs(p.v2)} m/s`, 14, 18, '#34467e', 11, true);
+  } else {
+    drawTrainCar(ctx, wrap(220 + p.vB * S * t), 56, '#27ae60', 'B');
+    txt(ctx, `A：${p.vA > 0 ? '東' : '西'}へ ${Math.abs(p.vA)} m/s　B：${p.vB > 0 ? '東' : '西'}へ ${Math.abs(p.vB)} m/s`, 14, 18, '#34467e', 11, true);
+  }
+  txt(ctx, 'ホームから見たようす', 14, 36, '#6b7488', 10);
+}
+
 // ========================================
 // アニメーションループ
 // ========================================
@@ -761,6 +870,7 @@ function draw(ts) {
     case 'equil':        drawEquil(ctx,t,current.ap);        break;
     case 'friction':     drawFriction(ctx,t,current.ap);     break;
     case 'pressure':     drawPressure(ctx,t,current.ap);     break;
+    case 'train':        drawTrain(ctx,t,current.ap);        break;
   }
   animId = requestAnimationFrame(draw);
 }
@@ -906,6 +1016,8 @@ function cycleSoundMode() {
 function renderInputs(inputs) {
   const container = document.getElementById('inputs-container');
   container.innerHTML = '';
+  // 1-7 のように − を入れる問題は、スマホで − が打てるキーボードにする
+  const im = current && current.signed ? 'text' : 'decimal';
 
   if (mode === 'test') {
     // テストモード：答え欄1つ ＋ メモ欄
@@ -915,7 +1027,7 @@ function renderInputs(inputs) {
     row.innerHTML = `
       <span class="input-label">${r.variable} =</span>
       <input type="number" class="answer-input" id="inp-result"
-             placeholder="?" inputmode="decimal" step="any" autocomplete="off">
+             placeholder="?" inputmode="${im}" step="any" autocomplete="off">
       <span class="unit">${r.unit}</span>`;
     container.appendChild(row);
 
@@ -939,7 +1051,7 @@ function renderInputs(inputs) {
     row.innerHTML = `
       <span class="input-label">${inp.variable} =</span>
       <input type="number" class="answer-input" id="inp-${i}"
-             placeholder="?" inputmode="decimal" step="any" autocomplete="off">
+             placeholder="?" inputmode="${im}" step="any" autocomplete="off">
       <span class="unit">${inp.unit}</span>`;
     container.appendChild(row);
   });
@@ -957,7 +1069,7 @@ function renderInputs(inputs) {
     row.innerHTML = `
       <span class="input-label">${r.variable} =</span>
       <input type="number" class="answer-input" id="inp-result"
-             placeholder="?" inputmode="decimal" step="any" autocomplete="off">
+             placeholder="?" inputmode="${im}" step="any" autocomplete="off">
       <span class="unit">${r.unit}</span>`;
     container.appendChild(row);
   }
@@ -999,7 +1111,7 @@ function loadProblem() {
 
   document.getElementById('badge').textContent = current.badge;
   document.getElementById('problem-text').innerHTML = current.text;
-  document.getElementById('formula').textContent = current.formula;
+  document.getElementById('formula').innerHTML = current.formula;   // 1-7 の v<sub>AB</sub> のような下つき文字を出す
   renderInputs(current.inputs);
 
   document.getElementById('feedback').textContent = '';
