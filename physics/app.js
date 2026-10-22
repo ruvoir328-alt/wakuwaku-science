@@ -1390,7 +1390,7 @@ function retry() {
 
 const SIM_EP = {
   'speed-race.html': 1, 'displacement.html': 2, 'uniform-motion.html': 3, 'relative-velocity.html': 4,
-  'inclined-plane-simulator.html': 5, 'freefall.html': 6, 'vertical-throw.html': 7, 'horizontal-throw.html': 8
+  'inclined-plane.html': 5, 'inclined-plane-simulator.html': 5, 'freefall.html': 6, 'vertical-throw.html': 7, 'horizontal-throw.html': 8
 };
 function cameFrom() {
   try {

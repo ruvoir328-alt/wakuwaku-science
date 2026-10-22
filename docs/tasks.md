@@ -87,6 +87,10 @@ Claude Code にこう送るだけ：
   - T-05 の報告の 1・2・3・4・5・9・10 を直す（6・7・8・11・12 はこのまま）
   - さわる場所：`inclined-plane-simulator.html` `physics/app.js` `physics/style.css` `physics/index.html` `physics/mypage.html` `story/ep01.js` `story/ep02.js` `story/ep03.js` `story/ep04.js` `story/ep07.js`
 
+- [x] **T-07　斜面台車シミュを作り直す（第5話）** 🌙
+  - 前からある斜面台車シミュを、ほかの1章のシミュと同じ作りで一から作り直す（`sim/inclined-plane.html`）
+  - さわる場所：`sim/inclined-plane.html`（新しく作る） `inclined-plane-simulator.html`（新しいページへ案内） `sim/index.html` `story/ep05.js` `physics/app.js`
+
 ---
 
 ## C. 2章「力と運動の法則」の準備と実装

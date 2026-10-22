@@ -166,7 +166,7 @@ window.EPISODE = {
   chapter: '1章 直線運動の世界',
   topic: '速度が変わる運動',
   title: '記録テープの暗号',
-  simUrl: '../inclined-plane-simulator.html',
+  simUrl: '../sim/inclined-plane.html',
   drillUrl: '../physics/drill.html?unit=1-3',
   scenes: [
     { bg: 'title' },
