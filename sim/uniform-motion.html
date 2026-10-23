@@ -189,6 +189,7 @@ body{
   </div>
 </div>
 
+<script src="medal.js"></script>
 <script>
 /* ---- 第3話 等速直線運動 ----
    動く歩道の上に立つリカ。速度 v（一定）で 60 秒間運ばれる。
@@ -241,6 +242,7 @@ function showMissions(){
     li.classList.toggle('done', !!done[li.id]);
     li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
   });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
 }
 // 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
 function play(dur, step, onEnd, rate){

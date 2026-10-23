@@ -300,3 +300,9 @@ body {
 .mp-legend-item { color: #cfd7ee; }
 .mp-footer .mp-csv-btn { font-family: inherit; }
 .mp-back:focus-visible, .mp-card:focus-visible, .mp-csv-btn:focus-visible { outline: 3px solid #d93a3f; outline-offset: 2px; }
+
+/* ---- シミュのミッション（T-31） ---- */
+.mp-main + .mp-main { padding-top: 16px; }
+.mp-sim-head .mp-section-num { white-space: nowrap; }
+.mp-sim-count { margin-left: auto; font-size: 0.85rem; font-weight: 800; color: #1f2638; white-space: nowrap; }
+.mp-sim-note { padding: 8px 20px 0; font-size: 0.75rem; font-weight: 700; color: #6b7488; }

@@ -205,6 +205,7 @@ body{
   </div>
 </div>
 
+<script src="medal.js"></script>
 <script>
 /* ---- 第5話 斜面を下る力学台車（教科書の実験1） ----
    長さ 98 cm の板の一方を高さ h にのせた斜面。まさつは考えない。
@@ -259,6 +260,7 @@ function showMissions(){
     li.classList.toggle('done', !!done[li.id]);
     li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
   });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
 }
 // 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
 function play(dur, step, onEnd, rate){

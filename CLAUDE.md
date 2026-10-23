@@ -51,6 +51,10 @@
 - 数値はその話の脚本と同じものが出るようにする（例：第5話は高さ 20 cm で 2, 4, 6, 8 cm）
 - 「動きを減らす」設定では、アニメをせずに最後の形をすぐ表示する
 - `sim/index.html` に、章の見出しをつけて話の順に並べる
+- ミッションのメダル・トロフィーは `sim/medal.js` でまとめて動かす（メダル＝ミッション2こ、トロフィー＝全部。絵・ジングルはドリルと同じ。記録は localStorage の `wakuwakupub_sim_guest`）。新しいシミュでは次の3つをする
+  1. 本体の `<script>` の前で `<script src="medal.js"></script>` を読みこむ
+  2. ミッションの ✓ をつける関数（`showMissions()`）の最後で `SimMedal.sync(done);` を呼ぶ（`done` は `{ m1: true, ... }`。シミュの中の `done` は、開き直したら空からでよい）
+  3. `sim/medal.js` の `SIMS` に1行足す（ファイル名・話の番号・名前）。これでシミュ一覧とマイページにも出る
 
 ## チャレンジモード（ドリル）
 - 問題は `physics/app.js` の問題を作る関数で作り、`unitMap` に単元として登録する。単元一覧（`physics/index.html`）とマイページ（`physics/mypage.html` の `UNITS`）にも足す

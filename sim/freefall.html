@@ -173,6 +173,7 @@ body{
   </div>
 </div>
 
+<script src="medal.js"></script>
 <script>
 /* ---- 物理 ----
    筒の高さ H = 1.225 m（真空なら ちょうど 0.5 秒で底に着く）
@@ -352,6 +353,7 @@ function updateMissions(justFinished){
     li.classList.toggle('done', done[id]);
     li.querySelector('.box').textContent = done[id] ? '✓' : '';
   });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
   let face = 'question', text;
   if (!done.m1){
     text = mode === 'air'

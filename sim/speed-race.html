@@ -197,6 +197,7 @@ body{
   </div>
 </div>
 
+<script src="medal.js"></script>
 <script>
 /* ---- 第1話 速さくらべ ----
    2人とも、それぞれの平均の速さ v = 距離 ÷ 時間 で走るとして、最初の10秒間の位置を1秒ごとに並べる。
@@ -249,6 +250,7 @@ function showMissions(){
     li.classList.toggle('done', !!done[li.id]);
     li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
   });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
 }
 // 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
 function play(dur, step, onEnd, rate){
