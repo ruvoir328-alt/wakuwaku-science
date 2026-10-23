@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作用・反作用シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=13">← 第13話 ストーリーにもどる</a>
+    <span>2章 力と運動の法則</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　第13話</div>
+    <h1>押したら、押し返される？</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 250" role="img" aria-label="スケートリンクで押し合うリカとニュートンくんと、2つの力の矢印"></svg>
+    </div>
+
+    <div class="time-row">
+      <span class="label">押しはじめてからの時間</span>
+      <span class="t" id="tOut">0.00<small>秒</small></span>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>リカがニュートンくんを押す力</div><div id="f1Out"></div>
+      <div>ニュートンくんがリカを押す力</div><div id="f2Out"></div>
+      <div>ニュートンくんの速度</div><div id="vNOut"></div>
+      <div>リカの速度</div><div id="vROut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <label class="slider"><span class="s-head"><span class="s-name">押す力 F</span><output id="oF"></output></span>
+        <input type="range" id="inF" min="50" max="200" step="10" value="100"></label>
+      <label class="slider"><span class="s-head"><span class="s-name">リカの質量</span><output id="oMR"></output></span>
+        <input type="range" id="inMR" min="30" max="60" step="5" value="50"></label>
+      <label class="slider"><span class="s-head"><span class="s-name">ニュートンくんの質量</span><output id="oMN"></output></span>
+        <input type="range" id="inMN" min="20" max="60" step="5" value="25"></label>
+      <div class="btns">
+        <button type="button" class="drop" id="go">押す ▶</button>
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>そのまま押して、2つの力の大きさをくらべる</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>押す力を変えて、2つの力がいつも同じか確かめる</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>2人の質量を同じにして押し、すべる速さをくらべる</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>押すと、同じ大きさで押し返される（作用・反作用の法則）</li><li>作用と反作用は、同じ大きさ・反対向き・別々の物体にはたらく</li><li>力は同じでも、軽いほうが速くすべる（くわしくは第14話）</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <span class="soon">チャレンジモード（準備中）</span>
+    <a class="back" href="../story/?ep=13">第13話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 第13話 作用・反作用 ----
+   右向きを正。リカ（50 kg）がニュートンくん（25 kg）を F = 100 N で 0.50 秒押す（スケートでまさつなし）
+   作用・反作用：ニュートンくんに右向き 100 N、リカに左向き 100 N
+   加速度 a = F ÷ m：ニュートンくん 4.0 m/s² → 0.50 秒で +2.0 m/s、リカ 2.0 m/s² → −1.0 m/s。そのあとは等速
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+const fa = x => (Math.abs(x * 10 - Math.round(x * 10)) < 1e-9 ? f1(x) : f2(x));
+const TP = 0.5, T = 2;                     // 押している時間 0.50 s、2秒まで見る
+const svg = $('svg');
+const FY = 196, PXM = 20;                  // 氷の面の y、1 m の px
+const X0R = 136, X0N = 184;                // はじめの位置（手がふれている）
+let F = 100, mR = 50, mN = 25, simT = 0, runs = [];
+
+// 右向きを正。押している間は加速度 ±F/m、そのあとは等速
+const aN = () => F / mN, aR = () => -F / mR;
+const vOf = (a, t) => a * Math.min(t, TP);
+const xOf = (a, t) => { const s = Math.min(t, TP); return a * s * s / 2 + a * TP * Math.max(0, t - TP); };
+const clampX = p => Math.max(22, Math.min(298, p));
+
+function person(img, cx, w){
+  el('image', { href: '../story/img/' + img + '.webp', x: cx - w / 2, y: FY - 92, width: w, height: 92 }, svg);
+}
+
+function draw(t){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 250, fill: '#e9f6fc' }, svg);
+  el('rect', { y: FY, width: 320, height: 54, fill: '#bfe2f6' }, svg);
+  txt(svg, 8, 16, '右向きを正とする', 11, '#4b5568', 'start');
+  txt(svg, 312, 16, 'スケートリンク（まさつなし）', 10, '#6b7488', 'end');
+  for (let m = -4; m <= 6; m += 2){
+    const p = 160 + m * PXM;
+    el('line', { x1: p, x2: p, y1: FY + 4, y2: FY + 10, stroke: '#4b5568', 'stroke-width': 1 }, svg);
+    txt(svg, p, FY + 22, (m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m) + (m === 6 ? ' m' : ''), 9, '#4b5568');
+  }
+  const pR = clampX(X0R + xOf(aR(), t) * PXM), pN = clampX(X0N + xOf(aN(), t) * PXM);
+  person(t > 0 && t < TP ? 'rika_surprise' : 'rika_normal', pR - 14, 52);
+  person(t > 0 ? 'newton_surprise' : 'newton_normal', pN + 16, 60);
+  txt(svg, pR - 14, FY + 36, 'リカ ' + mR + ' kg', 10, '#1f2638');
+  txt(svg, pN + 16, FY + 36, 'ニュートンくん ' + mN + ' kg', 10, '#1f2638');
+  // 2つの力（押しているあいだ）。長さは同じ、向きは反対
+  const L = F * 0.42;
+  if (t === 0){
+    const y = FY - 50;
+    arrow(svg, pN - 2, y, pN - 2 + L, y, '#d93a3f', 4);
+    txt(svg, pN - 2 + L, y - 8, 'F ' + F + ' N', 11, '#d93a3f', 'end');
+    txt(svg, pR - 30, y + 26, '？', 22, '#d93a3f');
+    txt(svg, 160, 36, 'リカ → ニュートンくん：' + F + ' N（右向き）', 10, '#d93a3f');
+    txt(svg, 160, 50, 'ニュートンくん → リカ：何 N？', 10, '#d93a3f');
+  } else if (t < TP){
+    const y = FY - 50;
+    arrow(svg, pN - 2, y, pN - 2 + L, y, '#d93a3f', 4);
+    txt(svg, pN - 2 + L, y - 8, 'F ' + F + ' N', 11, '#d93a3f', 'end');
+    arrow(svg, pR + 2, y + 18, pR + 2 - L, y + 18, '#d93a3f', 4);
+    txt(svg, pR + 2 - L, y + 36, F + ' N', 11, '#d93a3f', 'start');
+    txt(svg, 160, 36, '作用：リカ → ニュートンくん（右向き）', 10, '#d93a3f');
+    txt(svg, 160, 50, '反作用：ニュートンくん → リカ（左向き）', 10, '#d93a3f');
+  } else {
+    txt(svg, 160, 40, '押しおわり → 力がなくなり、同じ速さですべる', 10, '#4b5568');
+    const vN = vOf(aN(), t), vR = vOf(aR(), t);
+    arrow(svg, pN + 16, FY - 104, pN + 16 + vN * 14, FY - 104, '#4b5568', 2.5);
+    txt(svg, pN + 16, FY - 110, '+' + fa(vN) + ' m/s', 10, '#4b5568');
+    arrow(svg, pR - 14, FY - 104, pR - 14 + vR * 14, FY - 104, '#4b5568', 2.5);
+    txt(svg, pR - 14, FY - 110, '−' + fa(-vR) + ' m/s', 10, '#4b5568');
+  }
+  show(t);
+}
+
+function show(t){
+  const vN = vOf(aN(), t), vR = vOf(aR(), t);
+  $('tOut').innerHTML = t.toFixed(2) + '<small>秒</small>';
+  $('oF').innerHTML = F + '<small>N</small>';
+  $('oMR').innerHTML = mR + '<small>kg</small>';
+  $('oMN').innerHTML = mN + '<small>kg</small>';
+  const on = t < TP;
+  $('f1Out').textContent = on ? F + ' N（右向き）' : '0 N（はなれた）';
+  $('f2Out').textContent = t === 0 ? '？' : on ? F + ' N（左向き）' : '0 N（はなれた）';
+  $('vNOut').textContent = (vN > 0 ? '+' : '') + fa(vN) + ' m/s';
+  $('vROut').textContent = (vR < 0 ? '−' : '') + fa(Math.abs(vR)) + ' m/s';
+  if (t === 0){ $('formula').innerHTML = '押すと、2つの力の矢印が出るよ。押し返す力は何 N かな？'; return; }
+  $('formula').innerHTML = '作用と反作用：どちらも <b>' + F + ' N</b>。向きは反対で、別々の人にはたらく。' +
+    (t >= TP ? '<br>はなれる速さ：ニュートンくん <b>+' + fa(aN() * TP) + ' m/s</b>、リカ <b>−' + fa(-aR() * TP) + ' m/s</b>' +
+      (mR === mN ? '（質量が同じなら、同じ速さ）' : '<br>力は同じなのに、軽いほうが速い。そのわけは第14話のお楽しみ！') : '');
+}
+
+function talk(t){
+  if (t === 0) return say('question', 'リカくんがわしを ' + F + ' N で押す。そのとき、わしがリカくんを押し返す力は何 N かな？');
+  if (!done.m2) return say('proud', '押すと、同じ大きさで押し返される。2つの矢印は同じ長さじゃろう？ これが作用・反作用の法則、わしの第三法則じゃ！ 押す力を変えてもためしてみよう。');
+  if (!done.m3) return say('think', '力をいくつにしても、2つの力はいつも同じ大きさじゃ。でも、軽いわしのほうが速くすべる。2人の質量を同じにしたら、どうなるかな？');
+  if (mR === mN) return say('happy', '質量が同じなら、同じ速さで反対向きにすべる。力は同じでも、軽いほうが動きやすい。そのわけは第14話でな！');
+  say('happy', '作用と反作用は、同じ大きさ・反対向き・別々の物体にはたらく。つりあいとのちがいに気をつけるのじゃ。');
+}
+
+function start(){
+  $('go').disabled = true; $('go').textContent = 'すべっています…';
+  say('normal', '2つの力の矢印をよく見ていてごらん。');
+  play(T, t => { simT = t; draw(t); }, () => {
+    done.m1 = true;
+    if (F !== 100) done.m2 = true;
+    if (mR === mN) done.m3 = true;
+    runs.push({ F, mR, mN });
+    $('go').disabled = false; $('go').textContent = 'もう一度押す ▶';
+    showMissions(); draw(T); talk(T);
+  }, 0.5);
+}
+function setFrom(){
+  stopPlay(); F = Number($('inF').value); mR = Number($('inMR').value); mN = Number($('inMN').value); simT = 0;
+  $('go').disabled = false; $('go').textContent = '押す ▶';
+  draw(0); talk(0);
+}
+function reset(){
+  $('inF').value = 100; $('inMR').value = 50; $('inMN').value = 25; runs = [];
+  setFrom();
+}
+['inF', 'inMR', 'inMN'].forEach(id => $(id).addEventListener('input', setFrom));
+$('go').addEventListener('click', start);
+$('reset').addEventListener('click', reset);
+draw(0); talk(0);
+</script>
+</body>
+</html>
