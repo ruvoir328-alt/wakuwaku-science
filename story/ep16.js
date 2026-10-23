@@ -129,7 +129,7 @@ SCENES['e16-ramp'] = () => anim(svg(
     const Fp = Math.min(11, 4 + 7 * t / 3.5), slip = Fp > MU * NN;
     const ts = (MU * NN - 4) * 3.5 / 7;                                   // すべり出す時刻
     const f = slip ? MU2 * NN : Fp;
-    const dx = slip ? Math.min(90, 40 * (t - ts) * (t - ts)) : 0;
+    const dx = slip ? Math.min(50, 40 * (t - ts) * (t - ts)) : 0;
     const bx = 250 + dx;
     root.querySelector('[data-b]').innerHTML = book(bx, 78, 60, 34).replace('本 2.0 kg', '本') +
       arrow(bx - 2 - 6 * Fp, 95, bx - 2, 95, '#d93a3f', 4) + T(bx - 8 - 6 * Fp, 99, 'F ' + Fp.toFixed(1) + ' N', 11, '#d93a3f', 'end') +

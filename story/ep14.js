@@ -173,7 +173,7 @@ window.EPISODE = {
 
     /* ---- 謎と予想 ---- */
     { bg: 'e14-cart', chars: [{ who: 'newton', face: 'question', side: 'left' }],
-      speaker: 'newton', text: 'まさつのない床の上で、2.0 kg の台車を 4.0 N で押し続ける。台車の速さはどうなるかな？',
+      speaker: 'newton', text: 'まさつのない床で、2.0 kg の台車を 4.0 N で押し続ける。速さはどうなるかな？',
       choice: {
         id: 'q1',
         options: [

@@ -116,7 +116,9 @@ SCENES['e12-compare'] = () => {
       const lab = root.querySelector('[data-l' + k + ']');
       const stopped = L.a && t >= 2.0 / L.a;
       lab.textContent = stopped ? x.toFixed(1) + ' m で止まった' : (!L.a && t >= 5 ? '止まらない →' : '');
-      lab.setAttribute('x', Math.min(220, LX + x * PM + 30));
+      // 止まったときは、そりの右どなり（レーンの名前とかさならないように）。氷の「止まらない」はレーンの上
+      if (stopped){ lab.setAttribute('x', LX + x * PM + 18); lab.setAttribute('y', L.y - 3); lab.setAttribute('text-anchor', 'start'); }
+      else { lab.setAttribute('x', 200); lab.setAttribute('y', L.y - 30); lab.setAttribute('text-anchor', 'middle'); }
     });
     root.querySelector('[data-time]').textContent = t.toFixed(1) + '秒';
   }, 'もう一度すべらせる');

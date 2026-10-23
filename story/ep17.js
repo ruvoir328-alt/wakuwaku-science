@@ -147,12 +147,12 @@ SCENES['e17-depth'] = () => anim(svg(stand() + tank() + '<g data-s></g>' + T(200
 function snowPerson(cx, label, area, pa, ski){
   const sinkPx = 36 * pa / 24500, top = 64 + sinkPx;
   return '<image href="img/rika_normal.webp" x="' + (cx - 40) + '" y="' + top + '" width="80" height="146"/>' +
-    (ski ? '<rect x="' + (cx - 58) + '" y="' + (top + 140) + '" width="116" height="7" rx="3" fill="#d93a3f"/>' : '') +
     '<rect x="' + (cx - 64) + '" y="206" width="128" height="94" fill="#fff"/>' +
     '<path d="M' + (cx - 64) + ' 206 h128" stroke="#d6dce6" stroke-width="2"/>' +
+    (ski ? '<rect x="' + (cx - 58) + '" y="202" width="116" height="7" rx="3" fill="#d93a3f"/>' : '') +
     T(cx, 228, label + ' ' + area + ' m²', 12, '#1f2638') +
     T(cx, 248, 'P = 490 ÷ ' + area, 11, '#6b7488') + T(cx, 268, '= ' + pa + ' Pa', 14, '#d93a3f') +
-    T(cx, 196, ski ? 'ほとんど しずまない' : 'ずぶっと しずむ', 11, '#7e5129');
+    T(cx, top - 6, ski ? 'ほとんど しずまない' : 'ずぶっと しずむ', 11, '#7e5129');
 }
 SCENES['e17-snow'] = () => svg(SKY +
   snowPerson(196, 'くつ', '0.020', 24500, false) + snowPerson(330, 'スキー', '0.25', 1960, true) +
