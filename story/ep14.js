@@ -219,7 +219,10 @@ window.EPISODE = {
       speaker: 'newton', text: '加速度は力に比例し、質量に反比例する。これが『運動の法則』。わしの第二法則じゃ！' },
 
     { bg: 'e14-board', chars: [{ who: 'newton', face: 'normal', side: 'left' }],
-      speaker: 'newton', text: '式にすると ma = F。この台車なら a = 4.0 ÷ 2.0 = 2.0 m/s²、3秒後には 6.0 m/s じゃ。' },
+      speaker: 'newton', text: '式にすると ma = F。これが『運動方程式』じゃ。' },
+
+    { bg: 'e14-board', chars: [{ who: 'rika', face: 'idea', side: 'left' }],
+      speaker: 'rika', text: 'この台車なら a = 4.0 ÷ 2.0 = 2.0 m/s²。3秒後には 6.0 m/s だね！' },
 
     { bg: 'e14-recall', chars: [{ who: 'newton', face: 'happy', side: 'left' }],
       speaker: 'newton', text: '第13話で、軽いわしのほうが速くすべったのも、このためじゃ。' },
