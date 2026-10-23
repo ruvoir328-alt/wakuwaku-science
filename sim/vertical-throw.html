@@ -200,6 +200,7 @@ body{
   </div>
 </div>
 
+<script src="medal.js"></script>
 <script>
 /* ---- 第7話 鉛直投げ上げ ----
    上向きを正。v = v₀ − gt、y = v₀t − ½gt²、加速度はいつも −g（下向き 9.8 m/s²）
@@ -252,6 +253,7 @@ function showMissions(){
     li.classList.toggle('done', !!done[li.id]);
     li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
   });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
 }
 // 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
 function play(dur, step, onEnd, rate){

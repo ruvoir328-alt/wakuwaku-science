@@ -198,6 +198,7 @@ body{
   </div>
 </div>
 
+<script src="medal.js"></script>
 <script>
 /* ---- 第4話 合成速度と相対速度 ----
    東向きを正。地面に対して：電車 20 m/s、リカは電車の中を ±2 m/s で歩く、隣の電車 25 m/s。
@@ -251,6 +252,7 @@ function showMissions(){
     li.classList.toggle('done', !!done[li.id]);
     li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
   });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
 }
 // 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
 function play(dur, step, onEnd, rate){

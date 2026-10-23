@@ -45,6 +45,19 @@
 
     </main>
 
+    <!-- シミュレーションのミッション（sim/medal.js の記録） -->
+    <div class="mp-main">
+      <section class="mp-section">
+        <div class="mp-section-header mp-sim-head">
+          <span class="mp-section-num">シミュ</span>
+          <h2 class="mp-section-title">ミッション</h2>
+          <span class="mp-sim-count" id="mp-sim-count"></span>
+        </div>
+        <p class="mp-sim-note">🥇 ミッション2こ　🏆 ミッション全部</p>
+        <div class="mp-grid" id="mp-grid-sim"></div>
+      </section>
+    </div>
+
     <footer class="mp-footer">
       <button class="mp-csv-btn" id="mp-csv">📥 自分のデータをCSVで保存</button>
       <button class="mp-logout-btn" id="mp-logout">ログアウト</button>
@@ -145,5 +158,31 @@
     });
   </script>
 
+  <script src="../sim/medal.js"></script>
+  <script>
+    // シミュのミッション：⊙ まだ／🥇 メダル／🏆 トロフィー（T-31）
+    document.addEventListener('DOMContentLoaded', () => {
+      const grid = document.getElementById('mp-grid-sim');
+      const lv = SimMedal.levels();
+      let trophies = 0;
+      SimMedal.SIMS.forEach(s => {
+        const rec = SimMedal.record(s.id), l = lv[s.id];
+        if (l === 'trophy') trophies++;
+        const card = document.createElement('a');
+        card.href = `../sim/${s.id}.html`;
+        card.className = `mp-card ${l === 'trophy' ? 'mp-perfect' : l === 'medal' ? 'mp-done' : 'mp-new'}`;
+        card.innerHTML = `
+          <div class="mp-card-icon">
+            ${l === 'trophy' ? '🏆' : l === 'medal' ? '🥇' : '<span class="mp-card-empty">⊙</span>'}
+          </div>
+          <div class="mp-card-id">第${s.ep}話</div>
+          <div class="mp-card-name">${s.name}</div>
+          <div class="mp-card-score">${rec && rec.total ? `ミッション ${SimMedal.count(rec)} / ${rec.total}` : '未挑戦'}</div>
+        `;
+        grid.appendChild(card);
+      });
+      document.getElementById('mp-sim-count').textContent = `🏆 ${trophies} / ${SimMedal.SIMS.length}`;
+    });
+  </script>
 </body>
 </html>
