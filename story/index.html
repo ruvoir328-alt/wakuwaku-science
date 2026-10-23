@@ -243,12 +243,18 @@ function start(EP){
     }
     if (sc.end){
       const wrap = document.createElement('div'); wrap.className = 'ends';
+      // ドリルは drillUrls: [{ url, label }, ...]（0こ〜複数。文字だけでもよい）。drillUrl: '...'（1つ）でもよい
+      const drills = (EP.drillUrls || (EP.drillUrl ? [EP.drillUrl] : []))
+        .map(d => typeof d === 'string' ? { url: d } : d);
+      // シミュがあるときはシミュが赤いボタン。ないときは1つめのドリルが赤いボタン
+      const drillBtns = drills.length
+        ? drills.map((d, k) => '<a class="' + (EP.simUrl || k ? 'next' : 'go') + '" href="' + d.url + '">' +
+            (drills.length > 1 && d.label ? 'チャレンジモード（' + d.label + '）' : 'チャレンジモードで計算する') + '</a>').join('')
+        : '<button class="soon" disabled>チャレンジモード（準備中）</button>';
       wrap.innerHTML =
         (EP.simUrl
-          ? '<a class="go" href="' + EP.simUrl + '">シミュレーションで確かめる</a>' +
-            '<a class="next" href="' + EP.drillUrl + '">チャレンジモードで計算する</a>'
-          : '<a class="go" href="' + EP.drillUrl + '">チャレンジモードで計算する</a>' +
-            '<button class="soon" disabled>シミュレーションモード（準備中）</button>') +
+          ? '<a class="go" href="' + EP.simUrl + '">シミュレーションで確かめる</a>' + drillBtns
+          : drillBtns + '<button class="soon" disabled>シミュレーションモード（準備中）</button>') +
         '<button class="again" id="again">最初から見る</button>';
       box.appendChild(wrap);
       $('again').onclick = () => { i = 0; Object.keys(answers).forEach(k => delete answers[k]); render(1); };
