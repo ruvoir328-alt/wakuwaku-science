@@ -330,7 +330,7 @@ function show(){
   $('oF').innerHTML = F.toFixed(1) + '<small>N</small>';
   $('fOut').textContent = F.toFixed(1) + ' N';
   $('frOut').textContent = f1(f) + ' N';
-  $('vOut').textContent = sliding ? f2(v) + ' m/s' : '0（止まっている）';
+  $('vOut').textContent = !sliding ? '0（止まっている）' : reduce ? '動いている' : f2(v) + ' m/s';
   $('formula').innerHTML = sliding
     ? 'すべっている → 動摩擦力 <span class="m">μ\'N</span> = 0.25 × 19.6 = <b>4.9 N</b>（押す力によらない）' +
       '<br>加速度 <span class="m">a</span> = (' + F.toFixed(1) + ' − 4.9) ÷ 2.0 = <b>' + sgn((F - FK) / M, 2) + ' m/s²</b>'
@@ -374,7 +374,8 @@ function setF(nf){
   F = nf; $('inF').value = F;
   if (sliding){
     slideFs.add(F); path.push([F, FK]);
-    if (slideFs.size >= 2){ done.m3 = true; showMissions(); }
+    const fs = [...slideFs];
+    if (Math.max(...fs) - Math.min(...fs) >= 1 - 1e-9){ done.m3 = true; showMissions(); }   // 1 N 以上変えた
     if (reduce && F <= FK){ sliding = false; v = 0; path.push([F, Math.min(F, FMAX)]); }
     draw(); talk(); return;
   }
