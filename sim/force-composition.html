@@ -316,7 +316,8 @@ function ground(){
 function drawComp(){
   const p1 = tip(F1, 0), p2 = tip(F2, A), R = resultant(), pr = tip(R.f, R.deg);
   // 平行四辺形（prog 0→1 で描く）
-  if (prog > 0){
+  const line = A === 0 || A === 180;                                  // 一直線
+  if (prog > 0 && !line){
     const q = Math.min(1, prog * 2);
     const a = { x: p1.x + (pr.x - p1.x) * q, y: p1.y + (pr.y - p1.y) * q };
     const b = { x: p2.x + (pr.x - p2.x) * q, y: p2.y + (pr.y - p2.y) * q };
@@ -324,15 +325,16 @@ function drawComp(){
     el('line', { x1: p2.x, y1: p2.y, x2: b.x, y2: b.y, stroke: '#6b7488', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
   }
   arrow(svg, O.x, O.y, p1.x, p1.y, '#d93a3f', 4);
-  label(p1, 'F₁ ' + F1 + ' N', '#d93a3f', 0, 18);
-  arrow(svg, O.x, O.y, p2.x, p2.y, '#d93a3f', 4);
-  label(p2, 'F₂ ' + F2 + ' N', '#d93a3f', A >= 60 && A <= 120 ? -34 : 0, A > 150 ? 18 : -8);
+  label(p1, 'F₁ ' + F1 + ' N', '#d93a3f', 0, A === 0 ? -8 : 18);
+  const d2 = A === 0 ? 14 : 0;                                        // 同じ向きのときは、F₂ を少し下にずらして描く
+  arrow(svg, O.x, O.y + d2, p2.x, p2.y + d2, '#d93a3f', 4);
+  label({ x: p2.x, y: p2.y + d2 }, 'F₂ ' + F2 + ' N', '#d93a3f', A >= 60 && A <= 120 ? -34 : 0, A > 150 || A === 0 ? 18 : -8);
   if (prog >= 0.5){
     const q = Math.min(1, (prog - 0.5) * 2);
-    const oy = Math.abs(R.y) < 0.01 ? -16 : 0;                        // 一直線のときは、少し上にずらして描く
+    const oy = Math.abs(R.y) < 0.01 ? (A === 0 ? -30 : -16) : 0;                       // 一直線のときは、少し上にずらして描く
     const e = { x: O.x + (pr.x - O.x) * q, y: O.y + oy + (pr.y - O.y) * q };
     dashArrow(O.x, O.y + oy, e.x, e.y, '#d93a3f');
-    if (q >= 1 && R.f > 0.5) label({ x: pr.x, y: pr.y + oy }, '合力 ' + r1(R.f) + ' N', '#d93a3f', 0, -10);
+    if (q >= 1 && R.f > 0.5) label({ x: Math.min(pr.x, 270), y: pr.y + oy }, '合力 ' + r1(R.f) + ' N', '#d93a3f', 0, -10);
   }
 }
 

@@ -144,7 +144,7 @@ body{
 
   <div class="bench">
     <div class="view">
-      <svg id="svg" viewBox="0 0 320 320" role="img" aria-label="押し続けた台車の動きと、v-tグラフ"></svg>
+      <svg id="svg" viewBox="0 0 320 330" role="img" aria-label="押し続けた台車の動きと、v-tグラフ"></svg>
     </div>
 
     <div class="time-row">
@@ -287,11 +287,11 @@ function cart(cx){
 function draw(t){
   const v = a() * t, x = a() * t * t / 2;
   svg.innerHTML = '';
-  el('rect', { width: 320, height: 320, fill: '#eef2f7' }, svg);
+  el('rect', { width: 320, height: 330, fill: '#eef2f7' }, svg);
   txt(svg, 8, 16, '右向きを正とする', 11, '#4b5568', 'start');
   txt(svg, 312, 16, '●＝0.5秒ごとの位置', 10, '#6b7488', 'end');
   el('rect', { x: 0, y: TR.y, width: 320, height: 8, fill: '#d6dce6' }, svg);
-  txt(svg, 312, TR.y + 44, 'まさつのない床', 9, '#6b7488', 'end');
+  txt(svg, 8, 32, 'まさつのない床', 10, '#6b7488', 'start');
   for (let k = 0; k <= TR.xm; k += 5){
     el('line', { x1: px(k), x2: px(k), y1: TR.y + 8, y2: TR.y + 14, stroke: '#4b5568', 'stroke-width': 1.2 }, svg);
     txt(svg, px(k), TR.y + 26, k + (k === TR.xm ? ' m' : ''), 10, '#4b5568');

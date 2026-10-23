@@ -144,7 +144,7 @@ body{
 
   <div class="bench">
     <div class="view">
-      <svg id="svg" viewBox="0 0 320 300" role="img" aria-label="手をはなしたそりの動きと、v-tグラフ"></svg>
+      <svg id="svg" viewBox="0 0 320 310" role="img" aria-label="手をはなしたそりの動きと、v-tグラフ"></svg>
     </div>
 
     <div class="time-row">
@@ -297,7 +297,7 @@ function sled(x, op){
 function draw(t){
   const f = FACES[face], v = vAt(face, t), x = xAt(face, t);
   svg.innerHTML = '';
-  el('rect', { width: 320, height: 300, fill: '#eef2f7' }, svg);
+  el('rect', { width: 320, height: 310, fill: '#eef2f7' }, svg);
   txt(svg, 8, 16, '右向きを正とする', 11, '#4b5568', 'start');
   txt(svg, 312, 16, '●＝1秒ごとの位置', 10, '#6b7488', 'end');
   // 道（面の色）
@@ -362,7 +362,7 @@ function draw(t){
 function show(t){
   const f = FACES[face], v = vAt(face, t), x = xAt(face, t);
   $('tOut').innerHTML = t.toFixed(1) + '<small>秒</small>';
-  $('vOut').textContent = '+' + v.toFixed(1) + ' m/s';
+  $('vOut').textContent = (v > 0 ? '+' : '') + v.toFixed(1) + ' m/s';
   $('xOut').textContent = f1(x) + ' m';
   $('fOut').textContent = f.a ? (v > 0 ? 'あり（左向き）' : '止まった') : 'なし';
   if (t === 0){ $('formula').innerHTML = f.name + 'の上で、2.0 m/s で手をはなすよ。' + (f.a ? f.name + 'では、まさつで 1秒に ' + f.al + ' m/s ずつ遅くなる。' : '氷はつるつるで、まさつがない。'); return; }
