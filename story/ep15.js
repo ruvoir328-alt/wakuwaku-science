@@ -130,7 +130,7 @@ SCENES['e15-air'] = () => anim(svg(
   4, (root, t) => {
     const tau = 0.7, k = 1 - Math.exp(-t / tau);           // v ÷ 終端速度（0 → 1）
     const pos = s => s - tau * (1 - Math.exp(-s / tau));    // 進んだきょり（形だけ）
-    const fy = 70 + 150 * pos(t) / pos(4);
+    const fy = 66 + 110 * pos(t) / pos(4);
     root.querySelector('[data-fea]').innerHTML = feather(190, fy) +
       arrow(190, fy + 8, 190, fy + 54, '#22305a', 4) + T(204, fy + 50, 'W', 12, '#22305a', 'start') +
       (k > 0.05 ? arrow(190, fy - 8, 190, fy - 8 - 46 * k, '#b47a44', 4) + T(176, fy - 20, 'R', 12, '#b47a44', 'end') : '');
@@ -144,7 +144,7 @@ SCENES['e15-air'] = () => anim(svg(
     root.querySelector('[data-msg2]').textContent = k > 0.95 ? '→ 速さが一定（終端速度）' : '';
   }, 'もう一度落とす');
 
-SCENES['e15-answer'] = answerCard('9.8 m/s²！', '鉄球も羽根も、加速度は g', 'clamp(30px,10vw,46px)');
+SCENES['e15-answer'] = answerCard('9.8 m/s²！', '鉄球も羽根も、加速度は g', 'clamp(22px,7.5vw,34px)');
 
 /* ---- 脚本 ---- */
 window.EPISODE = {

@@ -116,7 +116,7 @@ SCENES['e16-balance-still'] = () => balance(false);
 const GR = { x: 176, y: 276, w: 200, h: 120 };
 const gX = F => GR.x + GR.w * F / 12, gY = f => GR.y - GR.h * f / 12;
 SCENES['e16-ramp'] = () => anim(svg(
-  desk(140, 400, 104).replace(/height="\d+" fill="#7e5129"/g, 'height="30" fill="#7e5129"') +
+  desk(140, 400, 112).replace(/height="\d+" fill="#7e5129"/g, 'height="22" fill="#7e5129"') +
   '<g data-b></g>' +
   '<rect x="' + (GR.x - 26) + '" y="' + (GR.y - GR.h - 16) + '" width="' + (GR.w + 40) + '" height="' + (GR.h + 36) + '" rx="6" fill="#fff" stroke="#cfd7ee" stroke-width="2"/>' +
   '<path d="M' + GR.x + ' ' + (GR.y - GR.h - 6) + ' V' + GR.y + ' H' + (GR.x + GR.w + 6) + '" fill="none" stroke="#1f2638" stroke-width="1.5"/>' +
@@ -124,16 +124,16 @@ SCENES['e16-ramp'] = () => anim(svg(
   T(GR.x - 4, gY(9.8) + 4, '9.8', 10, '#6b7488', 'end') + T(GR.x - 4, gY(4.9) + 4, '4.9', 10, '#6b7488', 'end') +
   T(GR.x + 4, GR.y - GR.h - 4, 'まさつ力 f〔N〕', 10, '#6b7488', 'start') + T(GR.x + GR.w, GR.y + 12, '押す力 F〔N〕', 10, '#6b7488', 'end') +
   '<path data-g d="" fill="none" stroke="#b47a44" stroke-width="3"/><circle data-pt r="5" fill="#d93a3f"/>' +
-  T(300, 30, '', 13, '#7e5129', 'middle', ' data-msg'), '#eef2f7'),
+  T(392, 60, '', 12, '#7e5129', 'end', ' data-msg'), '#eef2f7'),
   4.5, (root, t) => {
     const Fp = Math.min(11, 4 + 7 * t / 3.5), slip = Fp > MU * NN;
     const ts = (MU * NN - 4) * 3.5 / 7;                                   // すべり出す時刻
     const f = slip ? MU2 * NN : Fp;
     const dx = slip ? Math.min(90, 40 * (t - ts) * (t - ts)) : 0;
     const bx = 250 + dx;
-    root.querySelector('[data-b]').innerHTML = book(bx, 70, 60, 34).replace('本 2.0 kg', '本') +
-      arrow(bx - 2 - 6 * Fp, 86, bx - 2, 86, '#d93a3f', 4) + T(bx - 8 - 6 * Fp, 90, 'F ' + Fp.toFixed(1), 11, '#d93a3f', 'end') +
-      arrow(bx + 30, 112, bx + 30 - 6 * f, 112, '#b47a44', 4) + T(bx + 34, 126, 'f ' + f.toFixed(1) + ' N', 11, '#b47a44', 'start');
+    root.querySelector('[data-b]').innerHTML = book(bx, 78, 60, 34).replace('本 2.0 kg', '本') +
+      arrow(bx - 2 - 6 * Fp, 95, bx - 2, 95, '#d93a3f', 4) + T(bx - 8 - 6 * Fp, 99, 'F ' + Fp.toFixed(1) + ' N', 11, '#d93a3f', 'end') +
+      arrow(bx + 30, 120, bx + 30 - 6 * f, 120, '#b47a44', 4) + T(bx + 34, 134, 'f ' + f.toFixed(1) + ' N', 11, '#b47a44', 'start');
     let d = 'M' + gX(0) + ' ' + gY(0) + ' L' + gX(Math.min(Fp, MU * NN)) + ' ' + gY(Math.min(Fp, MU * NN));
     if (slip) d += ' L' + gX(MU * NN) + ' ' + gY(MU2 * NN) + ' L' + gX(Fp) + ' ' + gY(MU2 * NN);
     root.querySelector('[data-g]').setAttribute('d', d);
@@ -151,10 +151,10 @@ SCENES['e16-slide'] = () => svg(
   '<rect x="150" y="26" width="236" height="58" rx="6" fill="#fff7e9" stroke="#e9c48f" stroke-width="2" stroke-dasharray="5 4"/>' +
   T(268, 50, "動摩擦力 μ'N = 0.25 × 19.6 = 4.9 N", 12, '#1f2638') +
   T(268, 72, '押す力をかえても、ほぼ一定', 12, '#7e5129') +
-  T(386, 284, '右向きを正とする', 10, '#6b7488', 'end'),
+  T(150, 104, '右向きを正とする', 10, '#6b7488', 'start'),
   '#eef2f7');
 
-SCENES['e16-answer'] = answerCard('4.0 N！', '押す力とつりあう、静止摩擦力');
+SCENES['e16-answer'] = answerCard('4.0 N！', '押す力とつりあう', 'clamp(30px,10vw,46px)');
 
 /* ---- 脚本 ---- */
 window.EPISODE = {

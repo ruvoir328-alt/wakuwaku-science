@@ -71,8 +71,8 @@ const SKY = '<defs><linearGradient id="sky17" x1="0" y1="0" x2="0" y2="1"><stop 
 /* ---- この話の絵 ---- */
 // ばねばかりにつるした石：0.20 kg → W = 0.20 × 9.8 = 1.96 N。体積 V = 1.0 × 10⁻⁴ m³
 // 全部沈めると浮力 F = ρVg = 1000 × 1.0 × 10⁻⁴ × 9.8 = 0.98 N → 目盛り 1.96 − 0.98 = 0.98 N
-// 力の矢印は 0.98 N = 26 px（重力＝紺、浮力＝木）
-const W = 1.96, B = 0.98, PX = 26 / 0.98;
+// 力の矢印は 0.98 N = 20 px（重力＝紺、浮力＝木）
+const W = 1.96, B = 0.98, PX = 20 / 0.98;
 const WS = 186;                    // 水面の高さ（y）
 const SH = 24;                     // 石の高さ（px）
 function stand(){
@@ -110,10 +110,10 @@ SCENES['e17-scale'] = () => svg(stand() + tank() + scaleAndStone(118, 0, false) 
 function sink(animated){
   const html = svg(stand() + tank() + '<g data-s></g>' + T(200, 290, '', 12, '#7e5129', 'middle', ' data-msg'), '#eef2f7');
   const draw = (root, t) => {
-    const p = Math.min(1, t / 2.2), y = 118 + (198 - 118) * p * p * (3 - 2 * p);
+    const p = Math.min(1, t / 2.2), y = 118 + (192 - 118) * p * p * (3 - 2 * p);
     const fr = fracAt(y);
     root.querySelector('[data-s]').innerHTML = scaleAndStone(y, fr, true);
-    root.querySelector('[data-msg]').textContent = fr >= 1 ? '目盛り 0.98 N に' : '';
+    root.querySelector('[data-msg]').textContent = '';
   };
   if (animated) return anim(html, 2.6, draw, 'もう一度沈める');
   const id = 'ep17s' + (++uid);
@@ -137,27 +137,28 @@ SCENES['e17-board'] = () => svg(
 // 全部沈めたまま、深くしていく：目盛りは 0.98 N のまま
 SCENES['e17-depth'] = () => anim(svg(stand() + tank() + '<g data-s></g>' + T(200, 290, '', 12, '#7e5129', 'middle', ' data-msg'), '#eef2f7'),
   3, (root, t) => {
-    const p = Math.min(1, t / 2.4), y = 198 + (234 - 198) * (0.5 - 0.5 * Math.cos(Math.PI * p));
+    const p = Math.min(1, t / 2.4), y = 192 + (212 - 192) * (0.5 - 0.5 * Math.cos(Math.PI * p));
     root.querySelector('[data-s]').innerHTML = scaleAndStone(y, 1, true);
-    root.querySelector('[data-msg]').textContent = '目盛り 0.98 N のまま';
+    root.querySelector('[data-msg]').textContent = '';
   }, 'もう一度動かす');
 
 // 雪の上：重さ 490 N のリカ。くつ 0.020 m² → 24500 Pa、スキー 0.25 m² → 1960 Pa
 // 沈み方は圧力に比例した絵（24500 Pa で 30 px）
 function snowPerson(cx, label, area, pa, ski){
-  const sinkPx = 30 * pa / 24500, top = 96 + sinkPx;
-  return '<image href="img/rika_normal.webp" x="' + (cx - 33) + '" y="' + top + '" width="66" height="120"/>' +
-    (ski ? '<rect x="' + (cx - 54) + '" y="' + (top + 116) + '" width="108" height="6" rx="3" fill="#d93a3f"/>' : '') +
-    '<rect x="' + (cx - 62) + '" y="218" width="124" height="70" fill="#fff"/>' +
-    '<path d="M' + (cx - 62) + ' 218 h124" stroke="#d6dce6" stroke-width="2"/>' +
-    T(cx, 244, label + ' ' + area + ' m²', 12, '#1f2638') +
-    T(cx, 268, 'P = 490 ÷ ' + area, 11, '#6b7488') + T(cx, 286, '= ' + pa + ' Pa', 14, '#d93a3f');
+  const sinkPx = 36 * pa / 24500, top = 64 + sinkPx;
+  return '<image href="img/rika_normal.webp" x="' + (cx - 40) + '" y="' + top + '" width="80" height="146"/>' +
+    (ski ? '<rect x="' + (cx - 58) + '" y="' + (top + 140) + '" width="116" height="7" rx="3" fill="#d93a3f"/>' : '') +
+    '<rect x="' + (cx - 64) + '" y="206" width="128" height="94" fill="#fff"/>' +
+    '<path d="M' + (cx - 64) + ' 206 h128" stroke="#d6dce6" stroke-width="2"/>' +
+    T(cx, 228, label + ' ' + area + ' m²', 12, '#1f2638') +
+    T(cx, 248, 'P = 490 ÷ ' + area, 11, '#6b7488') + T(cx, 268, '= ' + pa + ' Pa', 14, '#d93a3f') +
+    T(cx, 196, ski ? 'ほとんど しずまない' : 'ずぶっと しずむ', 11, '#7e5129');
 }
 SCENES['e17-snow'] = () => svg(SKY +
   snowPerson(196, 'くつ', '0.020', 24500, false) + snowPerson(330, 'スキー', '0.25', 1960, true) +
-  T(263, 30, 'リカの重さ 490 N', 13, '#22305a') + T(263, 50, '圧力 P = F ÷ S', 13, '#22305a'), '#e9f6fc');
+  T(263, 26, 'リカの重さ 490 N　圧力 P = F ÷ S', 12, '#22305a'), '#e9f6fc');
 
-SCENES['e17-answer'] = answerCard('小さくなる！', '1.96 N → 0.98 N', 'clamp(30px,10vw,48px)');
+SCENES['e17-answer'] = answerCard('小さくなる！', '1.96 N → 0.98 N', 'clamp(24px,8vw,38px)');
 
 /* ---- 脚本 ---- */
 window.EPISODE = {
