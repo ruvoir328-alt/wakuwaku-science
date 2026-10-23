@@ -56,20 +56,6 @@ function answerCard(word, sub, size){
   };
 }
 const SKY = '<defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset="1" stop-color="#e9f6fc"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky1)"/>';
-// ドリルが2つ（1-5 投げ下ろし、1-6 投げ上げ）あるので、最後のボタンを2つにする
-function twoDrills(){
-  const box = document.getElementById('choices');
-  new MutationObserver(() => {
-    const go = box.querySelector('.ends a[href*="drill.html"]');
-    if (!go || go.dataset.two) return;
-    go.dataset.two = '1';
-    go.href = '../physics/drill.html?unit=1-5'; go.textContent = 'チャレンジモード（投げ下ろし）';
-    const up = document.createElement('a');
-    up.className = go.className; up.href = '../physics/drill.html?unit=1-6'; up.textContent = 'チャレンジモード（投げ上げ）';
-    go.after(up);
-  }).observe(box, { childList: true });
-}
-
 /* ---- この話の絵 ---- */
 // 秒速19.6 m で真上に投げ上げる（上向きを正）。y = 19.6t − 4.9t²、v = 19.6 − 9.8t
 const V0 = 19.6, g = 9.8;
@@ -150,7 +136,6 @@ SCENES['e7-answer'] = (sc, EP, answers) => {
     '<div class="your-guess" style="white-space:normal">あなたの予想：' + (mine ? mine.label : '—') + '</div>';
 };
 
-twoDrills();
 
 /* ---- 脚本 ---- */
 window.EPISODE = {
@@ -159,7 +144,11 @@ window.EPISODE = {
   topic: '鉛直投射',
   title: 'てっぺんで、リンゴは止まる？',
   simUrl: '../sim/vertical-throw.html',
-  drillUrl: '../physics/drill.html?unit=1-6',
+  // ドリルが2つ（1-5 投げ下ろし、1-6 投げ上げ）
+  drillUrls: [
+    { url: '../physics/drill.html?unit=1-5', label: '投げ下ろし' },
+    { url: '../physics/drill.html?unit=1-6', label: '投げ上げ' },
+  ],
   scenes: [
     { bg: 'title' },
 
