@@ -144,7 +144,7 @@ body{
 
   <div class="bench">
     <div class="view">
-      <svg id="svg" viewBox="0 0 320 340" role="img" aria-label="筒の中を落ちる鉄球と羽根、重力と加速度の矢印、v-tグラフ"></svg>
+      <svg id="svg" viewBox="0 0 320 302" role="img" aria-label="筒の中を落ちる鉄球と羽根、重力と加速度の矢印、v-tグラフ"></svg>
     </div>
 
     <div class="time-row">
@@ -283,7 +283,7 @@ const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).to
 
 const g = 9.8, H = 1.225, VT = 0.6, MF = 0.0050;   // 筒の高さ、羽根の終端速度・質量
 const TOP = 40, BOT = 250, PXM = (BOT - TOP) / H;  // 筒の上下（px）と 1 m の px
-const BX = 54, FX = 118;                           // 鉄球と羽根の x
+const BX = 66, FX = 124;                           // 鉄球と羽根の x
 const KF = 2.0, KA = 4.0;                          // 1 N の矢印 px、1 m/s² の矢印 px
 const GR = { x0: 190, x1: 308, yt: 40, yb: 250, tmax: 2.5, vmax: 5 };   // v-tグラフ
 const svg = $('svg');
@@ -313,7 +313,7 @@ function drawFeather(x, y){
 
 function draw(t){
   svg.innerHTML = '';
-  el('rect', { width: 320, height: 340, fill: '#eef2f7' }, svg);
+  el('rect', { width: 320, height: 302, fill: '#eef2f7' }, svg);
   // 筒
   el('rect', { x: 18, y: TOP - 18, width: 138, height: BOT - TOP + 24, rx: 10, fill: air ? '#e9f6fc' : '#fff', stroke: '#22305a', 'stroke-width': 2 }, svg);
   txt(svg, 87, TOP - 4, air ? '空気あり' : '真空（空気なし）', 11, '#22305a');

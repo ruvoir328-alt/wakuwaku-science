@@ -280,27 +280,27 @@ function draw(){
   const off = ((x * PXM) % 40 + 40) % 40;
   for (let k = -1; k < 10; k++) el('line', { x1: k * 40 - off, x2: k * 40 - off, y1: 118, y2: 126, stroke: '#7e5129', 'stroke-width': 2 }, svg);
   el('rect', { x: 0, y: 128, width: 320, height: 4, fill: '#7e5129' }, svg);
-  txt(svg, 160, 150, '右向きを正とする', 10, '#6b7488');
+  txt(svg, 4, 176, '右向きを正とする', 9, '#6b7488', 'start');
   // 本
-  const bx = 128, by = 82, bw = 62, bh = 34, cx = bx + bw / 2, cy = by + bh / 2;
+  const bx = 120, by = 72, bw = 80, bh = 44, cx = bx + bw / 2, cy = by + bh / 2;
   el('rect', { x: bx, y: by, width: bw, height: bh, rx: 3, fill: '#22305a' }, svg);
   el('rect', { x: bx + 4, y: by + 4, width: bw - 8, height: bh - 8, rx: 2, fill: 'none', stroke: '#ffe14a', 'stroke-width': 1.2 }, svg);
-  txt(svg, cx, by + 21, '本 2.0 kg', 9, '#fff');
+  txt(svg, cx, by + 14, '本 2.0 kg', 9, '#fff');
   // 重力 W（紺）・垂直抗力 N（木）は半分の長さで
-  arrow(svg, cx - 12, cy, cx - 12, cy + N * KF * 0.5, '#1f2638', 3);
-  txt(svg, cx - 16, cy + N * KF * 0.5 - 2, 'W 19.6 N', 9, '#1f2638', 'end');
-  arrow(svg, cx + 12, by + bh, cx + 12, by + bh - N * KF * 0.5, '#7e5129', 3);
-  txt(svg, cx + 16, by - 8, 'N 19.6 N', 9, '#7e5129', 'start');
+  arrow(svg, cx + 8, cy, cx + 8, cy + N * KF * 0.5, '#1f2638', 3);
+  txt(svg, cx + 13, cy + N * KF * 0.5 + 14, 'W 19.6 N', 9, '#1f2638', 'start');
+  arrow(svg, cx + 26, by + bh, cx + 26, by + bh - N * KF * 0.5, '#7e5129', 3);
+  txt(svg, bx + bw + 4, by + bh - N * KF * 0.5 + 8, 'N 19.6 N', 9, '#7e5129', 'start');
   txt(svg, 316, 176, '※ W と N の矢印は半分の長さ', 8, '#6b7488', 'end');
   // 押す力 F（赤）・まさつ力 f（木）
   if (F > 0){
     arrow(svg, bx - 4 - F * KF, cy, bx - 4, cy, '#d93a3f', 4);
-    txt(svg, bx - 6 - F * KF / 2, cy - 8, 'F ' + F.toFixed(1) + ' N', 10, '#d93a3f');
+    txt(svg, bx - 6, cy - 10, 'F ' + F.toFixed(1) + ' N', 10, '#d93a3f', 'end');
   }
   const f = fric();
   if (f > 0){
-    arrow(svg, cx, by + bh + 4, cx - f * KF, by + bh + 4, '#b47a44', 4);
-    txt(svg, cx - f * KF / 2, by + bh + 18, 'f ' + f1(f) + ' N', 10, '#b47a44');
+    arrow(svg, cx, by + bh + 2, cx - f * KF, by + bh + 2, '#b47a44', 4);
+    txt(svg, cx - f * KF - 4, by + bh + 22, 'f ' + f1(f) + ' N', 10, '#7e5129', 'end');
   }
   txt(svg, 160, 22, sliding ? 'すべっている！（動摩擦力）' : F > 0 ? '止まっている（静止摩擦力）' : '止まっている', 13, sliding ? '#d93a3f' : '#22305a');
 

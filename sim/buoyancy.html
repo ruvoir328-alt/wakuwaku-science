@@ -315,11 +315,11 @@ function drawBuoy(){
   txt(svg, SX, ty + SH / 2 + 4, '石', 11, '#fff');
   el('rect', { x: 41, y: SURF, width: 148, height: 299 - SURF, fill: '#bfe2f6', opacity: .6 }, svg);
   el('line', { x1: 41, x2: 189, y1: SURF, y2: SURF, stroke: '#22305a', 'stroke-width': 1.5 }, svg);
-  txt(svg, 186, SURF - 4, '水面', 9, '#22305a', 'end');
+  txt(svg, 196, SURF + 3, '水面 0', 8, '#22305a', 'start');
   // 深さのものさし
   for (let c = 0; c <= 16; c += 2){
-    el('line', { x1: 189, x2: c % 4 ? 184 : 181, y1: SURF + c * CM, y2: SURF + c * CM, stroke: '#4b5568', 'stroke-width': 1 }, svg);
-    if (c % 4 === 0 && c > 0) txt(svg, 178, SURF + c * CM + 3, c + ' cm', 8, '#4b5568', 'end');
+    el('line', { x1: 191, x2: c % 4 ? 196 : 199, y1: SURF + c * CM, y2: SURF + c * CM, stroke: '#4b5568', 'stroke-width': 1 }, svg);
+    if (c % 4 === 0 && c > 0) txt(svg, 202, SURF + c * CM + 3, c + ' cm', 8, '#4b5568', 'start');
   }
   // 力の矢印（石にはたらく力。上向きを正とする）
   const cy = ty + SH / 2;

@@ -343,7 +343,8 @@ function show(t){
   $('vROut').textContent = (vR < 0 ? '−' : '') + fa(Math.abs(vR)) + ' m/s';
   if (t === 0){ $('formula').innerHTML = '押すと、2つの力の矢印が出るよ。押し返す力は何 N かな？'; return; }
   $('formula').innerHTML = '作用と反作用：どちらも <b>' + F + ' N</b>。向きは反対で、別々の人にはたらく。' +
-    (t >= TP ? '<br>押している 0.50 秒のあいだの加速度は <span class="m">a</span> = <span class="m">F</span> ÷ <span class="m">m</span>（第14話）<br>ニュートンくん：' + F + ' ÷ ' + mN + ' = ' + fa(aN()) + ' m/s² → ' + fa(aN()) + ' × 0.50 = <b>+' + fa(aN() * TP) + ' m/s</b><br>リカ：' + F + ' ÷ ' + mR + ' = ' + fa(-aR()) + ' m/s² → ' + fa(-aR()) + ' × 0.50 = <b>−' + fa(-aR() * TP) + ' m/s</b>' : '');
+    (t >= TP ? '<br>はなれる速さ：ニュートンくん <b>+' + fa(aN() * TP) + ' m/s</b>、リカ <b>−' + fa(-aR() * TP) + ' m/s</b>' +
+      (mR === mN ? '（質量が同じなら、同じ速さ）' : '<br>力は同じなのに、軽いほうが速い。そのわけは第14話のお楽しみ！') : '');
 }
 
 function talk(t){
