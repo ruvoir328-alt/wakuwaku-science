@@ -16,6 +16,15 @@
     { id: 'freefall',          ep: 6, name: '自由落下' },
     { id: 'vertical-throw',    ep: 7, name: '鉛直投げ上げ' },
     { id: 'horizontal-throw',  ep: 8, name: '水平投射' },
+    { id: 'force-arrows',      ep: 9, name: '力の矢印' },
+    { id: 'force-composition', ep: 10, name: '力の合成・分解' },
+    { id: 'force-balance',     ep: 11, name: '力のつりあい' },
+    { id: 'inertia',           ep: 12, name: '氷の上のそり' },
+    { id: 'action-reaction',   ep: 13, name: '押し合い' },
+    { id: 'motion-equation',   ep: 14, name: '台車を押す' },
+    { id: 'fall-force',        ep: 15, name: '落下と運動方程式' },
+    { id: 'friction',          ep: 16, name: 'まさつ力' },
+    { id: 'buoyancy',          ep: 17, name: '浮力' },
   ];
 
   function loadAll() {
