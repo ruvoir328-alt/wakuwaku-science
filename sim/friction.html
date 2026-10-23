@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>まさつ力シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=16">← 第16話 ストーリーにもどる</a>
+    <span>2章 力と運動の法則</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　第16話</div>
+    <h1>押す力を強くして、すべり出す瞬間を見よう</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 360" role="img" aria-label="机の上の本を押す力とまさつ力の矢印、押す力とまさつ力のグラフ"></svg>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>押す力 F（右向き）</div><div id="fOut"></div>
+      <div>まさつ力 f（左向き）</div><div id="frOut"></div>
+      <div>本の速さ v</div><div id="vOut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <label class="slider"><span class="s-head"><span class="s-name">押す力 F</span><output id="oF"></output></span>
+        <input type="range" id="inF" min="0" max="12" step="0.2" value="4"></label>
+      <div class="btns">
+        <button type="button" class="drop" id="stop">押すのをやめる（F = 0）</button>
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>押す力 4.0 N のときのまさつ力を見てから、押す力を変えて、まさつ力も変わるか確かめる</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>押す力を少しずつ強くして、本がすべり出す瞬間（最大摩擦力）を見る</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>すべっている間に押す力を変えて、まさつ力が変わるかくらべる</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>止まっているとき、静止摩擦力は押す力とつりあう（押す力 4.0 N なら 4.0 N）</li><li>静止摩擦力には上限がある。最大摩擦力 μN = 0.50 × 19.6 = 9.8 N</li><li>すべり出すと動摩擦力 μ'N = 0.25 × 19.6 = 4.9 N。押す力によらず、ほぼ一定</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <a class="go" href="../physics/drill.html?unit=2-4">チャレンジモードで計算する →</a>
+    <a class="back" href="../story/?ep=16">第16話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 第16話 まさつ力 ----
+   右向きを正とする。机の上の本 m = 2.0 kg、垂直抗力 N = mg = 19.6 N
+   静止摩擦係数 μ = 0.50 → 最大摩擦力 μN = 9.8 N。動摩擦係数 μ' = 0.25 → 動摩擦力 μ'N = 4.9 N
+   止まっている：F ≦ 9.8 N なら f = F（つりあい）。F > 9.8 N ですべり出す
+   すべっている：f = 4.9 N（一定）、a = (F − 4.9) ÷ 2.0（右向きが＋）。速さが 0 になったら止まる（そのあとは静止摩擦）
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+const g = 9.8, M = 2.0, MU = 0.50, MUK = 0.25;
+const N = M * g, FMAX = MU * N, FK = MUK * N;      // 19.6 N、9.8 N、4.9 N
+const PXM = 120;                                    // 1 m の px（机の目もりが流れる）
+const KF = 4.0;                                     // 1 N の矢印 px
+const GR = { x0: 44, x1: 304, yt: 196, yb: 330, fmax: 12 };   // まさつ力のグラフ
+const svg = $('svg');
+let F = 4.0, sliding = false, v = 0, x = 0, raf = 0, path = [], slideFs = new Set();
+
+const fric = () => sliding ? FK : Math.min(F, FMAX);
+const gx = f => GR.x0 + (GR.x1 - GR.x0) * f / GR.fmax;
+const gy = f => GR.yb - (GR.yb - GR.yt) * f / GR.fmax;
+
+function draw(){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 360, fill: '#eef2f7' }, svg);
+  // 机（すべると目もりが左へ流れる）
+  el('rect', { x: 0, y: 116, width: 320, height: 12, fill: '#b47a44' }, svg);
+  const off = ((x * PXM) % 40 + 40) % 40;
+  for (let k = -1; k < 10; k++) el('line', { x1: k * 40 - off, x2: k * 40 - off, y1: 118, y2: 126, stroke: '#7e5129', 'stroke-width': 2 }, svg);
+  el('rect', { x: 0, y: 128, width: 320, height: 4, fill: '#7e5129' }, svg);
+  txt(svg, 160, 150, '右向きを正とする', 10, '#6b7488');
+  // 本
+  const bx = 128, by = 82, bw = 62, bh = 34, cx = bx + bw / 2, cy = by + bh / 2;
+  el('rect', { x: bx, y: by, width: bw, height: bh, rx: 3, fill: '#22305a' }, svg);
+  el('rect', { x: bx + 4, y: by + 4, width: bw - 8, height: bh - 8, rx: 2, fill: 'none', stroke: '#ffe14a', 'stroke-width': 1.2 }, svg);
+  txt(svg, cx, by + 21, '本 2.0 kg', 9, '#fff');
+  // 重力 W（紺）・垂直抗力 N（木）は半分の長さで
+  arrow(svg, cx - 12, cy, cx - 12, cy + N * KF * 0.5, '#1f2638', 3);
+  txt(svg, cx - 16, cy + N * KF * 0.5 - 2, 'W 19.6 N', 9, '#1f2638', 'end');
+  arrow(svg, cx + 12, by + bh, cx + 12, by + bh - N * KF * 0.5, '#7e5129', 3);
+  txt(svg, cx + 16, by - 8, 'N 19.6 N', 9, '#7e5129', 'start');
+  txt(svg, 316, 176, '※ W と N の矢印は半分の長さ', 8, '#6b7488', 'end');
+  // 押す力 F（赤）・まさつ力 f（木）
+  if (F > 0){
+    arrow(svg, bx - 4 - F * KF, cy, bx - 4, cy, '#d93a3f', 4);
+    txt(svg, bx - 6 - F * KF / 2, cy - 8, 'F ' + F.toFixed(1) + ' N', 10, '#d93a3f');
+  }
+  const f = fric();
+  if (f > 0){
+    arrow(svg, cx, by + bh + 4, cx - f * KF, by + bh + 4, '#b47a44', 4);
+    txt(svg, cx - f * KF / 2, by + bh + 18, 'f ' + f1(f) + ' N', 10, '#b47a44');
+  }
+  txt(svg, 160, 22, sliding ? 'すべっている！（動摩擦力）' : F > 0 ? '止まっている（静止摩擦力）' : '止まっている', 13, sliding ? '#d93a3f' : '#22305a');
+
+  // グラフ：押す力 F とまさつ力 f
+  el('rect', { x: GR.x0, y: GR.yt, width: GR.x1 - GR.x0, height: GR.yb - GR.yt, fill: '#fff' }, svg);
+  for (let k = 2; k <= GR.fmax; k += 2){
+    el('line', { x1: gx(k), x2: gx(k), y1: GR.yt, y2: GR.yb, stroke: '#dfe4ee', 'stroke-width': 1 }, svg);
+    el('line', { x1: GR.x0, x2: GR.x1, y1: gy(k), y2: gy(k), stroke: '#dfe4ee', 'stroke-width': 1 }, svg);
+    txt(svg, gx(k), GR.yb + 12, k, 9, '#6b7488');
+    txt(svg, GR.x0 - 3, gy(k) + 3, k, 9, '#6b7488', 'end');
+  }
+  el('polyline', { points: [gx(0), gy(0), gx(FMAX), gy(FMAX), gx(FMAX), gy(FK), gx(GR.fmax), gy(FK)].join(' '), fill: 'none', stroke: '#d6dce6', 'stroke-width': 3, 'stroke-dasharray': '5 4' }, svg);
+  if (path.length > 1) el('polyline', { points: path.map(p => gx(p[0]) + ' ' + gy(p[1])).join(' '), fill: 'none', stroke: '#b47a44', 'stroke-width': 3 }, svg);
+  el('circle', { cx: gx(F), cy: gy(f), r: 5, fill: '#d93a3f' }, svg);
+  el('path', { d: 'M' + GR.x0 + ' ' + (GR.yt - 6) + ' V' + GR.yb + ' H' + (GR.x1 + 4), fill: 'none', stroke: '#1f2638', 'stroke-width': 1.5 }, svg);
+  txt(svg, GR.x0 - 3, GR.yb + 12, '0', 9, '#6b7488', 'end');
+  txt(svg, GR.x0 + 2, GR.yt - 10, 'まさつ力 f〔N〕', 10, '#4b5568', 'start');
+  txt(svg, GR.x1, GR.yb + 26, '押す力 F〔N〕', 10, '#4b5568', 'end');
+  txt(svg, gx(FMAX) - 4, gy(FMAX) - 6, '最大摩擦力 9.8 N', 9, '#7e5129', 'end');
+  txt(svg, gx(3) + 6, gy(3) - 18, '静止摩擦力', 9, '#7e5129', 'end');
+  txt(svg, gx(11), gy(FK) - 6, '動摩擦力 4.9 N', 9, '#7e5129');
+  show();
+}
+
+function show(){
+  const f = fric();
+  $('oF').innerHTML = F.toFixed(1) + '<small>N</small>';
+  $('fOut').textContent = F.toFixed(1) + ' N';
+  $('frOut').textContent = f1(f) + ' N';
+  $('vOut').textContent = sliding ? f2(v) + ' m/s' : '0（止まっている）';
+  $('formula').innerHTML = sliding
+    ? 'すべっている → 動摩擦力 <span class="m">μ\'N</span> = 0.25 × 19.6 = <b>4.9 N</b>（押す力によらない）' +
+      '<br>加速度 <span class="m">a</span> = (' + F.toFixed(1) + ' − 4.9) ÷ 2.0 = <b>' + sgn((F - FK) / M, 2) + ' m/s²</b>'
+    : '止まっている → 力はつりあう：<span class="m">f</span> = <span class="m">F</span> = <b>' + f1(f) + ' N</b>（静止摩擦力）' +
+      '<br>最大摩擦力 <span class="m">μN</span> = 0.50 × 19.6 = <b>9.8 N</b>（<span class="m">N</span> = <span class="m">mg</span> = 2.0 × 9.8 = 19.6 N）';
+}
+
+function talk(){
+  if (sliding){
+    if (done.m3) return say('happy', '押す力を変えても、すべっているときのまさつ力は 4.9 N のまま。これが動摩擦力じゃ！');
+    return say('surprise', '9.8 N をこえて、すべり出した！ まさつ力は 4.9 N に下がったぞ。すべっている間に、押す力を変えてごらん。');
+  }
+  if (done.m2 && F === 0) return say('proud', '押すのをやめると、動摩擦力でだんだん遅くなって止まった。止まったら、またつりあいじゃ。');
+  if (F === 0) return say('question', '押していないとき、まさつ力ははたらいていない。少しずつ押してみよう。');
+  if (Math.abs(F - 4) < 1e-9) return say('question', 'リカくんが 4.0 N で押しても、本は動かない。このとき、まさつ力は何 N かな？ 矢印を見てから、押す力を変えてみよう。');
+  if (Math.abs(F - FMAX) < 1e-9) return say('think', '9.8 N。これが最大摩擦力 μN じゃ。あと少しでも強くすると…？');
+  return say('normal', '止まっているあいだは、まさつ力が押す力と同じ ' + F.toFixed(1) + ' N になって、つりあっておる。もっと強くしてみよう。');
+}
+
+// すべっている間の動き（右向きを正）。動きを減らす設定では、動かさずに数値だけ出す
+function loop(){
+  let last = performance.now();
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    v += (F - FK) / M * dt;
+    if (v <= 0){ v = 0; sliding = false; raf = 0; path.push([F, Math.min(F, FMAX)]); draw(); talk(); return; }
+    v = Math.min(v, 3);                       // 画面の上では 3 m/s で頭打ち
+    x += v * dt; draw();
+    raf = requestAnimationFrame(f);
+  };
+  raf = requestAnimationFrame(f);
+}
+function startSlide(){
+  sliding = true; v = reduce ? 0.5 : 0.01; done.m2 = true; slideFs = new Set([F]);
+  path.push([FMAX, FMAX], [FMAX, FK], [F, FK]);
+  showMissions(); draw(); talk();
+  if (!reduce) loop();
+}
+function stopAll(){ if (raf) cancelAnimationFrame(raf); raf = 0; }
+function setF(nf){
+  F = nf; $('inF').value = F;
+  if (sliding){
+    slideFs.add(F); path.push([F, FK]);
+    if (slideFs.size >= 2){ done.m3 = true; showMissions(); }
+    if (reduce && F <= FK){ sliding = false; v = 0; path.push([F, Math.min(F, FMAX)]); }
+    draw(); talk(); return;
+  }
+  path.push([Math.min(F, FMAX), Math.min(F, FMAX)]);
+  if (F > FMAX + 1e-9){ startSlide(); return; }
+  if (Math.abs(F - 4) > 1e-9 && F > 0){ done.m1 = true; showMissions(); }   // 4.0 N から押す力を変えた
+  draw(); talk();
+}
+function reset(){
+  stopAll(); sliding = false; v = 0; x = 0; path = [[0, 0], [4, 4]]; slideFs = new Set();
+  F = 4.0; $('inF').value = 4; draw(); talk();
+}
+$('inF').addEventListener('input', () => setF(Math.round(Number($('inF').value) * 10) / 10));
+$('stop').addEventListener('click', () => setF(0));
+$('reset').addEventListener('click', reset);
+reset();
+</script>
+</body>
+</html>

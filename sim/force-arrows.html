@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>力の矢印シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=09">← 第9話 ストーリーにもどる</a>
+    <span>2章 力と運動の法則</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　第9話</div>
+    <h1>かごにはたらく力を、矢印で見よう</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 300" role="img" aria-label="かごにはたらく重力と、それを支える力の矢印"></svg>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>質量 m</div><div id="mOut"></div>
+      <div>重力 W</div><div id="wOut"></div>
+      <div id="sName">垂直抗力 N</div><div id="sOut"></div>
+      <div>ばねののび x</div><div id="xOut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <div class="row">
+        <span class="name">支え方</span>
+        <div class="seg" role="group" aria-label="支え方">
+          <button type="button" data-mode="desk" aria-pressed="true">机に置く</button>
+          <button type="button" data-mode="string" aria-pressed="false">ひも</button>
+          <button type="button" data-mode="spring" aria-pressed="false">ばね</button>
+        </div>
+      </div>
+      <label class="slider"><span class="s-head"><span class="s-name">かごの質量</span><output id="oM"></output></span>
+        <input type="range" id="inM" min="0.5" max="3" step="0.5" value="2"></label>
+      <div class="btns">
+        <button type="button" class="drop" id="go">支えをはずす ▶</button>
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>「支えをはずす」で、かごがどうなるか見る</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>「ひも」「ばね」にも切りかえて、上向きの力をくらべる</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>ばねでつるして質量を変え、ばねののびの変わり方を見る</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>止まっていても、力ははたらいている（重力と、それを支える力）</li><li>力は矢印（大きさ・向き・作用点）で表し、単位は N。重力 W = mg</li><li>支える力：垂直抗力・張力・弾性力（ばね F = kx）</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <a class="go" href="../physics/drill.html?unit=2-2">チャレンジモードで計算する →</a>
+    <a class="back" href="../story/?ep=09">第9話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 第9話 力の表し方・いろいろな力 ----
+   かご（質量 m）にはたらく重力 W = mg（g = 9.8 m/s²）。2.0 kg → 19.6 N
+   支える力（垂直抗力 N・張力 T・弾性力 kx）は、止まっているとき W と同じ大きさ。
+   ばね定数 k = 49 N/m：kx = mg → x = mg ÷ k。2.0 kg → 19.6 ÷ 49 = 0.40 m（m = 0.5〜3.0 kg → 0.10〜0.60 m）
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+const g = 9.8, k = 49;                     // ばね定数 49 N/m
+const PXN = 4;                             // 力の矢印 1 N = 4 px（19.6 N → 78 px）
+const PXM = 150;                           // ばねののび 1 m = 150 px
+const svg = $('svg');
+const CX = 160;                            // かごの中心の x
+const NAMES = { desk: ['垂直抗力', 'N'], string: ['張力', 'T'], spring: ['弾性力', 'F'] };
+let mode = 'desk', m = 2, fallen = false, fallY = 0, tried = { desk: true }, springM = null;
+
+const W = () => m * g;
+// 力の矢印（記号と大きさつき）
+function force(x1, y1, x2, y2, color, label, side){
+  arrow(svg, x1, y1, x2, y2, color, 5);
+  txt(svg, x2 + (side || 1) * 8, (y1 + y2) / 2 + 4, label, 12, color, side < 0 ? 'end' : 'start', { 'font-weight': 900 });
+}
+function basket(cy){
+  // かご（幅 70、高さ 40）とリンゴ
+  el('circle', { cx: CX - 16, cy: cy - 22, r: 9, fill: '#d93a3f' }, svg);
+  el('circle', { cx: CX + 4, cy: cy - 25, r: 9, fill: '#d93a3f' }, svg);
+  el('circle', { cx: CX + 20, cy: cy - 21, r: 8, fill: '#d93a3f' }, svg);
+  el('path', { d: 'M' + (CX - 35) + ' ' + (cy - 20) + ' h70 l-7 40 h-56 z', fill: '#e9c48f', stroke: '#7e5129', 'stroke-width': 2.5 }, svg);
+  for (let i = 1; i < 4; i++) el('line', { x1: CX - 33 + i * 1.5, x2: CX + 33 - i * 1.5, y1: cy - 20 + i * 10, y2: cy - 20 + i * 10, stroke: '#b47a44', 'stroke-width': 1.2 }, svg);
+}
+
+function draw(){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 300, fill: '#eef2f7' }, svg);
+  el('rect', { y: 280, width: 320, height: 20, fill: '#d6dce6' }, svg);           // 床
+  const w = W();
+  let cy;                                                                     // かごの中心（重心）の y
+  if (mode === 'desk'){
+    cy = 150;
+    if (!fallen){
+      el('rect', { x: 70, y: cy + 20, width: 180, height: 12, rx: 3, fill: '#b47a44', stroke: '#7e5129', 'stroke-width': 2 }, svg);
+      el('rect', { x: 82, y: cy + 32, width: 10, height: 248 - cy - 32 + 30, fill: '#7e5129' }, svg);
+      el('rect', { x: 228, y: cy + 32, width: 10, height: 248 - cy - 32 + 30, fill: '#7e5129' }, svg);
+    }
+  } else {
+    el('rect', { x: 60, y: 6, width: 200, height: 10, rx: 3, fill: '#7e5129' }, svg);                   // 天井のはり
+    if (mode === 'string'){
+      cy = 150;
+      if (!fallen) el('line', { x1: CX, y1: 16, x2: CX, y2: cy - 20, stroke: '#1f2638', 'stroke-width': 2 }, svg);
+    } else {
+      const L0 = 40, x = w / k;                                                 // 自然の長さ 40 px ＋ のび
+      const top = 16, bot = top + L0 + x * PXM;
+      cy = bot + 20;
+      if (!fallen){
+        const n = 12, len = bot - top;
+        let d = 'M' + CX + ' ' + top + ' v6';
+        for (let i = 0; i < n; i++) d += ' L' + (CX + (i % 2 ? -9 : 9)) + ' ' + (top + 6 + (len - 12) * (i + 0.5) / n);
+        d += ' L' + CX + ' ' + (bot - 6) + ' V' + bot;
+        el('path', { d, fill: 'none', stroke: '#4b5568', 'stroke-width': 2 }, svg);
+        // のびのものさし
+        const ny = top + L0;
+        el('line', { x1: CX + 60, x2: CX + 60, y1: ny, y2: bot, stroke: '#7e5129', 'stroke-width': 1.5 }, svg);
+        el('line', { x1: CX + 15, x2: CX + 66, y1: ny, y2: ny, stroke: '#7e5129', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
+        el('line', { x1: CX + 15, x2: CX + 66, y1: bot, y2: bot, stroke: '#7e5129', 'stroke-width': 1, 'stroke-dasharray': '3 3' }, svg);
+        txt(svg, CX + 70, (ny + bot) / 2 + 4, 'のび ' + f2(x) + ' m', 11, '#7e5129', 'start');
+        txt(svg, CX + 70, ny - 4, 'k = 49 N/m', 10, '#6b7488', 'start');
+      }
+    }
+  }
+  cy += fallY;
+  basket(cy);
+  // 矢印：重力（重心から下）、支える力（ふれているところから上）
+  force(CX - 6, cy, CX - 6, cy + w * PXN, '#22305a', 'W ' + f1(w) + ' N', -1);
+  if (!fallen){
+    const [nm, sym] = NAMES[mode];
+    const y0 = mode === 'desk' ? cy + 20 : cy - 20;
+    force(CX + 6, y0, CX + 6, y0 - w * PXN, '#7e5129', sym + ' ' + f1(w) + ' N', 1);
+  }
+  el('circle', { cx: CX - 6, cy: cy, r: 3, fill: '#22305a' }, svg);
+  txt(svg, 8, 292, '● 作用点（力がはたらく点）', 10, '#6b7488', 'start');
+  show();
+}
+
+function show(){
+  const w = W(), [nm, sym] = NAMES[mode];
+  $('oM').innerHTML = m.toFixed(1) + '<small>kg</small>';
+  $('mOut').textContent = m.toFixed(1) + ' kg';
+  $('wOut').textContent = f1(w) + ' N';
+  $('sName').textContent = nm + ' ' + sym;
+  $('sOut').textContent = fallen ? '0 N（支えなし）' : f1(w) + ' N';
+  $('xOut').textContent = mode === 'spring' ? f2(w / k) + ' m' : '—';
+  let s = '<span class="m">W</span> = <span class="m">mg</span> = ' + m.toFixed(1) + ' × 9.8 = <b>' + f1(w) + ' N</b>';
+  if (fallen) s += '<br>支えがないので、重力だけがはたらいて落ちる';
+  else if (mode === 'spring') s += '<br>弾性力 <span class="m">kx</span> = <span class="m">W</span> より、<span class="m">x</span> = ' + f1(w) + ' ÷ 49 = <b>' + f2(w / k) + ' m</b>';
+  else s += '<br>' + nm + ' <span class="m">' + sym + '</span> = ' + f1(w) + ' N（重力と同じ大きさ・上向き）';
+  $('formula').innerHTML = s;
+}
+
+function talk(){
+  if (fallen) return say('surprise', 'ほれ、落ちた！ 止まっている間も、ずっと重力 ' + f1(W()) + ' N で下に引かれておったのじゃ。');
+  if (!done.m1) return say('question', '机の上のかごは止まっておる。でも力ははたらいているかな？ 「支えをはずす」でたしかめよう。');
+  if (!done.m2) return say('proud', '重力を、机が押し上げる力（垂直抗力）が支えておった。次は「ひも」「ばね」にも切りかえてごらん。');
+  if (mode === 'spring' && !done.m3) return say('think', 'ばねは ' + f2(W() / 49) + ' m のびて、' + f1(W()) + ' N で引き上げておる。質量を変えると、のびはどうなるかな？');
+  if (!done.m3) return say('think', '支え方がちがっても、上向きの力は重力と同じ大きさじゃな。「ばね」で質量を変えてみよう。');
+  say('happy', 'ばねののびは、重力の大きさに比例しておる（' + f1(W()) + ' ÷ 49 = ' + f2(W() / k) + ' m）。止まっていても、力はちゃんとはたらいておるのじゃ！');
+}
+
+function drop(){
+  if (fallen) return back();
+  fallen = true; $('go').textContent = 'もどす ↺';
+  const start = mode === 'spring' ? 16 + 40 + W() / k * PXM + 20 : 150;
+  const D = 280 - (start + 20);                                         // 床まで（px）
+  const T = 0.45;
+  play(T, t => { fallY = D * (t / T) * (t / T); draw(); talk(); }, () => {
+    done.m1 = true; showMissions(); fallY = D; draw(); talk();
+  });
+}
+function back(){
+  stopPlay(); fallen = false; fallY = 0; $('go').textContent = '支えをはずす ▶';
+  draw(); talk();
+}
+segGroup('mode', v => {
+  back(); mode = v; tried[v] = true;
+  if (tried.desk && tried.string && tried.spring) done.m2 = true;
+  if (mode === 'spring') springM = m;
+  showMissions(); draw(); talk();
+});
+$('inM').addEventListener('input', () => {
+  m = Number($('inM').value);
+  if (mode === 'spring' && !fallen){
+    if (springM !== null && m !== springM) done.m3 = true;
+    showMissions();
+  }
+  draw(); talk();
+});
+$('go').addEventListener('click', drop);
+$('reset').addEventListener('click', () => {
+  back(); mode = 'desk'; m = 2; $('inM').value = 2; pickSeg('mode', 'desk'); draw(); talk();
+});
+draw(); talk();
+</script>
+</body>
+</html>

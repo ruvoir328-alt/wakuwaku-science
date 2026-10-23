@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>力の合成・分解シミュレーター | わくわく物理基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=10">← 第10話 ストーリーにもどる</a>
+    <span>2章 力と運動の法則</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　第10話</div>
+    <h1>2本の力を、1本にまとめよう</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 270" role="img" aria-label="台車を引く2つの力と、その合力"></svg>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div id="r1n"></div><div id="r1"></div>
+      <div id="r2n"></div><div id="r2"></div>
+      <div id="r3n"></div><div id="r3"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <div class="row">
+        <span class="name">やること</span>
+        <div class="seg" role="group" aria-label="合成か分解か">
+          <button type="button" data-mode="comp" aria-pressed="true">合成</button>
+          <button type="button" data-mode="dec" aria-pressed="false">分解</button>
+        </div>
+      </div>
+      <div id="compCtl" class="controls">
+        <label class="slider"><span class="s-head"><span class="s-name">F₁（リカ・東向き）</span><output id="o1"></output></span>
+          <input type="range" id="in1" min="10" max="50" step="5" value="30"></label>
+        <label class="slider"><span class="s-head"><span class="s-name">F₂（ニュートンくん）</span><output id="o2"></output></span>
+          <input type="range" id="in2" min="10" max="50" step="5" value="40"></label>
+        <label class="slider"><span class="s-head"><span class="s-name">F₂ の向き（東から）</span><output id="oA"></output></span>
+          <input type="range" id="inA" min="0" max="180" step="15" value="90"></label>
+      </div>
+      <div id="decCtl" class="controls" style="display:none">
+        <label class="slider"><span class="s-head"><span class="s-name">引く力 F</span><output id="oF"></output></span>
+          <input type="range" id="inF" min="10" max="50" step="5" value="40"></label>
+        <label class="slider"><span class="s-head"><span class="s-name">F の向き（水平から）</span><output id="oB"></output></span>
+          <input type="range" id="inB" min="0" max="90" step="15" value="60"></label>
+      </div>
+      <div class="btns">
+        <button type="button" class="drop" id="go">合成する ▶</button>
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>直角（90°）で 30 N と 40 N を合成して、合力を見る</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>角度を 0° と 180° にして合成し、70 N と 10 N になるのをたしかめる</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>「分解」で、60° の向きの 40 N を、水平と鉛直に分ける</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>2つの力の合力は、2つの力を辺とする平行四辺形の対角線</li><li>向きがちがうと、合力はただの足し算にはならない（直角の 30 N と 40 N → 50 N）</li><li>1つの力を2つの向きに分けられる（分力）。40 N を 60° → 水平 40 × cos60° = 20 N</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <a class="go" href="../physics/drill.html?unit=2-1">チャレンジモードで計算する →</a>
+    <a class="back" href="../story/?ep=10">第10話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 第10話 力の合成・分解 ----
+   合成：F₁（東向き）と F₂（東から θ 回した向き）。合力 F = √(F₁² + F₂² + 2F₁F₂cosθ)
+   30 N と 40 N：θ = 90° → 50 N、0° → 70 N、180° → 東を正として 30 − 40 = −10 N（西へ 10 N）
+   分解：F を水平から θ の向き。水平の分力 Fcosθ、鉛直の分力 Fsinθ。40 N・60° → 20 N と 34.6 N
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+const svg = $('svg');
+const O = { x: 110, y: 220 };              // 台車（力の作用点）
+const PX = 2;                              // 力の矢印 1 N = 2 px（方眼 20 px ＝ 10 N）
+const RAD = Math.PI / 180;
+let mode = 'comp', F1 = 30, F2 = 40, A = 90, F = 40, B = 60, prog = 0, tried = {};
+
+// 東向きが x の正、北向きが上（画面の y は下が正なので、北は −）
+const tip = (f, deg) => ({ x: O.x + f * PX * Math.cos(deg * RAD), y: O.y - f * PX * Math.sin(deg * RAD) });
+const r1 = x => Math.round(x * 10) / 10;
+function resultant(){
+  const x = F1 + F2 * Math.cos(A * RAD), y = F2 * Math.sin(A * RAD);
+  return { x, y, f: Math.hypot(x, y), deg: Math.atan2(y, x) / RAD };
+}
+function label(p, s, color, dx, dy){ txt(svg, p.x + (dx || 0), p.y + (dy || 0), s, 12, color, 'middle', { 'font-weight': 900 }); }
+function dashArrow(x1, y1, x2, y2, color){
+  const L = Math.hypot(x2 - x1, y2 - y1); if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = 11;
+  el('line', { x1, y1, x2: x2 - ux * h * .8, y2: y2 - uy * h * .8, stroke: color, 'stroke-width': 4, 'stroke-dasharray': '7 5' }, svg);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * .55) + ' ' + (y2 - uy * h + ux * h * .55) + ' L' + (x2 - ux * h + uy * h * .55) + ' ' + (y2 - uy * h - ux * h * .55) + 'z', fill: color }, svg);
+}
+
+function ground(){
+  el('rect', { width: 320, height: 270, fill: '#eef2f7' }, svg);
+  for (let x = 0; x <= 320; x += 20) el('line', { x1: x, x2: x, y1: 0, y2: 270, stroke: '#dfe4ee', 'stroke-width': 1 }, svg);
+  for (let y = 0; y <= 270; y += 20) el('line', { x1: 0, x2: 320, y1: y, y2: y, stroke: '#dfe4ee', 'stroke-width': 1 }, svg);
+  // 方位
+  arrow(svg, 292, 44, 292, 16, '#6b7488', 2); txt(svg, 292, 56, '北', 10, '#6b7488');
+  arrow(svg, 270, 66, 298, 66, '#6b7488', 2); txt(svg, 262, 70, '東', 10, '#6b7488', 'end');
+  txt(svg, 8, 262, '方眼 1目もり ＝ 10 N', 10, '#6b7488', 'start');
+  // 台車
+  el('rect', { x: O.x - 16, y: O.y - 10, width: 32, height: 20, rx: 4, fill: '#b47a44', stroke: '#7e5129', 'stroke-width': 2 }, svg);
+  el('circle', { cx: O.x - 9, cy: O.y + 12, r: 4, fill: '#1f2638' }, svg);
+  el('circle', { cx: O.x + 9, cy: O.y + 12, r: 4, fill: '#1f2638' }, svg);
+}
+
+function drawComp(){
+  const p1 = tip(F1, 0), p2 = tip(F2, A), R = resultant(), pr = tip(R.f, R.deg);
+  // 平行四辺形（prog 0→1 で描く）
+  if (prog > 0){
+    const q = Math.min(1, prog * 2);
+    const a = { x: p1.x + (pr.x - p1.x) * q, y: p1.y + (pr.y - p1.y) * q };
+    const b = { x: p2.x + (pr.x - p2.x) * q, y: p2.y + (pr.y - p2.y) * q };
+    el('line', { x1: p1.x, y1: p1.y, x2: a.x, y2: a.y, stroke: '#6b7488', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
+    el('line', { x1: p2.x, y1: p2.y, x2: b.x, y2: b.y, stroke: '#6b7488', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
+  }
+  arrow(svg, O.x, O.y, p1.x, p1.y, '#d93a3f', 4);
+  label(p1, 'F₁ ' + F1 + ' N', '#d93a3f', 0, 18);
+  arrow(svg, O.x, O.y, p2.x, p2.y, '#d93a3f', 4);
+  label(p2, 'F₂ ' + F2 + ' N', '#d93a3f', A >= 60 && A <= 120 ? -34 : 0, A > 150 ? 18 : -8);
+  if (prog >= 0.5){
+    const q = Math.min(1, (prog - 0.5) * 2);
+    const oy = Math.abs(R.y) < 0.01 ? -16 : 0;                        // 一直線のときは、少し上にずらして描く
+    const e = { x: O.x + (pr.x - O.x) * q, y: O.y + oy + (pr.y - O.y) * q };
+    dashArrow(O.x, O.y + oy, e.x, e.y, '#d93a3f');
+    if (q >= 1 && R.f > 0.5) label({ x: pr.x, y: pr.y + oy }, '合力 ' + r1(R.f) + ' N', '#d93a3f', 0, -10);
+  }
+}
+
+function drawDec(){
+  const p = tip(F, B), px = tip(F * Math.cos(B * RAD), 0), py = tip(F * Math.sin(B * RAD), 90);
+  if (prog > 0){
+    const q = Math.min(1, prog);
+    el('line', { x1: p.x, y1: p.y, x2: p.x, y2: p.y + (px.y - p.y) * q, stroke: '#6b7488', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
+    el('line', { x1: p.x, y1: p.y, x2: p.x + (py.x - p.x) * q, y2: p.y, stroke: '#6b7488', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
+    if (q >= 1){
+      dashArrow(O.x, O.y, px.x, px.y, '#7e5129');
+      dashArrow(O.x, O.y, py.x, py.y, '#7e5129');
+      if (F * Math.cos(B * RAD) > 0.5) label(px, '水平 ' + r1(F * Math.cos(B * RAD)) + ' N', '#7e5129', 0, 26);
+      if (F * Math.sin(B * RAD) > 0.5) label(py, '鉛直 ' + r1(F * Math.sin(B * RAD)) + ' N', '#7e5129', -6, -8);
+    }
+  }
+  arrow(svg, O.x, O.y, p.x, p.y, '#d93a3f', 4);
+  label(p, 'F ' + F + ' N', '#d93a3f', 14, -6);
+  // 角度
+  if (B > 0) el('path', { d: 'M' + (O.x + 30) + ' ' + O.y + ' A30 30 0 0 0 ' + (O.x + 30 * Math.cos(B * RAD)) + ' ' + (O.y - 30 * Math.sin(B * RAD)), fill: 'none', stroke: '#6b7488', 'stroke-width': 1.5 }, svg);
+  txt(svg, O.x + 40, O.y - 6, B + '°', 11, '#6b7488', 'start');
+}
+
+function draw(){
+  svg.innerHTML = '';
+  ground();
+  if (mode === 'comp') drawComp(); else drawDec();
+  show();
+}
+
+function show(){
+  $('o1').innerHTML = F1 + '<small>N</small>'; $('o2').innerHTML = F2 + '<small>N</small>'; $('oA').innerHTML = A + '<small>°</small>';
+  $('oF').innerHTML = F + '<small>N</small>'; $('oB').innerHTML = B + '<small>°</small>';
+  const shown = prog >= 1;
+  if (mode === 'comp'){
+    const R = resultant();
+    $('r1n').textContent = 'F₁（東向き）'; $('r1').textContent = F1 + ' N';
+    $('r2n').textContent = 'F₂（東から ' + A + '°）'; $('r2').textContent = F2 + ' N';
+    $('r3n').textContent = '合力'; $('r3').textContent = shown ? r1(R.f) + ' N' : '？';
+    let s;
+    if (!shown) s = '「合成する」を押すと、平行四辺形を描いて合力を求めるよ。';
+    else if (A === 0) s = '同じ向き：' + F1 + ' + ' + F2 + ' = <b>' + (F1 + F2) + ' N</b>（東向き）';
+    else if (A === 180) s = '東向きを正とする。反対向き：' + F1 + ' − ' + F2 + ' = <b>' + (F1 - F2) + ' N</b>' + (F1 - F2 < 0 ? '（西へ ' + (F2 - F1) + ' N）' : F1 - F2 > 0 ? '（東へ ' + (F1 - F2) + ' N）' : '（合力 0）');
+    else if (A === 90) s = '直角：<span class="m">F</span> = √(' + F1 + '² + ' + F2 + '²) = <b>' + r1(R.f) + ' N</b>';
+    else s = '平行四辺形の対角線の長さ：<b>' + r1(R.f) + ' N</b>（東から ' + r1(R.deg) + '°の向き）<br>' + F1 + ' + ' + F2 + ' = ' + (F1 + F2) + ' N より小さい';
+    $('formula').innerHTML = s;
+  } else {
+    const c = F * Math.cos(B * RAD), sn = F * Math.sin(B * RAD);
+    $('r1n').textContent = '引く力 F（水平から ' + B + '°）'; $('r1').textContent = F + ' N';
+    $('r2n').textContent = '水平の分力'; $('r2').textContent = shown ? r1(c) + ' N' : '？';
+    $('r3n').textContent = '鉛直の分力'; $('r3').textContent = shown ? r1(sn) + ' N' : '？';
+    $('formula').innerHTML = shown
+      ? '水平：' + F + ' × cos' + B + '° = <b>' + r1(c) + ' N</b><br>鉛直：' + F + ' × sin' + B + '° = <b>' + r1(sn) + ' N</b>'
+      : '「分解する」を押すと、F を水平と鉛直の2つの力に分けるよ。';
+  }
+}
+
+function talk(){
+  const shown = prog >= 1;
+  if (mode === 'dec'){
+    if (!shown) return say('question', 'ななめに引く力は、横に引く力と、上に引く力に分けられる。「分解する」で見てみよう。');
+    return say(done.m3 && B === 60 && F === 40 ? 'happy' : 'proud', '水平の分力は ' + r1(F * Math.cos(B * RAD)) + ' N じゃ。台車を前に進めるのは、この水平の分力なのじゃ。');
+  }
+  if (!shown) return say('question', 'リカくんが東へ ' + F1 + ' N、わしが東から ' + A + '°の向きに ' + F2 + ' N。合わせると何 N かな？');
+  const R = resultant();
+  if (A === 90 && !done.m2) return say('proud', '直角なら、平行四辺形は長方形じゃ。対角線は ' + r1(R.f) + ' N。足し算の ' + (F1 + F2) + ' N にはならんのじゃ。次は角度を 0° と 180° にしてごらん。');
+  if (A === 0) return say('normal', '同じ向きなら、そのまま足し算で ' + (F1 + F2) + ' N じゃ。');
+  if (A === 180) return say('think', '反対向きなら引き算じゃ。東向きを正とすると ' + F1 + ' − ' + F2 + ' = ' + (F1 - F2) + ' N。');
+  if (!done.m3) return say('think', '角度が開くほど、合力は小さくなるな。最後は「分解」もためしてみよう。');
+  say('happy', '合力は平行四辺形の対角線。向きがちがうと、ただの足し算にはならんのじゃ！');
+}
+
+function run(){
+  $('go').disabled = true;
+  play(1.2, t => { prog = t / 1.2; draw(); }, () => {
+    prog = 1;
+    if (mode === 'comp'){
+      if (A === 90 && F1 === 30 && F2 === 40) done.m1 = true;
+      if (F1 === 30 && F2 === 40 && (A === 0 || A === 180)) tried[A] = true;
+      if (tried[0] && tried[180]) done.m2 = true;
+    } else if (F === 40 && B === 60) done.m3 = true;
+    $('go').disabled = false;
+    showMissions(); draw(); talk();
+  });
+}
+function changed(){
+  stopPlay(); prog = 0; $('go').disabled = false;
+  F1 = Number($('in1').value); F2 = Number($('in2').value); A = Number($('inA').value);
+  F = Number($('inF').value); B = Number($('inB').value);
+  draw(); talk();
+}
+['in1', 'in2', 'inA', 'inF', 'inB'].forEach(id => $(id).addEventListener('input', changed));
+segGroup('mode', v => {
+  mode = v;
+  $('compCtl').style.display = v === 'comp' ? '' : 'none'; $('decCtl').style.display = v === 'dec' ? '' : 'none';
+  $('go').textContent = v === 'comp' ? '合成する ▶' : '分解する ▶';
+  changed();
+});
+$('go').addEventListener('click', run);
+$('reset').addEventListener('click', () => {
+  $('in1').value = 30; $('in2').value = 40; $('inA').value = 90; $('inF').value = 40; $('inB').value = 60;
+  mode = 'comp'; pickSeg('mode', 'comp'); $('compCtl').style.display = ''; $('decCtl').style.display = 'none'; $('go').textContent = '合成する ▶';
+  changed();
+});
+draw(); talk();
+</script>
+</body>
+</html>
