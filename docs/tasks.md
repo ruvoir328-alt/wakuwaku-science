@@ -147,7 +147,7 @@ Claude Code にこう送るだけ：
   - さわる場所：`physics/app.js` `physics/index.html` `physics/mypage.html`、2章の `story/epXX.js` と `sim/` のリンク
   - ※ T-14・T-15 が main に入ってから投げる
 
-- [ ] **T-14　マイページに2章の単元を出す** ☕
+- [x] **T-14　マイページに2章の単元を出す** ☕
   - 今のマイページ（`physics/mypage.html` の `UNITS`）は1章の8単元だけ。2-1〜2-5 を「第2章 力と運動の法則」として足す（見出し・クリア数・トロフィー数も2章ぶん数える）
   - さわる場所：`physics/mypage.html`
   - ※ T-13 より前に

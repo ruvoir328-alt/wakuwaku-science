@@ -43,6 +43,15 @@
         <div class="mp-grid" id="mp-grid-1"></div>
       </section>
 
+      <!-- 第2章 -->
+      <section class="mp-section">
+        <div class="mp-section-header">
+          <span class="mp-section-num">第2章</span>
+          <h2 class="mp-section-title">力と運動の法則</h2>
+        </div>
+        <div class="mp-grid" id="mp-grid-2"></div>
+      </section>
+
     </main>
 
     <footer class="mp-footer">
@@ -53,15 +62,21 @@
   </div>
 
   <script>
+    // ch：章（教科書の 1編1章・2章）。単元一覧（index.html）と同じ順・同じ名前
     const UNITS = [
-      { id: '1-1', name: '速度と時間と変位', formula: 'v = x/t' },
-      { id: '1-2', name: '等速直線運動',     formula: 'x = vt' },
-      { id: '1-3', name: '等加速度運動',     formula: 'v = v₀ + at' },
-      { id: '1-4', name: '自由落下',         formula: 'v = gt' },
-      { id: '1-5', name: '鉛直投げおろし',   formula: 'v = v₀ + gt' },
-      { id: '1-6', name: '鉛直投げ上げ',     formula: 'v = v₀ − gt' },
-      { id: '1-7', name: '合成速度・相対速度', formula: 'v = v₁ + v₂' },
-      { id: '1-8', name: '水平投射',         formula: 'x = v₀t・y = ½gt²' },
+      { ch: 1, id: '1-1', name: '速度と時間と変位', formula: 'v = x/t' },
+      { ch: 1, id: '1-2', name: '等速直線運動',     formula: 'x = vt' },
+      { ch: 1, id: '1-3', name: '等加速度運動',     formula: 'v = v₀ + at' },
+      { ch: 1, id: '1-4', name: '自由落下',         formula: 'v = gt' },
+      { ch: 1, id: '1-5', name: '鉛直投げおろし',   formula: 'v = v₀ + gt' },
+      { ch: 1, id: '1-6', name: '鉛直投げ上げ',     formula: 'v = v₀ − gt' },
+      { ch: 1, id: '1-7', name: '合成速度・相対速度', formula: 'v = v₁ + v₂' },
+      { ch: 1, id: '1-8', name: '水平投射',         formula: 'x = v₀t・y = ½gt²' },
+      { ch: 2, id: '2-1', name: '力の合成・分解',   formula: 'F = F₁ + F₂' },
+      { ch: 2, id: '2-2', name: '力のつりあい',     formula: 'ΣF = 0' },
+      { ch: 2, id: '2-3', name: '運動方程式',       formula: 'F = ma' },
+      { ch: 2, id: '2-4', name: '摩擦力',           formula: "f = μ'N" },
+      { ch: 2, id: '2-5', name: '圧力と浮力',       formula: 'P = F/S' },
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -122,8 +137,8 @@
       }
 
       // ── ユニットグリッド ──
-      const grid = document.getElementById('mp-grid-1');
       UNITS.forEach(unit => {
+        const grid = document.getElementById('mp-grid-' + unit.ch);
         const prog = data[unit.id];
         const perfect = prog && prog.perfect;
         const done    = prog && !perfect && prog.bestScore >= 4;   // メダルは 4問以上
