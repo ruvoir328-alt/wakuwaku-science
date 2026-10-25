@@ -157,6 +157,7 @@ window.EPISODE = {
   topic: '作用・反作用の法則',
   title: '押したら、押し返される？',
   simUrl: '../sim/action-reaction.html',
+  drillUrl: '../physics/drill.html?unit=2-7',
   scenes: [
     { bg: 'title' },
 

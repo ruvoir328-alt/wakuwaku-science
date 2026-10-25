@@ -270,222 +270,375 @@ function saveProgress() {
 }
 
 // ========================================
-// 2節「力と運動の法則」問題生成
+// 2章「力と運動の法則」問題生成（ストーリーの場面にそろえた問題）
+//   2-1 第10話（2人で引っぱる）、2-2 第11話・第9話、2-3 第14話・第15話、2-4 第16話、
+//   2-5 第17話、2-6 第9話（ばね）、2-7 第13話（スケートで押し合う）
 // ========================================
 
-/** 2-1a: 同じ向きの合力  F = F₁ + F₂ */
-function probForceAdd() {
-  const f1 = ri(2, 20), f2 = ri(2, 20);
+const g98 = m => round1(m * 9.8);
+const f1d = n => n.toFixed(1);                       // 2 → "2.0"（脚本と同じ書き方）
+const round2 = n => Math.round(n * 100) / 100;
+
+/** 2-1a（第10話）：同じ向きに引く  F = F₁ + F₂ */
+function probPullSame() {
+  const f1 = ri(1, 5) * 10, f2 = ri(1, 5) * 10;
   return {
     badge: '力の合成',
-    text: `同じ向きに <b>${f1} N</b>と <b>${f2} N</b>の力がはたらいている。<br>合力 <i>F</i> を求めよ。`,
+    text: `リカが東へ <b>${f1} N</b>、ニュートンくんも東へ <b>${f2} N</b>の力で、同じ荷物を引っぱった。<br>荷物にはたらく合力 <i>F</i> を求めよ。<br><small>（東向きを正とする）</small>`,
     formula: 'F = F₁ + F₂',
     inputs: [
-      { variable: 'F₁', unit: 'N', answer: f1, tol: 0 },
-      { variable: 'F₂', unit: 'N', answer: f2, tol: 0 }
+      { variable: 'F₁（リカ）', unit: 'N', answer: f1, tol: 0 },
+      { variable: 'F₂（ニュートンくん）', unit: 'N', answer: f2, tol: 0 }
     ],
     result: { variable: 'F', value: f1 + f2, unit: 'N', expression: `${f1} + ${f2}` },
-    anim: 'force-add', ap: { f1, f2 }
+    anim: 'p-pull', ap: { kind: 'same', f1, f2 }
   };
 }
 
-/** 2-1b: 反対向きの合力  F = |F₁ − F₂| */
-function probForceSub() {
-  const f1 = ri(5, 25), f2 = ri(2, f1 - 1);
+/** 2-1b（第10話）：反対向きに引く  F = F₁ + F₂（F₂ < 0） */
+function probPullOpp() {
+  const f1 = ri(1, 5) * 10;
+  let f2 = f1; while (f2 === f1) f2 = ri(1, 5) * 10;
   return {
     badge: '力の合成',
-    text: `右向きに <b>${f1} N</b>、左向きに <b>${f2} N</b>の力がはたらいている。<br>合力 <i>F</i> の大きさと向きを答えよ（右向きを正とする）。`,
-    formula: 'F = F₁ − F₂（右向きを正とする）',
+    text: `リカが東へ <b>${f1} N</b>、ニュートンくんが西へ <b>${f2} N</b>の力で、同じ荷物を引っぱった。<br>荷物にはたらく合力 <i>F</i> を求めよ。${EAST.replace('速度', '力')}`,
+    formula: 'F = F₁ + F₂（西向きの力は −）',
+    signed: true,
     inputs: [
-      { variable: 'F₁', unit: 'N', answer: f1, tol: 0 },
-      { variable: 'F₂', unit: 'N', answer: f2, tol: 0 }
+      { variable: 'F₁（リカ）', unit: 'N', answer: f1, tol: 0 },
+      { variable: 'F₂（ニュートンくん）', unit: 'N', answer: -f2, tol: 0 }
     ],
-    result: { variable: 'F', value: f1 - f2, unit: 'N（右向き）', expression: `${f1} − ${f2}` },
-    anim: 'force-sub', ap: { f1, f2 }
+    result: { variable: 'F', value: f1 - f2, unit: 'N', expression: `${f1} + ${sgnTxt(-f2)}` },
+    anim: 'p-pull', ap: { kind: 'opp', f1, f2 }
   };
 }
 
-/** 2-1c: 力の分解（水平・鉛直成分）*/
-function probForceDecomp() {
-  const angles = [30, 45, 60];
-  const deg = angles[ri(0, 2)];
-  const F = ri(4, 20) * 5;           // きれいな数にする
-  const rad = deg * Math.PI / 180;
-  const fx = round1(F * Math.cos(rad));
-  const fy = round1(F * Math.sin(rad));
+/** 2-1c（第10話）：直角に引く  F = √(F₁² + F₂²)（3 : 4 : 5） */
+function probPullRight() {
+  const k = ri(2, 10), f1 = 3 * k, f2 = 4 * k;
+  return {
+    badge: '力の合成',
+    text: `リカが東へ <b>${f1} N</b>、ニュートンくんが北へ <b>${f2} N</b>の力で、同じ荷物を引っぱった。<br>合力 <i>F</i> の大きさを求めよ。<br><small>（2つの力は直角。平行四辺形は長方形になる）</small>`,
+    formula: 'F = √(F₁² + F₂²)',
+    inputs: [
+      { variable: 'F₁（東）', unit: 'N', answer: f1, tol: 0 },
+      { variable: 'F₂（北）', unit: 'N', answer: f2, tol: 0 }
+    ],
+    result: { variable: 'F', value: 5 * k, unit: 'N', expression: `√(${f1}² + ${f2}²) = √${25 * k * k}` },
+    anim: 'p-pull', ap: { kind: 'right', f1, f2 }
+  };
+}
+
+/** 2-1d（第10話）：ななめに引く力の分解  Fx = F cos60° */
+function probPullDecomp() {
+  const F = ri(2, 10) * 10;
   return {
     badge: '力の分解',
-    text: `大きさ <b>${F} N</b>の力が水平から <b>${deg}°</b>の向きにはたらいている。<br>水平成分 <i>Fx</i> を求めよ。`,
-    formula: `Fx = F × cos${deg}°`,
+    text: `ニュートンくんが台車のひもを、水平から <b>60°</b>の向きに <b>${F} N</b>の力で引いた。<br>台車を前に進める、水平の分力 <i>F<sub>x</sub></i> を求めよ。<br><small>（cos60° = 0.5）</small>`,
+    formula: 'F<sub>x</sub> = F × cos60°',
     inputs: [
-      { variable: 'F',  unit: 'N', answer: F,   tol: 0 },
+      { variable: 'F', unit: 'N', answer: F, tol: 0 },
+      { variable: 'cos60°', unit: '', answer: 0.5, tol: 0.001 }
     ],
-    result: { variable: 'Fx', value: fx, unit: 'N', expression: `${F} × cos${deg}° = ${F} × ${round1(Math.cos(rad))}` },
-    exact: false,   // cos の値を四捨五入した答えなので、整数でも「ぴったり判定」にしない
-    anim: 'force-decomp', ap: { F, deg }
+    result: { variable: 'Fx', value: F / 2, unit: 'N', expression: `${F} × 0.5` },
+    anim: 'p-pull', ap: { kind: 'decomp', F }
   };
 }
 
-/** 2-2a: 2力のつりあい（垂直抗力）  N = mg */
-function probEquilNormal() {
-  const m = ri(1, 20);
-  const N = round1(m * 9.8);
+/** 2-2a（第9話）：机の上のかご（垂直抗力）  N = W = mg */
+function probBasketNormal() {
+  const m = ri(2, 10) * 0.5;
   return {
     badge: '力のつりあい',
-    text: `質量 <b>${m} kg</b>の物体が水平面上で静止している。<br>垂直抗力 <i>N</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
-    formula: 'つりあい → N = mg',
+    text: `机の上に、質量 <b>${f1d(m)} kg</b>のかごが置いてある。<br>机がかごを押し上げる力（垂直抗力）<i>N</i> を求めよ。<br><small>（上向きを正とする。g = 9.8 m/s²）</small>`,
+    formula: 'つりあい：N = W = mg',
     inputs: [
-      { variable: 'm', unit: 'kg',  answer: m,   tol: 0    },
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 },
       { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 }
     ],
-    result: { variable: 'N', value: N, unit: 'N', expression: `${m} × 9.8` },
-    anim: 'equil', ap: { m, N }
+    result: { variable: 'N', value: g98(m), unit: 'N', expression: `${f1d(m)} × 9.8` },
+    anim: 'p-basket', ap: { m }
   };
 }
 
-/** 2-2b: 3力のつりあい（未知の力） */
-function probEquil3() {
-  const w  = ri(2, 15) * 10;   // 重力 [N]
-  const f1 = ri(1, w / 10) * 5;     // 一方の張力 T₁：5 N 〜 W の半分（W より大きくならないように）
-  const f2 = w - f1;
+/** 2-2b（第11話）：植木鉢を2本のひもでつるす  T₂ = W − T₁ */
+function probPotTension() {
+  const m = ri(2, 10), W = g98(m);
+  const t1 = ri(1, Math.floor(W / 10)) * 5;           // 5 N 〜 W の半分くらい
   return {
     badge: '力のつりあい',
-    text: `重力 <b>${w} N</b>の物体が2本のひもで支えられ静止している。<br>一方のひもの張力が <b>${f1} N</b>のとき、もう一方の張力 <i>T</i> を求めよ。`,
-    formula: 'ΣF = 0 → T = W − T₁',
+    text: `重さ（重力）<b>${W} N</b>の植木鉢を、2本のひもで真上につるした。<br>片方のひもの張力が <b>${t1} N</b>のとき、もう片方の張力 <i>T₂</i> を求めよ。<br><small>（上向きを正とする）</small>`,
+    formula: 'つりあい：T₁ + T₂ = W → T₂ = W − T₁',
     inputs: [
-      { variable: 'W',  unit: 'N', answer: w,  tol: 0 },
-      { variable: 'T₁', unit: 'N', answer: f1, tol: 0 }
+      { variable: 'W', unit: 'N', answer: W, tol: 0.05 },
+      { variable: 'T₁', unit: 'N', answer: t1, tol: 0 }
     ],
-    result: { variable: 'T', value: f2, unit: 'N', expression: `${w} − ${f1}` },
-    anim: 'equil', ap: { m: round1(w / 9.8), N: w }
+    result: { variable: 'T₂', value: round1(W - t1), unit: 'N', expression: `${W} − ${t1}` },
+    anim: 'p-pot', ap: { W, t1 }
   };
 }
 
-/** 2-3a: 運動方程式（加速度）  a = F ÷ m　← 既存 probNewton の拡充版 */
-function probEqAccel() {
-  const m = ri(1, 15), a = ri(1, 10);
-  const F = m * a;
+/** 2-3a（第14話）：台車の加速度  a = F ÷ m */
+function probCartAccel() {
+  const m = ri(1, 5), a = ri(1, 5), F = m * a;
   return {
     badge: '運動方程式',
-    text: `質量 <b>${m} kg</b>の物体に <b>${F} N</b>の力を加えた。<br>加速度 <i>a</i> を求めよ。`,
-    formula: 'F = ma  →  a = F ÷ m',
+    text: `まさつのない床の上で、リカが質量 <b>${m} kg</b>の台車を <b>${F} N</b>の力で押し続けた。<br>台車の加速度 <i>a</i> を求めよ。`,
+    formula: 'ma = F → a = F ÷ m',
     inputs: [
-      { variable: 'F', unit: 'N',  answer: F, tol: 0 },
+      { variable: 'F', unit: 'N', answer: F, tol: 0 },
       { variable: 'm', unit: 'kg', answer: m, tol: 0 }
     ],
     result: { variable: 'a', value: a, unit: 'm/s²', expression: `${F} ÷ ${m}` },
-    anim: 'newton', ap: { m, F }
+    anim: 'p-cart', ap: { m, F }
   };
 }
 
-/** 2-3b: 運動方程式（力）  F = ma */
-function probEqForce() {
-  const m = ri(1, 15), a = ri(1, 10);
-  const F = m * a;
+/** 2-3b（第14話）：必要な力  F = ma */
+function probCartForce() {
+  const m = ri(1, 5), a = ri(1, 5);
   return {
     badge: '運動方程式',
-    text: `質量 <b>${m} kg</b>の物体に力を加えたら加速度 <b>${a} m/s²</b>が生じた。<br>力 <i>F</i> を求めよ。`,
-    formula: 'F = m × a',
+    text: `まさつのない床の上で、質量 <b>${m} kg</b>の台車を押したら、加速度 <b>${a} m/s²</b>で速くなった。<br>押した力 <i>F</i> を求めよ。`,
+    formula: 'ma = F',
     inputs: [
-      { variable: 'm', unit: 'kg',  answer: m, tol: 0 },
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 },
       { variable: 'a', unit: 'm/s²', answer: a, tol: 0 }
     ],
-    result: { variable: 'F', value: F, unit: 'N', expression: `${m} × ${a}` },
-    anim: 'newton', ap: { m, F }
+    result: { variable: 'F', value: m * a, unit: 'N', expression: `${m} × ${a}` },
+    anim: 'p-cart', ap: { m, F: m * a }
   };
 }
 
-/** 2-3c: 運動方程式（質量）  m = F ÷ a */
-function probEqMass() {
-  const m = ri(1, 15), a = ri(1, 10);
-  const F = m * a;
+/** 2-3c（第14話）：台車の質量  m = F ÷ a */
+function probCartMass() {
+  const m = ri(1, 5), a = ri(1, 5), F = m * a;
   return {
     badge: '運動方程式',
-    text: `<b>${F} N</b>の力を加えたら加速度 <b>${a} m/s²</b>が生じた。<br>物体の質量 <i>m</i> を求めよ。`,
-    formula: 'F = ma  →  m = F ÷ a',
+    text: `まさつのない床の上で、台車を <b>${F} N</b>の力で押したら、加速度 <b>${a} m/s²</b>で速くなった。<br>台車の質量 <i>m</i> を求めよ。`,
+    formula: 'ma = F → m = F ÷ a',
     inputs: [
-      { variable: 'F', unit: 'N',   answer: F, tol: 0 },
+      { variable: 'F', unit: 'N', answer: F, tol: 0 },
       { variable: 'a', unit: 'm/s²', answer: a, tol: 0 }
     ],
     result: { variable: 'm', value: m, unit: 'kg', expression: `${F} ÷ ${a}` },
-    anim: 'newton', ap: { m, F }
+    anim: 'p-cart', ap: { m, F }
   };
 }
 
-/** 2-4a: 動摩擦力  f = μ'N = μ'mg */
-function probFriction() {
-  const mu  = [0.2, 0.3, 0.4, 0.5][ri(0, 3)];
-  const m   = ri(1, 10);
-  const N   = round1(m * 9.8);
-  const f   = round1(mu * N);
+/** 2-3d（第15話）：落ちる鉄球の加速度  a = W ÷ m（= g） */
+function probFallAccel() {
+  const m = ri(1, 8) * 0.5, W = g98(m);
   return {
-    badge: '摩擦力',
-    text: `動摩擦係数 <b>μ' = ${mu}</b>、質量 <b>${m} kg</b>の物体が水平面を滑っている。<br>動摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
-    formula: "f = μ'N = μ'mg",
+    badge: '運動方程式',
+    text: `ニュートンくんが、質量 <b>${f1d(m)} kg</b>の鉄球を真空の筒の中で落とした。鉄球にはたらく重力は <b>${W} N</b>。<br>鉄球の加速度 <i>a</i> を求めよ。<br><small>（下向きを正とする）</small>`,
+    formula: 'ma = W → a = W ÷ m',
     inputs: [
-      { variable: "μ'", unit: '',    answer: mu,  tol: 0.001 },
-      { variable: 'm',  unit: 'kg',  answer: m,   tol: 0     },
-      { variable: 'g',  unit: 'm/s²', answer: 9.8, tol: 0.05  }
+      { variable: 'W', unit: 'N', answer: W, tol: 0.05 },
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 }
     ],
-    result: { variable: 'f', value: f, unit: 'N', expression: `${mu} × ${m} × 9.8` },
-    anim: 'friction', ap: { m, mu }
+    result: { variable: 'a', value: 9.8, unit: 'm/s²', expression: `${W} ÷ ${f1d(m)}` },
+    anim: 'p-drop', ap: { v0: 0, t: 1 }
   };
 }
 
-/** 2-4b: 静止摩擦・最大静止摩擦力  f_max = μN */
-function probStaticFriction() {
-  const mu  = [0.3, 0.4, 0.5, 0.6][ri(0, 3)];
-  const m   = ri(1, 10);
-  const N   = round1(m * 9.8);
-  const f   = round1(mu * N);
+const MU = [0.20, 0.25, 0.30, 0.40, 0.50];
+/** 2-4a（第16話）：押しても動かない本（静止摩擦力）  f = F */
+function probBookStatic() {
+  const m = ri(1, 4), mu = 0.5, fmax = round1(mu * m * 9.8);
+  const F = ri(1, Math.floor(fmax - 0.5));
   return {
     badge: '摩擦力',
-    text: `静止摩擦係数 <b>μ = ${mu}</b>、質量 <b>${m} kg</b>の物体に水平の力を加え続ける。<br>最大静止摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `机の上の質量 <b>${m}.0 kg</b>の本を、リカが水平に <b>${F} N</b>の力で押した。本は動かなかった。<br>このときの静止摩擦力 <i>f</i> の大きさを求めよ。<br><small>（静止摩擦係数 μ = 0.50、g = 9.8 m/s²）</small>`,
+    formula: '動かない → つりあい：f = F',
+    inputs: [
+      { variable: 'F', unit: 'N', answer: F, tol: 0 }
+    ],
+    result: { variable: 'f', value: F, unit: 'N', expression: `${F}（押す力と同じ）` },
+    anim: 'p-book', ap: { m, F, kind: 'static' }
+  };
+}
+
+/** 2-4b（第16話）：すべり出す直前（最大摩擦力）  f = μN = μmg */
+function probBookMax() {
+  const m = ri(1, 4), mu = [0.30, 0.40, 0.50, 0.60][ri(0, 3)];
+  return {
+    badge: '摩擦力',
+    text: `机の上の質量 <b>${m}.0 kg</b>の本を、リカが少しずつ強く押していく。静止摩擦係数は <b>μ = ${mu.toFixed(2)}</b>。<br>本がすべり出す直前の最大摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
     formula: 'f = μN = μmg',
     inputs: [
-      { variable: 'μ', unit: '',    answer: mu,  tol: 0.001 },
-      { variable: 'm', unit: 'kg',  answer: m,   tol: 0     },
-      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05  }
+      { variable: 'μ', unit: '', answer: mu, tol: 0.001 },
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 },
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 }
     ],
-    result: { variable: 'f', value: f, unit: 'N', expression: `${mu} × ${m} × 9.8` },
-    anim: 'friction', ap: { m, mu }
+    result: { variable: 'f', value: round2(mu * m * 9.8), unit: 'N', expression: `${mu.toFixed(2)} × ${m} × 9.8` },
+    anim: 'p-book', ap: { m, F: round1(mu * m * 9.8), kind: 'max' }
   };
 }
 
-/** 2-5a: 圧力  P = F ÷ S */
-function probPressure() {
-  const F = ri(1, 20) * 10;
-  const S = [0.1, 0.2, 0.4, 0.5, 1.0][ri(0, 4)];
-  const P = round1(F / S);
+/** 2-4c（第16話）：すべっている本（動摩擦力）  f = μ'N = μ'mg */
+function probBookKinetic() {
+  const m = ri(1, 4), mu = MU[ri(0, 4)];
+  return {
+    badge: '摩擦力',
+    text: `机の上を、質量 <b>${m}.0 kg</b>の本がすべっている。動摩擦係数は <b>μ' = ${mu.toFixed(2)}</b>。<br>本にはたらく動摩擦力 <i>f</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    formula: "f = μ'N = μ'mg",
+    inputs: [
+      { variable: "μ'", unit: '', answer: mu, tol: 0.001 },
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 },
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 }
+    ],
+    result: { variable: 'f', value: round2(mu * m * 9.8), unit: 'N', expression: `${mu.toFixed(2)} × ${m} × 9.8` },
+    anim: 'p-book', ap: { m, F: round1(mu * m * 9.8 + 2), kind: 'kinetic' }
+  };
+}
+
+/** 2-5a（第17話）：雪の上のリカ（圧力）  P = F ÷ S */
+function probSnowPressure() {
+  const F = [392, 441, 490, 539, 588][ri(0, 4)];           // 40〜60 kg × 9.8
+  const S = [0.020, 0.040, 0.050, 0.20, 0.25, 0.50][ri(0, 5)];
+  const what = S < 0.1 ? 'くつ' : 'スキー';
   return {
     badge: '圧力',
-    text: `面積 <b>${S} m²</b>の面に <b>${F} N</b>の力が垂直にはたらいている。<br>圧力 <i>P</i> を求めよ。`,
+    text: `重さ <b>${F} N</b>の人が、${what}をはいて雪の上に立った。雪に接する面積は全部で <b>${S.toFixed(S < 0.1 ? 3 : 2)} m²</b>。<br>雪にかかる圧力 <i>P</i> を求めよ。`,
     formula: 'P = F ÷ S',
     inputs: [
-      { variable: 'F', unit: 'N',  answer: F, tol: 0    },
-      { variable: 'S', unit: 'm²', answer: S, tol: 0.001 }
+      { variable: 'F', unit: 'N', answer: F, tol: 0 },
+      { variable: 'S', unit: 'm²', answer: S, tol: 0.0001 }
     ],
-    result: { variable: 'P', value: P, unit: 'Pa', expression: `${F} ÷ ${S}` },
-    anim: 'pressure', ap: { F, S }
+    result: { variable: 'P', value: Math.round(F / S), unit: 'Pa', expression: `${F} ÷ ${S}` },
+    exact: false,     // S が小数なので、少しのずれまで正解にする
+    anim: 'p-snow', ap: { F, S, what }
   };
 }
 
-/** 2-5b: 浮力  F = ρVg */
-function probBuoyancy() {
-  const rho = 1000;   // 水
-  const V   = [0.001, 0.002, 0.005, 0.01][ri(0, 3)];
-  const F   = round1(rho * V * 9.8);
+/** 2-5b（第17話）：水に沈めた石の浮力  F = ρVg */
+function probStoneBuoyancy() {
+  const k = [1, 2, 3, 5][ri(0, 3)], V = k / 10000;
   return {
     badge: '浮力',
-    text: `水（密度 1000 kg/m³）に体積 <b>${V} m³</b>の物体が完全に沈んでいる。<br>浮力 <i>F</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    text: `ばねばかりにつるした石を、水の中に全部沈めた。石の体積は <b>${k}.0 × 10⁻⁴ m³</b>（${V} m³）。<br>石にはたらく浮力 <i>F</i> を求めよ。<br><small>（水の密度 1000 kg/m³、g = 9.8 m/s²）</small>`,
     formula: 'F = ρVg',
     inputs: [
-      { variable: 'ρ', unit: 'kg/m³', answer: rho, tol: 0   },
-      { variable: 'V', unit: 'm³',    answer: V,   tol: 0.0001 },
-      { variable: 'g', unit: 'm/s²',  answer: 9.8, tol: 0.05 }
+      { variable: 'ρ', unit: 'kg/m³', answer: 1000, tol: 0 },
+      { variable: 'V', unit: 'm³', answer: V, tol: 0.000001 },
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 }
     ],
-    result: { variable: 'F', value: F, unit: 'N', expression: `1000 × ${V} × 9.8` },
-    anim: 'pressure', ap: { F, S: 1 }
+    result: { variable: 'F', value: round2(0.98 * k), unit: 'N', expression: `1000 × ${V} × 9.8` },
+    anim: 'p-water', ap: { W: 1.96, F: round2(0.98 * k) }
+  };
+}
+
+/** 2-5c（第17話）：水の中のばねばかりの目盛り  T = W − F */
+function probScaleInWater() {
+  const m = [0.20, 0.30, 0.40, 0.50][ri(0, 3)], W = round2(m * 9.8);
+  const F = [0.49, 0.98][ri(0, 1)];
+  return {
+    badge: '浮力',
+    text: `重さ <b>${W} N</b>の石をばねばかりにつるし、水の中に全部沈めたら、浮力が <b>${F} N</b>はたらいた。<br>ばねばかりの目盛り <i>T</i> を求めよ。<br><small>（上向きを正とする。つりあい：T + F = W）</small>`,
+    formula: 'T = W − F',
+    inputs: [
+      { variable: 'W', unit: 'N', answer: W, tol: 0.005 },
+      { variable: 'F', unit: 'N', answer: F, tol: 0.005 }
+    ],
+    result: { variable: 'T', value: round2(W - F), unit: 'N', expression: `${W} − ${F}` },
+    anim: 'p-water', ap: { W, F }
+  };
+}
+
+/** 2-6a（第9話）：ばねの弾性力  F = kx */
+function probSpringForce() {
+  const k = [20, 40, 49, 50, 98, 100][ri(0, 5)], x = ri(1, 6) * 0.1;
+  return {
+    badge: '弾性力',
+    text: `ばね定数 <b>${k} N/m</b>のばねに、かごをつるしたら <b>${x.toFixed(2)} m</b>のびて止まった。<br>ばねがかごを引く力（弾性力）<i>F</i> を求めよ。`,
+    formula: 'F = kx',
+    inputs: [
+      { variable: 'k', unit: 'N/m', answer: k, tol: 0 },
+      { variable: 'x', unit: 'm', answer: round1(x), tol: 0.001 }
+    ],
+    result: { variable: 'F', value: round1(k * x), unit: 'N', expression: `${k} × ${x.toFixed(2)}` },
+    anim: 'p-spring', ap: { k, x: round1(x) }
+  };
+}
+
+/** 2-6b（第9話）：かごをつるしたばねののび  x = mg ÷ k */
+function probSpringStretch() {
+  const k = [49, 98][ri(0, 1)], m = ri(1, 6) * 0.5, x = round2(m * 9.8 / k);
+  return {
+    badge: '弾性力',
+    text: `ばね定数 <b>${k} N/m</b>のばねに、質量 <b>${f1d(m)} kg</b>のかごをつるした。<br>止まったときの、ばねののび <i>x</i> を求めよ。<br><small>（つりあい：kx = mg。g = 9.8 m/s²）</small>`,
+    formula: 'kx = mg → x = mg ÷ k',
+    inputs: [
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 },
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 },
+      { variable: 'k', unit: 'N/m', answer: k, tol: 0 }
+    ],
+    result: { variable: 'x', value: x, unit: 'm', expression: `${f1d(m)} × 9.8 ÷ ${k}` },
+    anim: 'p-spring', ap: { k, x }
+  };
+}
+
+/** 2-6c（第9話）：ばね定数  k = F ÷ x */
+function probSpringK() {
+  const k = [20, 40, 50, 100][ri(0, 3)], x = ri(1, 5) * 0.1, F = round1(k * x);
+  return {
+    badge: '弾性力',
+    text: `ばねを <b>${F} N</b>の力で引いたら、<b>${x.toFixed(2)} m</b>のびた。<br>このばねのばね定数 <i>k</i> を求めよ。`,
+    formula: 'F = kx → k = F ÷ x',
+    inputs: [
+      { variable: 'F', unit: 'N', answer: F, tol: 0 },
+      { variable: 'x', unit: 'm', answer: round1(x), tol: 0.001 }
+    ],
+    result: { variable: 'k', value: k, unit: 'N/m', expression: `${F} ÷ ${x.toFixed(2)}` },
+    anim: 'p-spring', ap: { k, x: round1(x) }
+  };
+}
+
+/** 2-7a（第13話）：押し返される力（向きつき）  反作用 = −作用 */
+function probPushBack() {
+  const F = ri(2, 20) * 10;
+  return {
+    badge: '作用・反作用',
+    text: `スケートリンクで、リカがニュートンくんを右向きに <b>${F} N</b>の力で押した。<br>ニュートンくんがリカを押し返す力 <i>F'</i> を求めよ。<br><small>（右向きを正とする。左向きの力には − をつけて入力）</small>`,
+    formula: "F' = −F（同じ大きさ・反対向き）",
+    signed: true,
+    inputs: [
+      { variable: 'F（作用）', unit: 'N', answer: F, tol: 0 }
+    ],
+    result: { variable: "F'", value: -F, unit: 'N', expression: `−${F}` },
+    anim: 'p-push', ap: { F, mR: 50, mN: 25 }
+  };
+}
+
+/** 2-7b（第13話）：重い・軽いにかかわらず同じ大きさ */
+function probPushMass() {
+  const F = ri(2, 20) * 10, mR = ri(8, 12) * 5, mN = ri(4, 6) * 5;
+  return {
+    badge: '作用・反作用',
+    text: `ニュートンくん（<b>${mN} kg</b>）が、リカ（<b>${mR} kg</b>）を右向きに <b>${F} N</b>の力で押した。<br>リカがニュートンくんを押し返す力の大きさ <i>F'</i> を求めよ。<br><small>（質量がちがっても…？）</small>`,
+    formula: "|F'| = |F|（重さにはよらない）",
+    inputs: [
+      { variable: 'F（作用）', unit: 'N', answer: F, tol: 0 }
+    ],
+    result: { variable: "F'", value: F, unit: 'N', expression: `${F}` },
+    anim: 'p-push', ap: { F, mR, mN }
+  };
+}
+
+/** 2-7c（第13話・第9話）：本が机を押す力（反作用）  = N = mg */
+function probBookOnDesk() {
+  const m = ri(2, 10) * 0.5;
+  return {
+    badge: '作用・反作用',
+    text: `机の上に、質量 <b>${f1d(m)} kg</b>のかごが止まっている。机がかごを押し上げる力（垂直抗力）は、つりあいから mg。<br>かごが机を押す力の大きさ <i>F'</i> を求めよ。<br><small>（g = 9.8 m/s²）</small>`,
+    formula: "F' = N = mg（作用・反作用）",
+    inputs: [
+      { variable: 'm', unit: 'kg', answer: m, tol: 0 },
+      { variable: 'g', unit: 'm/s²', answer: 9.8, tol: 0.05 }
+    ],
+    result: { variable: "F'", value: g98(m), unit: 'N', expression: `${f1d(m)} × 9.8` },
+    anim: 'p-basket', ap: { m, pair: true }
   };
 }
 
@@ -667,7 +820,10 @@ const allGenerators = [probRaceDist, probCartV, probCartX, probAppleDrop, probNe
 const STORY_EP = {
   '1-1': [1, 'どっちが速い？'], '1-2': [3, 'グラフがまっすぐになる運動'], '1-3': [5, '記録テープの暗号'],
   '1-4': [6, '重いほうが先に落ちる？'], '1-5': [7, 'てっぺんで、リンゴは止まる？'], '1-6': [7, 'てっぺんで、リンゴは止まる？'],
-  '1-7': [4, '電車の中で走ると？'], '1-8': [8, '横に投げたら、遅く落ちる？']
+  '1-7': [4, '電車の中で走ると？'], '1-8': [8, '横に投げたら、遅く落ちる？'],
+  '2-1': [10, '2人で引っぱると、何 N？'], '2-2': [11, '止まっているのは、力がないから？'], '2-3': [14, '同じ力で押し続けると？'],
+  '2-4': [16, 'すべり出すのは、いつ？'], '2-5': [17, '水の中で、軽くなる？'], '2-6': [9, '机の上のかごに、力ははたらいている？'],
+  '2-7': [13, '押したら、押し返される？']
 };
 
 // ── 単元マップ ──
@@ -681,12 +837,14 @@ const unitMap = {
   '1-6': { name: '鉛直投げ上げ',     gens: [probAppleUpV, probAppleUpTop] },
   '1-7': { name: '合成速度・相対速度', gens: [probRelCompSame, probRelCompOpp, probRelSame, probRelPass] },
   '1-8': { name: '水平投射', gens: [probHThrowTime, probHThrowHeight, probHThrowDist, probHThrowV0, probHThrowFull] },
-  // 2節: 力と運動の法則
-  '2-1': { name: '力の合成・分解',   gens: [probForceAdd, probForceSub, probForceDecomp] },
-  '2-2': { name: '力のつりあい',     gens: [probEquilNormal, probEquil3] },
-  '2-3': { name: '運動方程式',       gens: [probEqAccel, probEqForce, probEqMass] },
-  '2-4': { name: '摩擦力',           gens: [probFriction, probStaticFriction] },
-  '2-5': { name: '圧力と浮力',       gens: [probPressure, probBuoyancy] },
+  // 2章: 力と運動の法則（ストーリーの場面にそろえた問題）
+  '2-1': { name: '力の合成・分解',   gens: [probPullSame, probPullOpp, probPullRight, probPullDecomp] },
+  '2-2': { name: '力のつりあい',     gens: [probBasketNormal, probPotTension] },
+  '2-3': { name: '運動方程式',       gens: [probCartAccel, probCartForce, probCartMass, probFallAccel] },
+  '2-4': { name: '摩擦力',           gens: [probBookStatic, probBookMax, probBookKinetic] },
+  '2-5': { name: '圧力と浮力',       gens: [probSnowPressure, probStoneBuoyancy, probScaleInWater] },
+  '2-6': { name: '弾性力',           gens: [probSpringForce, probSpringStretch, probSpringK] },
+  '2-7': { name: '作用・反作用',     gens: [probPushBack, probPushMass, probBookOnDesk] },
 };
 
 // ── 起動時に URL パラメータを読む ──
@@ -744,111 +902,6 @@ function drawGround(ctx) {
 // ========================================
 // アニメーション
 // ========================================
-
-function drawForceAdd(ctx, t, p) {
-  const { f1, f2 } = p;
-  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
-  const bw = 52, bh = 42, bx = W / 2 - bw / 2, by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#34467e';
-  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#22305a'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
-  // 右向き矢印 F1
-  const len1 = Math.min(f1 * 2.5, 90);
-  arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 4 + len1, by + bh / 2, '#ff6b35');
-  txt(ctx, `F₁=${f1}N`, bx + bw + 8, by + bh / 2 - 8, '#ff6b35', 11, true);
-  // 右向き矢印 F2
-  const len2 = Math.min(f2 * 2.5, 90);
-  arrow(ctx, bx - 4 - len2, by + bh / 2, bx - 4, by + bh / 2, '#e74c3c');
-  txt(ctx, `F₂=${f2}N`, bx - len2, by + bh / 2 - 8, '#e74c3c', 11, true);
-  txt(ctx, `合力 F = ${f1 + f2} N`, 14, 18, '#27ae60', 12, true);
-}
-
-function drawForceSub(ctx, t, p) {
-  const { f1, f2 } = p;
-  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
-  const bw = 52, bh = 42, bx = W / 2 - bw / 2, by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#34467e';
-  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#22305a'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
-  const len1 = Math.min(f1 * 2.2, 110);
-  arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 4 + len1, by + bh / 2, '#ff6b35');
-  txt(ctx, `→ ${f1}N`, bx + bw + 8, by + bh / 2 - 8, '#ff6b35', 11, true);
-  const len2 = Math.min(f2 * 2.2, 110);
-  arrow(ctx, bx - 4, by + bh / 2, bx - 4 - len2, by + bh / 2, '#e74c3c');
-  txt(ctx, `← ${f2}N`, bx - 4 - len2, by + bh / 2 - 8, '#e74c3c', 11, true);
-  txt(ctx, `合力 = ${f1 - f2} N（右向き）`, 14, 18, '#27ae60', 12, true);
-}
-
-function drawForceDecomp(ctx, t, p) {
-  const { F, deg } = p;
-  const rad = deg * Math.PI / 180;
-  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
-  const ox = 90, oy = GY - 20;
-  const len = Math.min(F * 3, 110);
-  arrow(ctx, ox, oy, ox + len * Math.cos(rad), oy - len * Math.sin(rad), '#ff6b35');
-  txt(ctx, `F=${F}N`, ox + 6, oy - len * Math.sin(rad) - 8, '#ff6b35', 11, true);
-  // 水平成分
-  arrow(ctx, ox, oy, ox + len * Math.cos(rad), oy, '#34467e');
-  txt(ctx, `Fx`, ox + len * Math.cos(rad) + 4, oy + 4, '#34467e', 11, true);
-  // 角度ラベル
-  ctx.save(); ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.arc(ox, oy, 28, -rad, 0); ctx.stroke(); ctx.restore();
-  txt(ctx, `${deg}°`, ox + 32, oy - 8, '#888', 11);
-}
-
-function drawEquil(ctx, t, p) {
-  const { m, N } = p;
-  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
-  const bw = 52, bh = 42, bx = W / 2 - bw / 2, by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#34467e';
-  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#22305a'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.fillStyle = 'white'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
-  ctx.fillText(`${m} kg`, bx + bw / 2, by + bh / 2 + 5); ctx.textAlign = 'left'; ctx.restore();
-  // 下向き重力
-  const gLen = Math.min(N / 3, 50);
-  arrow(ctx, bx + bw / 2, by + bh + 2, bx + bw / 2, by + bh + 2 + gLen, '#e74c3c');
-  txt(ctx, `mg`, bx + bw / 2 + 4, by + bh + gLen + 4, '#e74c3c', 11, true);
-  // 上向き垂直抗力
-  arrow(ctx, bx + bw / 2, by - 2, bx + bw / 2, by - 2 - gLen, '#27ae60');
-  txt(ctx, `N`, bx + bw / 2 + 4, by - gLen - 6, '#27ae60', 11, true);
-  txt(ctx, `静止（つりあい）`, 14, 18, '#34467e', 12, true);
-}
-
-function drawFriction(ctx, t, p) {
-  const { m, mu } = p, prog = (t % 2.8) / 2.8;
-  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H); drawGround(ctx);
-  const bw = 52, bh = 42, bx = 26 + prog * (W - bw - 52), by = GY - bh;
-  ctx.save(); ctx.fillStyle = '#e67e22';
-  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.strokeStyle = '#ca6f1e'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.fillStyle = 'white'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
-  ctx.fillText(`${m} kg`, bx + bw / 2, by + bh / 2 + 5); ctx.textAlign = 'left'; ctx.restore();
-  // 進行方向矢印
-  arrow(ctx, bx + bw + 4, by + bh / 2, bx + bw + 44, by + bh / 2, '#34467e');
-  // 摩擦力（反対向き）
-  arrow(ctx, bx - 4, by + bh / 2, Math.max(bx - 44, 8), by + bh / 2, '#e74c3c');
-  txt(ctx, `f（摩擦力）`, 8, by + bh / 2 - 8, '#e74c3c', 10, true);
-  txt(ctx, `μ' = ${mu}`, 14, 18, '#27ae60', 12, true);
-}
-
-function drawPressure(ctx, t, p) {
-  const { F } = p;
-  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H);
-  // 面
-  ctx.save(); ctx.fillStyle = '#aac4e8';
-  ctx.fillRect(60, GY - 20, W - 120, 20); ctx.restore();
-  // 物体
-  const bw = 80, bh = 50, bx = W / 2 - bw / 2, by = GY - 20 - bh;
-  ctx.save(); ctx.fillStyle = '#34467e';
-  ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, bw, bh, 4) : ctx.rect(bx, by, bw, bh); ctx.fill();
-  ctx.restore();
-  // 下向き力
-  const fLen = Math.min(F / 5, 50);
-  arrow(ctx, W / 2, by - 6, W / 2, by - 6 - fLen, '#ff6b35');
-  txt(ctx, `F=${F}N`, W / 2 + 6, by - 10, '#ff6b35', 11, true);
-  txt(ctx, `P = F ÷ S`, 14, 18, '#34467e', 12, true);
-}
 
 function drawNewton(ctx, t, p) {
   const {m,F}=p, prog=(t%2.5)/2.5;
@@ -1100,6 +1153,224 @@ function pTable(ctx, t, p) {
 
 const STORY_DRAW = { 'p-race': pRace, 'p-walk': pWalk, 'p-slope': pSlope, 'p-drop': pDrop, 'p-up': pUp, 'p-train': pTrain, 'p-table': pTable };
 
+// ========================================
+// 2章の動く絵（ストーリー・シミュと同じ色・キャラ。力の矢印：重力＝紺、人が加える力＝赤、支える力＝木、まさつ力＝うすい木）
+// ========================================
+
+function pfloor(ctx, y) {                     // 部屋の床
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = PC.gray; ctx.fillRect(0, y, W, H - y);
+}
+function plabel(ctx, s, x, y, color, align) { ptxt(ctx, s, x, y, color, 10, align || 'center'); }
+function pbox(ctx, x, y, w, h, fill, label) {
+  ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = PC.woodDark; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, w, h);
+  if (label) ptxt(ctx, label, x + w / 2, y + h / 2 + 4, '#fff', 10, 'center');
+}
+const grow = (t, dur) => REDUCE ? 1 : Math.min(1, (t % (dur + 1.4)) / dur);   // 0 → 1 にのびて、少し止まる
+function pdash(ctx, x1, y1, x2, y2, color) {
+  ctx.save(); ctx.setLineDash([4, 3]); ctx.strokeStyle = color; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.restore();
+}
+
+// 第10話：2人で荷物を引っぱる（同じ向き・反対向き・直角）、ななめに引く台車（分解）
+function pPull(ctx, t, p) {
+  pfloor(ctx, 132);
+  const k = grow(t, 1.6);
+  if (p.kind === 'decomp') {
+    const X = 110, Y = 112, S = 0.9, L = Math.min(100, p.F * S) * k, c = 0.5, s = Math.sqrt(3) / 2;
+    ctx.fillStyle = PC.apple; ctx.fillRect(X - 30, Y - 14, 44, 18);
+    ctx.fillStyle = PC.wheel; [X - 20, X + 4].forEach(cx => { ctx.beginPath(); ctx.arc(cx, Y + 8, 5, 0, Math.PI * 2); ctx.fill(); });
+    parrow(ctx, X + 14, Y - 6, X + 14 + L * c, Y - 6 - L * s, PC.apple, 3.5);
+    if (k >= 1) {
+      pdash(ctx, X + 14 + L * c, Y - 6 - L * s, X + 14 + L * c, Y - 6, PC.muted);
+      parrow(ctx, X + 14, Y - 6, X + 14 + L * c, Y - 6, PC.woodDark, 3);
+      plabel(ctx, '水平の分力 Fx', X + 14 + L * c / 2, Y + 24, PC.woodDark);
+      plabel(ctx, '60°', X + 34, Y - 10, PC.ink);
+    }
+    plabel(ctx, 'F ' + p.F + ' N', X + 24 + L * c, Y - 14 - L * s, PC.apple, 'left');
+    chara(ctx, 'newton', 'proud', 362, 160, 120);
+    return;
+  }
+  const X = 150, Y = p.kind === 'right' ? 100 : 82, S = p.kind === 'right' ? 1.0 : 1.4;
+  pbox(ctx, X - 14, Y - 14, 28, 28, PC.wood, '荷物');
+  const f1 = p.f1 * S * k, f2 = p.f2 * S * k;
+  if (p.kind === 'same') {
+    parrow(ctx, X + 14, Y - 6, X + 14 + f1, Y - 6, PC.apple, 3.5);
+    parrow(ctx, X + 14, Y + 6, X + 14 + f2, Y + 6, PC.apple, 3.5);
+    plabel(ctx, 'リカ ' + p.f1 + ' N', X + 18 + f1, Y - 12, PC.apple, 'left');
+    plabel(ctx, 'ニュートンくん ' + p.f2 + ' N', X + 18 + f2, Y + 18, PC.apple, 'left');
+  } else if (p.kind === 'opp') {
+    parrow(ctx, X + 14, Y, X + 14 + f1, Y, PC.apple, 3.5);
+    parrow(ctx, X - 14, Y, X - 14 - f2, Y, PC.apple, 3.5);
+    plabel(ctx, 'リカ ' + p.f1 + ' N', X + 14 + f1 / 2, Y - 10, PC.apple);
+    plabel(ctx, 'ニュートンくん ' + p.f2 + ' N', X - 14 - f2 / 2, Y - 10, PC.apple);
+  } else {                                                   // 直角：東と北
+    parrow(ctx, X, Y, X + f1, Y, PC.apple, 3.5);
+    parrow(ctx, X, Y, X, Y - f2 * 0.8, PC.apple, 3.5);
+    plabel(ctx, '東 ' + p.f1 + ' N', X + f1 / 2, Y + 24, PC.apple);
+    plabel(ctx, '北 ' + p.f2 + ' N', X - 8, Y - f2 * 0.8 + 6, PC.apple, 'right');
+    if (k >= 1) {
+      pdash(ctx, X + f1, Y, X + f1, Y - f2 * 0.8, PC.muted); pdash(ctx, X, Y - f2 * 0.8, X + f1, Y - f2 * 0.8, PC.muted);
+      ctx.save(); ctx.setLineDash([6, 4]); parrow(ctx, X, Y, X + f1, Y - f2 * 0.8, PC.apple, 3); ctx.restore();
+      plabel(ctx, '合力', X + f1 + 6, Y - f2 * 0.8 - 4, PC.apple, 'left');
+    }
+  }
+  ptxt(ctx, '東（正の向き）→', 300, 150, PC.ink, 10, 'right');
+  chara(ctx, 'rika', 'confident', 362, 160, 120);
+}
+
+// 第9話・第13話：机の上のかご（重力 W と 垂直抗力 N。pair のときは、かごが机を押す力も）
+function pBasket(ctx, t, p) {
+  pfloor(ctx, 150);
+  const X = 140, TOP = 92, k = grow(t, 1.2), L = Math.min(48, 14 + p.m * 9) * k;
+  ctx.fillStyle = PC.wood; ctx.fillRect(60, TOP, 170, 8); ctx.fillRect(72, TOP + 8, 8, 50); ctx.fillRect(210, TOP + 8, 8, 50);
+  ctx.fillStyle = PC.creamLine; ctx.fillRect(X - 22, TOP - 22, 44, 22);
+  ctx.strokeStyle = PC.woodDark; ctx.lineWidth = 1.5; ctx.strokeRect(X - 22, TOP - 22, 44, 22);
+  [X - 10, X, X + 10].forEach(cx => papple(ctx, cx, TOP - 26, 6));
+  parrow(ctx, X - 6, TOP - 11, X - 6, TOP - 11 + L, PC.coat, 3.5);
+  parrow(ctx, X + 6, TOP - 11, X + 6, TOP - 11 - L, PC.woodDark, 3.5);
+  plabel(ctx, 'W（重力）', X - 12, TOP - 11 + L + 4, PC.coat, 'right');
+  plabel(ctx, 'N（垂直抗力）', X + 12, TOP - 11 - L + 8, PC.woodDark, 'left');
+  if (p.pair && k >= 1) {
+    parrow(ctx, X + 26, TOP + 2, X + 26, TOP + 2 + L * 0.8, PC.muted, 3);
+    plabel(ctx, 'かごが机を押す力', X + 32, TOP + 24, PC.muted, 'left');
+  }
+  plabel(ctx, p.m.toFixed(1) + ' kg', X, TOP - 6, PC.woodDark);
+  ptxt(ctx, '上向きを正 ↑', 8, 18, PC.ink, 10);
+  chara(ctx, 'rika', 'question', 362, 160, 120);
+}
+
+// 第11話：植木鉢を2本のひもでつるす
+function pPot(ctx, t, p) {
+  psky(ctx, 150);
+  const k = grow(t, 1.2), X = 150, Y = 104, S = 0.9;
+  ctx.fillStyle = PC.woodDark; ctx.fillRect(80, 14, 140, 7);
+  ctx.strokeStyle = PC.ink; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(122, 21); ctx.lineTo(126, Y - 16); ctx.moveTo(178, 21); ctx.lineTo(174, Y - 16); ctx.stroke();
+  ctx.fillStyle = PC.grass; ctx.beginPath(); ctx.ellipse(X - 8, Y - 26, 7, 14, -0.4, 0, Math.PI * 2); ctx.ellipse(X + 9, Y - 26, 7, 14, 0.4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = PC.wood; ctx.beginPath(); ctx.moveTo(X - 28, Y - 16); ctx.lineTo(X + 28, Y - 16); ctx.lineTo(X + 20, Y + 10); ctx.lineTo(X - 20, Y + 10); ctx.closePath(); ctx.fill();
+  const w = Math.min(46, p.W * S * 0.5) * k, a = Math.min(46, p.t1 * S * 0.5) * k, b = Math.min(46, (p.W - p.t1) * S * 0.5) * k;
+  parrow(ctx, X, Y, X, Y + w, PC.coat, 3.5);
+  parrow(ctx, 126, Y - 16, 126, Y - 16 - a, PC.woodDark, 3);
+  parrow(ctx, 174, Y - 16, 174, Y - 16 - b, PC.woodDark, 3);
+  plabel(ctx, 'T₁ ' + p.t1 + ' N', 120, Y - 22 - a, PC.woodDark, 'right');
+  plabel(ctx, 'T₂ ?', 180, Y - 22 - b, PC.woodDark, 'left');
+  plabel(ctx, 'W ' + p.W + ' N', X + 8, Y + w, PC.coat, 'left');
+  ptxt(ctx, '上向きを正 ↑', 8, 18, PC.ink, 10);
+  chara(ctx, 'newton', 'question', 362, 160, 120);
+}
+
+// 第14話：台車を押し続ける（0.5 秒ごとの位置。間隔がだんだん広がる）
+function pCart(ctx, t, p) {
+  pfloor(ctx, 130);
+  const a = p.F / p.m, T = 2, X0 = 30, S = 230 / (a * T * T / 2);
+  const tau = loop(t, 2.4, 0.8) * T, x = tt => X0 + a * tt * tt / 2 * S;
+  for (let n = 1; n * 0.5 <= tau + 1e-9; n++) { ctx.fillStyle = PC.coat; ctx.beginPath(); ctx.arc(x(n * 0.5), 136, 3, 0, Math.PI * 2); ctx.fill(); }
+  const cx = x(tau);
+  ctx.fillStyle = PC.coat; ctx.fillRect(cx - 18, 104, 40, 18);
+  ptxt(ctx, p.m + ' kg', cx + 2, 117, '#fff', 9, 'center');
+  ctx.fillStyle = PC.wheel; [cx - 10, cx + 14].forEach(c => { ctx.beginPath(); ctx.arc(c, 125, 5, 0, Math.PI * 2); ctx.fill(); });
+  parrow(ctx, cx - 50, 113, cx - 20, 113, PC.apple, 3.5);
+  plabel(ctx, 'F ' + p.F + ' N', cx - 36, 100, PC.apple);
+  ptxt(ctx, '●＝0.5秒ごとの位置（まさつのない床）', 8, 154, PC.ink, 10);
+  ptime(ctx, tau.toFixed(1) + ' 秒');
+  chara(ctx, 'rika', 'confident', 362, 160, 120);
+}
+
+// 第16話：机の上の本を押す（static：動かない／max：すべり出す直前／kinetic：すべっている）
+function pBook(ctx, t, p) {
+  pfloor(ctx, 150);
+  const TOP = 104;
+  ctx.fillStyle = PC.wood; ctx.fillRect(20, TOP, 270, 8); ctx.fillRect(34, TOP + 8, 8, 40); ctx.fillRect(268, TOP + 8, 8, 40);
+  const k = grow(t, 1.2), slide = p.kind === 'kinetic' ? ((t * 22) % 80) : 0, X = 130 + (REDUCE ? 20 : slide);
+  ctx.fillStyle = PC.coat; ctx.fillRect(X - 22, TOP - 20, 44, 20);
+  ctx.strokeStyle = PC.lemon; ctx.lineWidth = 1.5; ctx.strokeRect(X - 19, TOP - 17, 38, 14);
+  ptxt(ctx, '本 ' + p.m + '.0 kg', X, TOP - 7, '#fff', 9, 'center');
+  const L = Math.min(60, 14 + p.F * 4) * k;
+  const fL = p.kind === 'kinetic' ? Math.min(60, 14 + (p.F - 2) * 4) * k : L;
+  parrow(ctx, X - 22 - L, TOP - 10, X - 22, TOP - 10, PC.apple, 3.5);
+  parrow(ctx, X, TOP + 1, X - fL, TOP + 1, PC.wood, 3);
+  plabel(ctx, '押す力 F', X - 22 - L / 2, TOP - 16, PC.apple);
+  plabel(ctx, 'まさつ力 f', X - fL / 2, TOP + 18, PC.woodDark);
+  const msg = p.kind === 'static' ? '押しても動かない（f = F）' : p.kind === 'max' ? 'すべり出す直前（最大摩擦力）' : 'すべっている（動摩擦力）';
+  plabel(ctx, msg, 156, 26, p.kind === 'kinetic' ? PC.apple : PC.ink);
+  ptxt(ctx, '右向きを正 →', 300, 150, PC.ink, 10, 'right');
+  chara(ctx, 'rika', p.kind === 'kinetic' ? 'surprise' : 'confident', 362, 160, 120);
+}
+
+// 第17話：雪の上に、くつ／スキーで立つ（圧力が大きいほど沈む。絵だけ）
+function pSnow(ctx, t, p) {
+  psky(ctx);
+  const P = p.F / p.S, sink = Math.min(26, P / 1000) * grow(t, 1.4);
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 118, 320, 42);
+  ctx.strokeStyle = PC.gray; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, 118); ctx.lineTo(320, 118); ctx.stroke();
+  const X = 150, w = p.what === 'くつ' ? 30 : 140;
+  ctx.fillStyle = PC.gray; ctx.fillRect(X - w / 2, 118, w, sink);
+  ctx.fillStyle = p.what === 'くつ' ? PC.woodDark : PC.apple; ctx.fillRect(X - w / 2, 112 + sink, w, 6);
+  chara(ctx, 'rika', sink > 12 ? 'surprise' : 'happy', X, 114 + sink, 96);
+  plabel(ctx, p.what + '（S = ' + p.S + ' m²）', X, 150, PC.ink);
+  ptxt(ctx, '面積がせまいほど、ずぶっと沈む', 8, 18, PC.ink, 10);
+  chara(ctx, 'newton', 'proud', 362, 160, 120);
+}
+
+// 第17話：ばねばかりにつるした石を水に沈める（W：紺、浮力 F と 張力 T：木）
+function pWater(ctx, t, p) {
+  pfloor(ctx, 150);
+  const k = grow(t, 1.6), X = 150;
+  ctx.fillStyle = PC.woodDark; ctx.fillRect(60, 10, 6, 140); ctx.fillRect(60, 10, 96, 6);
+  ctx.fillStyle = '#fff'; ctx.fillRect(X - 9, 18, 18, 30); ctx.strokeStyle = PC.ink; ctx.lineWidth = 1.5; ctx.strokeRect(X - 9, 18, 18, 30);
+  const T = round2(p.W - p.F * k), y = 82 + 34 * k;
+  ptxt(ctx, T.toFixed(2) + ' N', X + 14, 38, PC.apple, 11);
+  ctx.strokeStyle = PC.ink; ctx.beginPath(); ctx.moveTo(X, 48); ctx.lineTo(X, y - 10); ctx.stroke();
+  ctx.fillStyle = 'rgba(191,226,246,.85)'; ctx.fillRect(96, 92, 110, 58);
+  ctx.strokeStyle = PC.rail; ctx.lineWidth = 2; ctx.strokeRect(96, 92, 110, 58);
+  ctx.fillStyle = PC.rail; ctx.fillRect(X - 10, y - 10, 20, 18);
+  parrow(ctx, X - 4, y, X - 4, y + 26, PC.coat, 3);
+  if (k > 0.3) parrow(ctx, X + 16, y + 6, X + 16, y + 6 - 22 * k, PC.woodDark, 3);
+  plabel(ctx, 'W', X - 12, y + 26, PC.coat, 'right');
+  if (k > 0.3) plabel(ctx, '浮力 F', X + 22, y - 8, PC.woodDark, 'left');
+  ptxt(ctx, '上向きを正 ↑', 8, 18, PC.ink, 10);
+  chara(ctx, 'rika', k >= 1 ? 'surprise' : 'question', 362, 160, 120);
+}
+
+// 第9話：ばねにかごをつるす（のび x と弾性力 F）
+function pSpring(ctx, t, p) {
+  pfloor(ctx, 150);
+  const X = 150, TOP = 16, L0 = 40, k = grow(t, 1.4), ext = Math.min(70, p.x * 140) * k, bot = TOP + L0 + ext;
+  ctx.fillStyle = PC.woodDark; ctx.fillRect(90, TOP - 6, 120, 6);
+  ctx.strokeStyle = PC.ink; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(X, TOP);
+  const n = 10; for (let i = 1; i <= n; i++) ctx.lineTo(X + (i % 2 ? 8 : -8), TOP + (L0 + ext) * i / (n + 1));
+  ctx.lineTo(X, bot); ctx.stroke();
+  ctx.fillStyle = PC.creamLine; ctx.fillRect(X - 18, bot, 36, 18); ctx.strokeStyle = PC.woodDark; ctx.strokeRect(X - 18, bot, 36, 18);
+  pdash(ctx, X + 30, TOP + L0, X + 60, TOP + L0, PC.muted); pdash(ctx, X + 30, bot, X + 60, bot, PC.muted);
+  if (ext > 6) { parrow(ctx, X + 50, TOP + L0, X + 50, bot, PC.muted, 1.5); plabel(ctx, 'のび x', X + 56, TOP + L0 + ext / 2 + 4, PC.ink, 'left'); }
+  parrow(ctx, X - 26, bot + 9, X - 26, bot + 9 - 28 * k, PC.woodDark, 3);
+  parrow(ctx, X - 10, bot + 9, X - 10, bot + 9 + 28 * k, PC.coat, 3);
+  plabel(ctx, '弾性力 F', X - 32, bot - 8, PC.woodDark, 'right');
+  plabel(ctx, 'W', X - 16, bot + 40, PC.coat, 'right');
+  plabel(ctx, 'k = ' + p.k + ' N/m', 96, TOP + 18, PC.ink, 'right');
+  chara(ctx, 'newton', 'question', 362, 160, 120);
+}
+
+// 第13話：スケートで押し合う（2つの力はいつも同じ大きさ・反対向き）
+function pPush(ctx, t, p) {
+  ctx.fillStyle = PC.sky2; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#eef2f7'; ctx.fillRect(0, 110, W, 50);
+  const k = grow(t, 1.2), L = Math.min(60, 16 + p.F / 5) * k, X = 150;
+  chara(ctx, 'rika', 'normal', X - 46, 140, 82);
+  chara(ctx, 'newton', 'surprise', X + 46, 140, 70);
+  parrow(ctx, X + 8, 70, X + 8 + L, 70, PC.apple, 3.5);
+  parrow(ctx, X - 8, 70, X - 8 - L, 70, PC.apple, 3.5);
+  plabel(ctx, 'リカ → ニュートンくん', X + 10 + L / 2, 60, PC.apple);
+  plabel(ctx, 'ニュートンくん → リカ', X - 10 - L / 2, 60, PC.apple);
+  plabel(ctx, p.mR + ' kg', X - 46, 154, PC.ink); plabel(ctx, p.mN + ' kg', X + 46, 154, PC.ink);
+  ptxt(ctx, '右向きを正 →', 300, 18, PC.ink, 10, 'right');
+  ptxt(ctx, '作用と反作用は同じ大きさ', 8, 18, PC.ink, 10);
+}
+
+Object.assign(STORY_DRAW, { 'p-pull': pPull, 'p-basket': pBasket, 'p-pot': pPot, 'p-cart': pCart, 'p-book': pBook, 'p-snow': pSnow, 'p-water': pWater, 'p-spring': pSpring, 'p-push': pPush });
+
 
 // ========================================
 // アニメーションループ
@@ -1117,12 +1388,6 @@ function draw(ts) {
   if (story) story(ctx, REDUCE ? 2.4 : t, current.ap);               // 動きを減らす設定では、とちゅうの形で止める
   else switch(current.anim) {
     case 'newton':       drawNewton(ctx,t,current.ap);       break;
-    case 'force-add':    drawForceAdd(ctx,t,current.ap);     break;
-    case 'force-sub':    drawForceSub(ctx,t,current.ap);     break;
-    case 'force-decomp': drawForceDecomp(ctx,t,current.ap);  break;
-    case 'equil':        drawEquil(ctx,t,current.ap);        break;
-    case 'friction':     drawFriction(ctx,t,current.ap);     break;
-    case 'pressure':     drawPressure(ctx,t,current.ap);     break;
   }
   animId = requestAnimationFrame(draw);
 }
@@ -1594,7 +1859,9 @@ function retry() {
 
 const SIM_EP = {
   'speed-race.html': 1, 'displacement.html': 2, 'uniform-motion.html': 3, 'relative-velocity.html': 4,
-  'inclined-plane.html': 5, 'inclined-plane-simulator.html': 5, 'freefall.html': 6, 'vertical-throw.html': 7, 'horizontal-throw.html': 8
+  'inclined-plane.html': 5, 'inclined-plane-simulator.html': 5, 'freefall.html': 6, 'vertical-throw.html': 7, 'horizontal-throw.html': 8,
+  'force-arrows.html': 9, 'force-composition.html': 10, 'force-balance.html': 11, 'inertia.html': 12, 'action-reaction.html': 13,
+  'motion-equation.html': 14, 'fall-force.html': 15, 'friction.html': 16, 'buoyancy.html': 17
 };
 function cameFrom() {
   try {
@@ -1634,7 +1901,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (ep) {
     const chip = document.createElement('a');
     chip.className = 'story-chip';
-    chip.href = '../story/index.html?ep=0' + ep[0];
+    chip.href = '../story/index.html?ep=' + String(ep[0]).padStart(2, '0');
     chip.innerHTML = `<img src="../story/img/newton_question.webp" alt="" width="26" height="26">第${ep[0]}話「${ep[1]}」の問題<span>ストーリーを見る ›</span>`;
     const card = document.querySelector('#problem-view .card');
     card.parentNode.insertBefore(chip, card);
