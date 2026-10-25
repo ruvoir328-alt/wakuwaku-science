@@ -616,13 +616,13 @@ function probPushMass() {
   const F = ri(2, 20) * 10, mR = ri(8, 12) * 5, mN = ri(4, 6) * 5;
   return {
     badge: '作用・反作用',
-    text: `ニュートンくん（<b>${mN} kg</b>）が、リカ（<b>${mR} kg</b>）を右向きに <b>${F} N</b>の力で押した。<br>リカがニュートンくんを押し返す力の大きさ <i>F'</i> を求めよ。<br><small>（質量がちがっても…？）</small>`,
+    text: `ニュートンくん（<b>${mN} kg</b>）が、リカ（<b>${mR} kg</b>）を左向きに <b>${F} N</b>の力で押した。<br>リカがニュートンくんを押し返す力の大きさ <i>F'</i> を求めよ。<br><small>（質量がちがっても…？）</small>`,
     formula: "|F'| = |F|（重さにはよらない）",
     inputs: [
       { variable: 'F（作用）', unit: 'N', answer: F, tol: 0 }
     ],
     result: { variable: "F'", value: F, unit: 'N', expression: `${F}` },
-    anim: 'p-push', ap: { F, mR, mN }
+    anim: 'p-push', ap: { F, mR, mN, who: 'newton' }
   };
 }
 
@@ -1192,8 +1192,10 @@ function pPull(ctx, t, p) {
     chara(ctx, 'newton', 'proud', 362, 160, 120);
     return;
   }
-  const X = 150, Y = p.kind === 'right' ? 100 : 82, S = p.kind === 'right' ? 1.0 : 1.4;
-  pbox(ctx, X - 14, Y - 14, 28, 28, PC.wood, '荷物');
+  const right = p.kind === 'right';
+  const X = right ? 110 : 150, Y = right ? 116 : 82, S = right ? 2.0 : 1.4;
+  if (right) pbox(ctx, X - 26, Y - 2, 24, 22, PC.wood, '');
+  else pbox(ctx, X - 14, Y - 14, 28, 28, PC.wood, '荷物');
   const f1 = p.f1 * S * k, f2 = p.f2 * S * k;
   if (p.kind === 'same') {
     parrow(ctx, X + 14, Y - 6, X + 14 + f1, Y - 6, PC.apple, 3.5);
@@ -1203,12 +1205,13 @@ function pPull(ctx, t, p) {
   } else if (p.kind === 'opp') {
     parrow(ctx, X + 14, Y, X + 14 + f1, Y, PC.apple, 3.5);
     parrow(ctx, X - 14, Y, X - 14 - f2, Y, PC.apple, 3.5);
-    plabel(ctx, 'リカ ' + p.f1 + ' N', X + 14 + f1 / 2, Y - 10, PC.apple);
-    plabel(ctx, 'ニュートンくん ' + p.f2 + ' N', X - 14 - f2 / 2, Y - 10, PC.apple);
+    plabel(ctx, 'リカ ' + p.f1 + ' N →', X + 14, Y - 22, PC.apple, 'left');
+    plabel(ctx, '← ニュートンくん ' + p.f2 + ' N', X - 14, Y + 30, PC.apple, 'right');
   } else {                                                   // 直角：東と北
     parrow(ctx, X, Y, X + f1, Y, PC.apple, 3.5);
     parrow(ctx, X, Y, X, Y - f2 * 0.8, PC.apple, 3.5);
-    plabel(ctx, '東 ' + p.f1 + ' N', X + f1 / 2, Y + 24, PC.apple);
+    plabel(ctx, '東 ' + p.f1 + ' N', X + f1 / 2, Y + 16, PC.apple);
+    plabel(ctx, '荷物', X - 14, Y + 32, PC.woodDark);
     plabel(ctx, '北 ' + p.f2 + ' N', X - 8, Y - f2 * 0.8 + 6, PC.apple, 'right');
     if (k >= 1) {
       pdash(ctx, X + f1, Y, X + f1, Y - f2 * 0.8, PC.muted); pdash(ctx, X, Y - f2 * 0.8, X + f1, Y - f2 * 0.8, PC.muted);
@@ -1234,9 +1237,9 @@ function pBasket(ctx, t, p) {
   plabel(ctx, 'N（垂直抗力）', X + 12, TOP - 11 - L + 8, PC.woodDark, 'left');
   if (p.pair && k >= 1) {
     parrow(ctx, X + 26, TOP + 2, X + 26, TOP + 2 + L * 0.8, PC.muted, 3);
-    plabel(ctx, 'かごが机を押す力', X + 32, TOP + 24, PC.muted, 'left');
+    plabel(ctx, 'かごが机を押す力', X + 20, TOP + 50, PC.muted);
   }
-  plabel(ctx, p.m.toFixed(1) + ' kg', X, TOP - 6, PC.woodDark);
+  plabel(ctx, p.m.toFixed(1) + ' kg', X - 28, TOP - 6, PC.woodDark, 'right');
   ptxt(ctx, '上向きを正 ↑', 8, 18, PC.ink, 10);
   chara(ctx, 'rika', 'question', 362, 160, 120);
 }
@@ -1244,13 +1247,13 @@ function pBasket(ctx, t, p) {
 // 第11話：植木鉢を2本のひもでつるす
 function pPot(ctx, t, p) {
   psky(ctx, 150);
-  const k = grow(t, 1.2), X = 150, Y = 104, S = 0.9;
+  const k = grow(t, 1.2), X = 150, Y = 104;
   ctx.fillStyle = PC.woodDark; ctx.fillRect(80, 14, 140, 7);
   ctx.strokeStyle = PC.ink; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.moveTo(122, 21); ctx.lineTo(126, Y - 16); ctx.moveTo(178, 21); ctx.lineTo(174, Y - 16); ctx.stroke();
   ctx.fillStyle = PC.grass; ctx.beginPath(); ctx.ellipse(X - 8, Y - 26, 7, 14, -0.4, 0, Math.PI * 2); ctx.ellipse(X + 9, Y - 26, 7, 14, 0.4, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = PC.wood; ctx.beginPath(); ctx.moveTo(X - 28, Y - 16); ctx.lineTo(X + 28, Y - 16); ctx.lineTo(X + 20, Y + 10); ctx.lineTo(X - 20, Y + 10); ctx.closePath(); ctx.fill();
-  const w = Math.min(46, p.W * S * 0.5) * k, a = Math.min(46, p.t1 * S * 0.5) * k, b = Math.min(46, (p.W - p.t1) * S * 0.5) * k;
+  const w = 46 * k, a = 46 * p.t1 / p.W * k, b = 46 * (p.W - p.t1) / p.W * k;   // 長さは力の大きさに比例
   parrow(ctx, X, Y, X, Y + w, PC.coat, 3.5);
   parrow(ctx, 126, Y - 16, 126, Y - 16 - a, PC.woodDark, 3);
   parrow(ctx, 174, Y - 16, 174, Y - 16 - b, PC.woodDark, 3);
@@ -1360,10 +1363,12 @@ function pPush(ctx, t, p) {
   const k = grow(t, 1.2), L = Math.min(60, 16 + p.F / 5) * k, X = 150;
   chara(ctx, 'rika', 'normal', X - 46, 140, 82);
   chara(ctx, 'newton', 'surprise', X + 46, 140, 70);
-  parrow(ctx, X + 8, 70, X + 8 + L, 70, PC.apple, 3.5);
-  parrow(ctx, X - 8, 70, X - 8 - L, 70, PC.apple, 3.5);
-  plabel(ctx, 'リカ → ニュートンくん', X + 10 + L / 2, 60, PC.apple);
-  plabel(ctx, 'ニュートンくん → リカ', X - 10 - L / 2, 60, PC.apple);
+  parrow(ctx, X + 8, 46, X + 8 + L, 46, PC.apple, 3.5);
+  parrow(ctx, X - 8, 46, X - 8 - L, 46, PC.apple, 3.5);
+  // 右の矢印＝ニュートンくんが受ける力、左の矢印＝リカが受ける力
+  const nw = p.who === 'newton';
+  plabel(ctx, nw ? '押し返す力 ?' : 'リカが押す力 ' + p.F + ' N', X + 8, 34, PC.apple, 'left');
+  plabel(ctx, nw ? 'ニュートンくんが押す力 ' + p.F + ' N' : '押し返す力 ?', X - 8, 34, PC.apple, 'right');
   plabel(ctx, p.mR + ' kg', X - 46, 154, PC.ink); plabel(ctx, p.mN + ' kg', X + 46, 154, PC.ink);
   ptxt(ctx, '右向きを正 →', 300, 18, PC.ink, 10, 'right');
   ptxt(ctx, '作用と反作用は同じ大きさ', 8, 18, PC.ink, 10);
