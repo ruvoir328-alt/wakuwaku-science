@@ -208,7 +208,7 @@ Claude Code にこう送るだけ：
   - 今の元素・周期表ドリル（`chemistry/index.html`）に、1章のドリルへのリンクを1つ足す
   - さわる場所：`story/index.html`、`chemistry/` の新しいファイル、`chemistry/index.html`（リンク1つ）、`CLAUDE.md`（化学のところ）
 
-- [ ] **T-41　化学1章のストーリー実装** 🌙
+- [x] **T-41　化学1章のストーリー実装** 🌙
   - `docs/chem-story-ch1.md` どおりに `story/chem01.js` 〜 `story/chem08.js` を書く（`subject: '化学基礎'`）。`story/list.html` の「化学のストーリー」に1章を足す
   - さわる場所：`story/` の新しいファイル、`story/list.html`
   - ※ T-40 が main に入ってから。T-42 と並行OK
