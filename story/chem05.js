@@ -91,10 +91,10 @@ function pencil(x, y, s){
     '<path d="M28 -2.5 L34 0 L28 2.5 Z" fill="' + C.black + '"/></g>';
 }
 SCENES['c5-two'] = () => svg(
-  '<rect x="120" y="200" width="160" height="14" rx="4" fill="' + C.gray2 + '"/>' +
-  diamond(165, 165, 1.1) + pencil(238, 182, 1) +
-  T(165, 232, 'ダイヤモンド', 12, C.ink) + T(238, 232, '鉛筆のしん（黒鉛）', 12, C.ink) +
-  '<path d="M140 120 l6 -10 M190 116 l-5 -10 M165 108 v-12" stroke="' + C.fire2 + '" stroke-width="3" stroke-linecap="round"/>', '#fff7e9');
+  '<rect x="140" y="236" width="120" height="12" rx="4" fill="' + C.gray2 + '"/>' +
+  diamond(200, 104, 1.1) + T(200, 152, 'ダイヤモンド', 12, C.ink) +
+  pencil(196, 196, 1.1) + T(200, 228, '鉛筆のしん（黒鉛）', 12, C.ink) +
+  '<path d="M172 60 l6 -10 M228 60 l-5 -10 M200 50 v-12" stroke="' + C.fire2 + '" stroke-width="3" stroke-linecap="round"/>', '#fff7e9');
 
 // 燃やすと、どちらも二酸化炭素だけ
 SCENES['c5-burn'] = () => anim(svg(
@@ -103,8 +103,8 @@ SCENES['c5-burn'] = () => anim(svg(
   '<g data-d>' + diamond(80, 140, 0.8) + '</g>' +
   '<g data-g><rect x="176" y="134" width="48" height="14" rx="2" fill="' + C.black + '"/></g>' +
   '<g data-co2></g>' +
-  T(80, 282, 'ダイヤモンド', 12, C.ink) + T(200, 282, '黒鉛', 12, C.ink) +
-  T(140, 26, '燃やすと…', 14, C.ink, 'middle', ' data-msg'), C.gray),
+  T(80, 264, 'ダイヤモンド', 12, C.ink) + T(200, 264, '黒鉛', 12, C.ink) +
+  T(140, 288, '燃やすと…', 14, C.ink, 'middle', ' data-msg'), C.gray),
   3.2, (root, t) => {
     const k = Math.min(1, t / 3);
     root.querySelector('[data-d]').setAttribute('transform', 'translate(80 140) scale(' + (1 - 0.6 * k).toFixed(3) + ') translate(-80 -140)');
@@ -122,7 +122,7 @@ SCENES['c5-burn'] = () => anim(svg(
     root.querySelector('[data-msg]').textContent = t >= 3 ? 'どちらも 二酸化炭素（CO₂）だけ！' : '燃やすと…';
   }, 'もう一度燃やす');
 
-SCENES['c5-answer'] = answerCard('同じ炭素！', 'どちらも炭素 C だけでできている', 'clamp(30px,10vw,48px)');
+SCENES['c5-answer'] = answerCard('同じ炭素！', 'どちらも炭素 C だけでできている', 'clamp(24px,8vw,38px)');
 
 // 炭素原子のつながり方：ダイヤモンド（立体のあみ目）と黒鉛（うすい層が重なる）
 SCENES['c5-structure'] = () => {

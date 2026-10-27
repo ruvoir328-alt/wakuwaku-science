@@ -79,15 +79,14 @@ const dot = (x, y, r) => '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1)
 // やかんの水蒸気を風船にとじこめると、ふくらむ
 SCENES['c8-kettle'] = () => anim(svg(
   '<rect y="250" width="400" height="50" fill="' + C.gray2 + '"/>' +
-  '<path d="M140 250 q0 -70 60 -70 q60 0 60 70 z" fill="' + C.glass + '"/><rect x="180" y="168" width="40" height="12" rx="4" fill="' + C.ink + '"/>' +
-  '<path d="M250 210 l40 -30" stroke="' + C.glass + '" stroke-width="12" stroke-linecap="round"/>' +
-  '<ellipse data-bl cx="300" cy="160" rx="10" ry="12" fill="' + C.fire + '" opacity=".85"/>' +
-  burner(200, 262, C.fire, 10) +
-  T(200, 40, '水を熱して、水蒸気を風船へ', 13, C.ink), C.gray),
+  '<path d="M150 250 q0 -56 46 -56 q46 0 46 56 z" fill="' + C.glass + '"/><rect x="180" y="184" width="32" height="10" rx="4" fill="' + C.ink + '"/>' +
+  '<path d="M232 222 l20 -24" stroke="' + C.glass + '" stroke-width="10" stroke-linecap="round"/>' +
+  '<ellipse data-bl cx="254" cy="186" rx="8" ry="10" fill="' + C.fire + '" opacity=".85"/>' +
+  T(200, 282, '水を熱して、水蒸気を風船へ', 13, C.ink), C.gray),
   3, (root, t) => {
     const k = Math.min(1, t / 2.8), b = root.querySelector('[data-bl]');
-    b.setAttribute('rx', (10 + 34 * k).toFixed(1)); b.setAttribute('ry', (12 + 40 * k).toFixed(1));
-    b.setAttribute('cx', (300 + 22 * k).toFixed(1)); b.setAttribute('cy', (160 - 40 * k).toFixed(1));
+    b.setAttribute('rx', (8 + 22 * k).toFixed(1)); b.setAttribute('ry', (10 + 28 * k).toFixed(1));
+    b.setAttribute('cx', '254'); b.setAttribute('cy', (186 - 38 * k).toFixed(1));
   }, 'もう一度ふくらませる');
 
 // 粒の目で見る：水（液体）と水蒸気（気体）。粒の大きさも数も同じ、すきまが広がる
@@ -106,9 +105,9 @@ SCENES['c8-model'] = () => anim(svg(
   '<rect x="160" y="180" width="70" height="60" rx="4" fill="#fff" stroke="' + C.glass + '" stroke-width="2"/>' +
   '<rect x="258" y="54" width="124" height="186" rx="6" fill="#fff" stroke="' + C.glass + '" stroke-width="2"/>' +
   '<g data-p></g>' + T(195, 262, '水（12こ）', 12, C.ink) + T(320, 262, '水蒸気（12こ）', 12, C.ink) +
-  T(270, 34, '粒の大きさも数も同じ', 13, C.coat), C.gray), 4, modelDraw, 'もう一度見る');
+  T(270, 288, '粒の大きさも数も同じ', 13, C.coat), C.gray), 4, modelDraw, 'もう一度見る');
 
-SCENES['c8-answer'] = answerCard('すきまが広がった！', '粒の大きさも数も変わらない', 'clamp(24px,8vw,40px)');
+SCENES['c8-answer'] = answerCard('粒は同じ！', '粒の大きさも数も同じ。すきまが広がる', 'clamp(22px,7vw,30px)');
 
 // 水 1 g（約 1 mL）→ 100 ℃ の水蒸気 約 1.7 L
 SCENES['c8-volume'] = () => svg(
@@ -142,7 +141,7 @@ function thermoScene(msg){
     '<rect x="160" y="80" width="12" height="154" rx="6" fill="#fff" stroke="' + C.glass + '"/><rect data-bar x="162" y="160" width="8" height="74" fill="' + C.fire + '"/>' +
     '<circle cx="166" cy="240" r="9" fill="' + C.fire + '"/>' +
     T(166, 268, '', 13, C.ink, 'middle', ' data-tc') + T(166, 284, '', 12, C.muted, 'middle', ' data-tk') +
-    '<g data-p></g>' + T(294, 52, msg, 13, C.coat), C.gray);
+    '<g data-p></g>' + T(294, 256, msg, 13, C.coat), C.gray);
 }
 SCENES['c8-hot'] = () => anim(thermoScene('温度を上げると…'), 3.5, (r, t) => thermo(r, t, [0, 100]), 'もう一度見る');
 SCENES['c8-cold'] = () => anim(thermoScene('温度を下げていくと…'), 3.5, (r, t) => thermo(r, t, [100, -273]), 'もう一度見る');

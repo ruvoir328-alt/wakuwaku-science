@@ -128,7 +128,7 @@ function curveScene(){
 SCENES['c7-curve'] = () => anim(curveScene(), 4, curveDraw, 'もう一度熱する');
 SCENES['c7-curve-still'] = () => still(curveScene(), 4, curveDraw);
 
-SCENES['c7-answer'] = answerCard('止まるところがある！', '0 ℃ と 100 ℃ で、温度が平らになる', 'clamp(24px,8vw,40px)');
+SCENES['c7-answer'] = answerCard('止まる！', 'とちゅうの 0 ℃ と 100 ℃ で、温度が止まる', 'clamp(26px,8.5vw,40px)');
 
 // 粒のようす：固体はならんで小さくゆれる、液体は動き回る、気体は飛び回る
 SCENES['c7-particles'] = () => {
@@ -154,7 +154,7 @@ SCENES['c7-particles'] = () => {
 
 // 三態の図と、矢印の名前
 SCENES['c7-states'] = () => {
-  const P = { s: [200, 230], l: [340, 230], g: [270, 90] };
+  const P = { s: [180, 236], l: [360, 236], g: [270, 72] };
   const node = (k, label) => '<circle cx="' + P[k][0] + '" cy="' + P[k][1] + '" r="30" fill="' + C.cream + '" stroke="' + C.creamLine + '" stroke-width="2"/>' + T(P[k][0], P[k][1] + 5, label, 14, C.ink);
   const arr = (a, b, off, label, lx, ly) => {
     const [x1, y1] = P[a], [x2, y2] = P[b], dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L, nx = -uy * off, ny = ux * off;
@@ -163,9 +163,9 @@ SCENES['c7-states'] = () => {
   };
   return svg('<defs><marker id="c7ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="' + C.fire + '"/></marker></defs>' +
     node('s', '固体') + node('l', '液体') + node('g', '気体') +
-    arr('s', 'l', -8, '融解', 270, 212) + arr('l', 's', -8, '凝固', 270, 262) +
-    arr('l', 'g', -8, '蒸発', 336, 154) + arr('g', 'l', -8, '凝縮', 282, 172) +
-    arr('s', 'g', 8, '昇華', 194, 154) + arr('g', 's', 8, '凝華', 254, 172), C.gray);
+    arr('s', 'l', -8, '融解 →', 270, 222) + arr('l', 's', -8, '← 凝固', 270, 266) +
+    arr('l', 'g', -8, '蒸発', 344, 150) + arr('g', 'l', -8, '凝縮', 290, 168) +
+    arr('s', 'g', 8, '昇華', 196, 150) + arr('g', 's', 8, '凝華', 250, 168), C.gray);
 };
 
 /* ---- 脚本 ---- */

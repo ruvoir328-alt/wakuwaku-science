@@ -136,7 +136,7 @@ SCENES['c3-cards'] = () => svg(T(147, 30, 'ほかの分け方', 15, NAVY) +
   card3(22, 182, '昇華法', '固体 → 気体 → 固体 になる性質を使う', '例：ヨウ素') +
   T(147, 270, 'どれも、物質の性質のちがいを使う', 13, NAVY), CREAM);
 
-SCENES['c3-answer'] = answerCard('何色かに分かれる！', '黒は、いくつかの色のまざりもの', 'clamp(18px,6vw,30px)');
+SCENES['c3-answer'] = answerCard('分かれる！', '黒は、何色かのまざりもの', 'clamp(26px,9vw,42px)');
 
 /* ---- 脚本 ---- */
 window.EPISODE = {

@@ -107,14 +107,14 @@ SCENES['c4-milk'] = () => svg(LAB +
   bone(232, 200, 0.8) + T(232, 176, '骨', 13, INK));
 
 // 場面3：金属のカルシウム（銀白色）を水に入れると、あわ（水素）を出してとけていく
-SCENES['c4-metal'] = () => anim(svg(LAB + '<g data-b></g>' + beaker(70, 230, 120, 100, 72) +
+SCENES['c4-metal'] = () => anim(svg(LAB + beaker(70, 230, 120, 100, 72) + '<g data-b></g>' +
   T(130, 270, '金属のカルシウム（銀白色）を水に入れると…', 12, INK) + T(130, 288, 'あわ（水素）を出して、とけていく', 12, RED, 'middle', ' data-k opacity="0"')),
   4, (root, t) => {
-    const fall = Math.min(1, t / 0.8), y = 96 + fall * (214 - 96), s = Math.max(0.35, 1 - Math.max(0, t - 0.8) * 0.2);
-    let b = '<rect x="' + (130 - 13 * s) + '" y="' + (y - 12 * s) + '" width="' + (26 * s) + '" height="' + (18 * s) + '" rx="3" fill="' + SILVER + '" stroke="' + MUTED + '" stroke-width="2"/>';
+    const fall = Math.min(1, t / 0.8), y = 96 + fall * (214 - 96), s = Math.max(0.5, 1 - Math.max(0, t - 0.8) * 0.16);
+    let b = '<rect x="' + (130 - 13 * s) + '" y="' + (y - 12 * s) + '" width="' + (26 * s) + '" height="' + (18 * s) + '" rx="3" fill="' + SILVER + '" stroke="' + INK + '" stroke-width="2"/>';
     if (t > 0.8) for (let i = 0; i < 9; i++){
       const k = ((t - 0.8) * 0.9 + i / 9) % 1, bx = 122 + (i * 23) % 18 - 4 + Math.sin(k * 6 + i) * 3, by = 210 - k * 50;
-      b += '<circle cx="' + bx.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="' + (2 + i % 3) + '" fill="#fff" stroke="' + MUTED + '" stroke-width="1"/>';
+      b += '<circle cx="' + bx.toFixed(1) + '" cy="' + by.toFixed(1) + '" r="' + (3 + i % 3) + '" fill="#fff" stroke="' + NAVY + '" stroke-width="1.5"/>';
     }
     root.querySelector('[data-b]').innerHTML = b;
     root.querySelector('[data-k]').setAttribute('opacity', t > 1.4 ? 1 : 0);
@@ -155,7 +155,7 @@ SCENES['c4-gold'] = () => svg('<rect width="400" height="300" fill="#eef2f7"/>' 
   '<path d="M118 130 H164" stroke="' + RED + '" stroke-width="4" stroke-dasharray="6 5"/><path d="M164 120 L178 130 L164 140z" fill="' + RED + '"/>' +
   T(145, 108, '？', 28, RED) + T(145, 250, '元素がちがうものに、変えられる？', 14, NAVY));
 
-SCENES['c4-answer'] = answerCard('入っていない！', '骨の「カルシウム」は元素の名前', 'clamp(22px,7vw,34px)');
+SCENES['c4-answer'] = answerCard('入っていない！', '「カルシウム」は元素の名前', 'clamp(22px,7vw,34px)');
 
 /* ---- 脚本 ---- */
 window.EPISODE = {

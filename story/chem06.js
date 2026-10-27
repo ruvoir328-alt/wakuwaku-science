@@ -101,7 +101,7 @@ function wireScene(color, label, sub){
     '<g data-fl>' + burner(200, 210, C.water, 60) + '</g>' +
     '<line data-w x1="70" y1="120" x2="160" y2="150" stroke="' + C.glass + '" stroke-width="3" stroke-linecap="round"/>' +
     '<rect x="40" y="108" width="36" height="12" rx="3" fill="' + C.wood + '"/>' +
-    T(200, 40, label, 14, C.ink) + T(200, 60, sub, 11, C.muted), C.gray);
+    T(250, 76, label, 13, C.ink) + T(250, 94, sub, 11, C.muted), C.gray);
 }
 SCENES['c6-wire'] = () => anim(wireScene('', '白金線に、食塩水（透明）をつけて…', 'バーナーの炎に入れる'),
   2.6, (root, t) => {
@@ -110,7 +110,7 @@ SCENES['c6-wire'] = () => anim(wireScene('', '白金線に、食塩水（透明�
     root.querySelector('[data-fl]').innerHTML = burner(200, 210, t > 1.3 ? FLAME.Na : C.water, 60);
   }, 'もう一度入れる');
 
-SCENES['c6-answer'] = answerCard('ナトリウムの色！', 'みそ汁の中の食塩（塩化ナトリウム）', 'clamp(26px,8.5vw,42px)');
+SCENES['c6-answer'] = answerCard('ナトリウム！', 'みそ汁の食塩にふくまれる元素の色', 'clamp(22px,7vw,28px)');
 
 // 炎色反応の色の表
 SCENES['c6-table'] = () => {
@@ -147,7 +147,7 @@ SCENES['c6-brass'] = () => anim(svg(
   '<rect y="270" width="400" height="30" fill="' + C.gray2 + '"/>' +
   '<g data-fl>' + burner(240, 210, C.water, 60) + '</g>' +
   '<g data-m><rect x="150" y="128" width="40" height="16" rx="3" fill="' + C.fire2 + '" stroke="' + C.woodDark + '" stroke-width="1.5"/></g>' +
-  T(240, 40, 'むかし作った「金色の金属」', 14, C.ink) + T(240, 60, '…を、炎に入れると？', 11, C.muted, 'middle', ' data-msg'), C.gray),
+  T(250, 76, 'むかし作った「金色の金属」', 13, C.ink) + T(250, 94, '…を、炎に入れると？', 12, C.muted, 'middle', ' data-msg'), C.gray),
   2.8, (root, t) => {
     const k = Math.min(1, t / 1.2);
     root.querySelector('[data-m]').setAttribute('transform', 'translate(' + (60 * k).toFixed(1) + ' ' + (12 * k).toFixed(1) + ')');
