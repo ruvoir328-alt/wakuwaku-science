@@ -432,8 +432,10 @@ function show(){
   const others = EL[elKey].list.map(x => x.name).join('・');
   $('formula').innerHTML = '同素体：同じ元素の単体で、性質がちがうもの<br>' + EL[elKey].name + 'の同素体：<b>' + others + '</b>' +
     (Object.keys(burned).length ? '<br>燃やしたもの：' + Object.keys(burned).map(k => EL.C.list.find(x => x.k === k).name + ' → CO₂').join('、') : '');
+  if (play.raf) return;                    // 燃やしている間は、ボタンをそのままにする
   $('go').disabled = elKey !== 'C';
-  $('go').textContent = elKey === 'C' ? '燃やす ▶' : '燃やす（炭素だけ）';
+  if (elKey !== 'C') $('go').textContent = '燃やす（炭素だけ）';
+  else if ($('go').textContent.indexOf('炭素だけ') >= 0) $('go').textContent = '燃やす ▶';
 }
 
 function talk(){
