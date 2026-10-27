@@ -49,7 +49,7 @@ body{
   position:relative;
 }
 .stage::before{ /* 舞台の上の名札 */
-  content:'わくわく物理基礎';
+  content:attr(data-label);       /* ふつうは「わくわく物理基礎」。化学の話は脚本の subject で変わる */
   position:absolute;top:-11px;left:50%;transform:translateX(-50%);
   background:var(--wood-dark);color:#f6e6cf;font-size:11px;font-weight:700;
   padding:3px 12px;border-radius:999px;white-space:nowrap;
@@ -127,7 +127,7 @@ body{
   <div class="ep-head"><span class="ep-no" id="epNo"></span><h1 class="ep-title" id="epTitle"></h1></div>
   <div class="progress" aria-hidden="true"><span id="bar"></span></div>
 
-  <div class="stage">
+  <div class="stage" data-label="わくわく物理基礎">
     <div class="deck" id="deck" role="img" aria-label="紙芝居の絵"></div>
   </div>
 
@@ -145,9 +145,11 @@ body{
 <script>
 (function(){
   const params = new URLSearchParams(location.search);
-  const epId = (params.get('ep') || '06').replace(/\D/g,'');
+  // 物理は ?ep=06 → ep06.js、化学は ?ep=c01 → chem01.js
+  const raw = params.get('ep') || '06';
+  const chem = /^c/i.test(raw), epId = raw.replace(/\D/g,'');
   const s = document.createElement('script');
-  s.src = 'ep' + epId + '.js';
+  s.src = (chem ? 'chem' : 'ep') + epId + '.js';
   s.onload = () => start(window.EPISODE);
   s.onerror = () => { document.getElementById('line').textContent = 'このお話はまだ準備中です。'; };
   document.head.appendChild(s);
@@ -163,7 +165,9 @@ function start(EP){
   $('chapter').textContent = EP.chapter;
   $('epNo').textContent = '第' + Number(EP.id) + '話';
   $('epTitle').textContent = EP.title;
-  document.title = '第' + Number(EP.id) + '話 ' + EP.title + ' | わくわく物理基礎';
+  const subject = EP.subject || '物理基礎';                       // 化学の話は subject: '化学基礎'
+  document.querySelector('.stage').dataset.label = 'わくわく' + subject;
+  document.title = '第' + Number(EP.id) + '話 ' + EP.title + ' | わくわく' + subject;
 
   // 画像を先に読み込んでおく
   EP.scenes.forEach(sc => (sc.chars||[]).forEach(c => { new Image().src = img(c.who, c.face); }));
