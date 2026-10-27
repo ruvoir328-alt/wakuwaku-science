@@ -220,10 +220,16 @@ Claude Code にこう送るだけ：
   - さわる場所：`sim/` の新しいファイル、`sim/index.html`、`sim/medal.js`、`physics/mypage.html`（シミュの欄）
   - ※ T-41 と並行OK
 
+- [x] **T-44　化学のチャレンジの入り口とマイページ** ☕
+  - トップ画面の「化学 → チャレンジ」を単元一覧（`chemistry/units.html`）へ。元素・周期表ドリルは単元一覧の中に「別枠」で
+  - マイページ（`physics/mypage.html`）に「化学 第1章」の欄
+  - さわる場所：`index.html`（リンク1つ）、`chemistry/units.html`、`chemistry/index.html`（もどるリンク）、`physics/mypage.html`
+
 - [ ] **T-43　化学1章のドリル（化1-1〜化1-7）** 🌙
   - 化1-2〜化1-6 を作る。化1-1・化1-7 も話の場面にそろえて見直す。問題に場面の絵を入れる（`pic`）
   - 化学1章の話の最後とシミュから、それぞれのドリルにつなぐ（`SIM_EP` も）
-  - さわる場所：`chemistry/drill.js` `chemistry/units.html`、化学1章の `story/chemXX.js` と `sim/` のリンク
+  - 単元一覧とマイページ（`physics/mypage.html` の `UNITS` の `soon: true`）の「準備中」を外す
+  - さわる場所：`chemistry/drill.js` `chemistry/units.html` `physics/mypage.html`、化学1章の `story/chemXX.js` と `sim/` のリンク
   - ※ T-41・T-42 が main に入ってから
 
 ---

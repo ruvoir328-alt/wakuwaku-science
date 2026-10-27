@@ -52,6 +52,15 @@
         <div class="mp-grid" id="mp-grid-2"></div>
       </section>
 
+      <!-- 化学 第1章（化学のドリル chemistry/drill.html の記録） -->
+      <section class="mp-section">
+        <div class="mp-section-header">
+          <span class="mp-section-num">化学 第1章</span>
+          <h2 class="mp-section-title">物質の成分と構成元素</h2>
+        </div>
+        <div class="mp-grid" id="mp-grid-c1"></div>
+      </section>
+
     </main>
 
     <!-- シミュレーションのミッション（sim/medal.js の記録） -->
@@ -92,6 +101,14 @@
       { ch: 2, id: '2-5', name: '圧力と浮力',       formula: 'P = F/S' },
       { ch: 2, id: '2-6', name: '弾性力',           formula: 'F = kx' },
       { ch: 2, id: '2-7', name: '作用・反作用',     formula: "F' = −F" },
+      // 化学（化学のドリル）。soon：まだない単元（できたら消す）
+      { ch: 'c1', id: '化1-1', name: '純物質と混合物',   formula: '純物質・混合物' },
+      { ch: 'c1', id: '化1-2', name: '分離・精製',       formula: 'ろ過・蒸留', soon: true },
+      { ch: 'c1', id: '化1-3', name: '元素と単体',       formula: '元素・単体', soon: true },
+      { ch: 'c1', id: '化1-4', name: '同素体',           formula: 'S・C・O・P', soon: true },
+      { ch: 'c1', id: '化1-5', name: '成分元素の検出',   formula: '炎色反応', soon: true },
+      { ch: 'c1', id: '化1-6', name: '状態変化',         formula: '融解・蒸発…', soon: true },
+      { ch: 'c1', id: '化1-7', name: '熱運動と絶対温度', formula: 'T = t + 273' },
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -163,7 +180,9 @@
         const done    = prog && !perfect && prog.bestScore >= 4;   // メダルは 4問以上
 
         const card = document.createElement('a');
-        card.href = `drill.html?unit=${unit.id}`;
+        const chem = String(unit.ch).startsWith('c');
+        card.href = unit.soon ? '../chemistry/units.html'
+          : chem ? `../chemistry/drill.html?unit=${encodeURIComponent(unit.id)}` : `drill.html?unit=${unit.id}`;
         card.className = `mp-card ${perfect ? 'mp-perfect' : done ? 'mp-done' : 'mp-new'}`;
         card.innerHTML = `
           <div class="mp-card-icon">
@@ -172,7 +191,7 @@
           <div class="mp-card-id">${unit.id}</div>
           <div class="mp-card-name">${unit.name}</div>
           <div class="mp-card-formula">${unit.formula}</div>
-          <div class="mp-card-score">${prog ? `${prog.bestScore} / 10` : '未挑戦'}</div>
+          <div class="mp-card-score">${prog ? `${prog.bestScore} / 10` : unit.soon ? '準備中' : '未挑戦'}</div>
         `;
         grid.appendChild(card);
       });

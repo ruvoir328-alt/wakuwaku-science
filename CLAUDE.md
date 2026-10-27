@@ -88,7 +88,8 @@
 - ドリル：`chemistry/drill.html?unit=化1-1`（問題は `chemistry/drill.js` の `UNITS`）。単元一覧は `chemistry/units.html`
   - 問題は2つの形：選ぶ問題（`choices` と `answer`）、数の問題（`number: true`・`answer`・`unit`）。どちらも `explain`（答えのあとに出す説明）を書く
   - メダル・トロフィー・記録のしかたは物理のドリルと同じ（記録のキーも同じ。単元の番号は「化1-1」）
-- 今の元素・周期表ドリル（`chemistry/index.html`）は別のものとして残す
+- 入り口：トップ画面の「化学 → チャレンジ」は単元一覧 `chemistry/units.html`。今の元素・周期表ドリル（`chemistry/index.html`）は、単元一覧の中の「別枠」として残す
+- 化学のドリルの記録は、物理のマイページ（`physics/mypage.html`）の「化学 第1章」の欄にも出る（`UNITS` の `ch: 'c1'`）
 
 ## キャラクター
 - **ニュートンくん**（ナビ役）：一人称「わし」、語尾「〜じゃ」。口ぐせ「ふむ、よい問いじゃ」「リンゴに聞いてみよう」。好奇心のかたまりで、ちょっと得意げ。リカのことは「リカくん」と呼ぶ
