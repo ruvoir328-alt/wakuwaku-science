@@ -190,7 +190,10 @@ window.EPISODE = {
   topic: '力の表し方・いろいろな力',
   title: '机の上のかごに、力ははたらいている？',
   simUrl: '../sim/force-arrows.html',
-  drillUrl: '../physics/drill.html?unit=2-2',
+  drillUrls: [
+    { url: '../physics/drill.html?unit=2-6', label: '弾性力' },
+    { url: '../physics/drill.html?unit=2-2', label: '力のつりあい' },
+  ],
   scenes: [
     { bg: 'title' },
 
