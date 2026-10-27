@@ -12,10 +12,10 @@
 ## 章立てと番号（3つのモードで同じ）
 - 教科書の「1編 物体の運動とエネルギー」にそろえる
   - 1章 直線運動の世界（第1〜8話。完成）
-  - 2章 力と運動の法則（第9話〜。準備中）
+  - 2章 力と運動の法則（第9〜17話。完成）
   - 3章 仕事と力学的エネルギー（準備中）
 - ストーリーの話の番号は章をまたいで通し番号（`story/ep09.js` から2章）
-- ドリルの単元番号は「章-番号」（1章は 1-1〜1-8、2章は 2-1〜）
+- ドリルの単元番号は「章-番号」（1章は 1-1〜1-8、2章は 2-1〜2-7）。新しい単元はうしろに足す（番号をずらすとマイページの記録がずれる）
 - 1章の対応：
 
 | 話 | ストーリー | シミュ | ドリル |
@@ -29,8 +29,22 @@
 | 第7話 | `story/ep07.js` | `sim/vertical-throw.html` | 1-5・1-6 |
 | 第8話 | `story/ep08.js` | `sim/horizontal-throw.html` | 1-8 |
 
+- 2章の対応：
+
+| 話 | ストーリー | シミュ | ドリル |
+| --- | --- | --- | --- |
+| 第9話 | `story/ep09.js` | `sim/force-arrows.html` | 2-6・2-2 |
+| 第10話 | `story/ep10.js` | `sim/force-composition.html` | 2-1 |
+| 第11話 | `story/ep11.js` | `sim/force-balance.html` | 2-2 |
+| 第12話 | `story/ep12.js` | `sim/inertia.html` | （なし。準備中） |
+| 第13話 | `story/ep13.js` | `sim/action-reaction.html` | 2-7 |
+| 第14話 | `story/ep14.js` | `sim/motion-equation.html` | 2-3 |
+| 第15話 | `story/ep15.js` | `sim/fall-force.html` | 2-3・1-4 |
+| 第16話 | `story/ep16.js` | `sim/friction.html` | 2-4 |
+| 第17話 | `story/ep17.js` | `sim/buoyancy.html` | 2-5 |
+
 ## ストーリーモード
-- 脚本の原本は `docs/story-chN.md`（1章は `docs/story-ch1.md`）。セリフ・数値・選択肢はここに従う。新しい章は、まず脚本案と設計表（話・狙う誤概念・シミュ案・ドリル）をこの形で書いて、ぱかちんの OK をもらってから作る
+- 脚本の原本は `docs/story-chN.md`（1章は `docs/story-ch1.md`、2章は `docs/story-ch2.md`）。セリフ・数値・選択肢はここに従う。新しい章は、まず脚本案と設計表（話・狙う誤概念・シミュ案・ドリル）をこの形で書いて、ぱかちんの OK をもらってから作る
 - 見本は第6話：`story/index.html`（紙芝居プレイヤー）と `story/ep06.js`（脚本データ）
 - 新しい話は `story/epXX.js` の脚本データを書くことで作る。その話だけの絵（SVG）は、脚本ファイルの中で `SCENES` に足す（第1〜5・7・8話と同じやり方）
   - プレイヤー（`story/index.html`）の変更がどうしても必要なときは、勝手に変えず報告に書く
