@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>化学ドリル - わくわく化学基礎</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+  <!-- 見た目は物理のチャレンジモードと同じ -->
+  <link rel="stylesheet" href="../physics/style.css">
+  <style>
+    /* 選ぶ問題のボタン（色は物理のドリルと同じものだけ） */
+    .choices { display: grid; gap: 8px; margin: 4px 0 12px; }
+    .choice-btn {
+      font: 700 15px 'Zen Maru Gothic', sans-serif; text-align: left;
+      background: #f4f6fb; color: #1f2638; border: 2px solid #dfe4ee; border-radius: 12px;
+      padding: 12px 14px; cursor: pointer;
+    }
+    .choice-btn:focus-visible { outline: 3px solid #d93a3f; outline-offset: 2px; }
+    .choice-btn[aria-pressed="true"] { border-color: #22305a; background: #fff; }
+    .choice-btn.correct { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); }
+    .choice-btn.incorrect { border-color: #d93a3f; background: var(--ng-soft); color: #d93a3f; }
+    .choice-btn[disabled] { cursor: default; }
+    .explain { font-size: 14px; line-height: 1.6; background: #fff7e9; border: 2px dashed #e9c48f; border-radius: 10px; padding: 10px 12px; margin: 8px 0 12px; }
+    .pic { display: block; width: 100%; height: auto; margin: 4px 0 10px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="top">
+      <a href="units.html" class="back-link">← 単元をえらぶ</a>
+      <div class="header-right">
+        <div class="score-box" aria-label="正解数">
+          <span class="score-num" id="score">0</span>
+          <span class="score-sep">/</span>
+          <span class="score-total" id="total">0</span>
+        </div>
+        <button class="sound-btn" id="sound-btn" onclick="toggleSound()" title="効果音の切りかえ" aria-label="効果音の切りかえ">🎵</button>
+      </div>
+    </div>
+
+    <header class="head">
+      <div class="tag">チャレンジモード（化学）</div>
+      <h1 id="drill-title">化学ドリル</h1>
+    </header>
+
+    <!-- ガイド役：リカ -->
+    <div class="guide">
+      <p class="bubble" id="rika-line" aria-live="polite"></p>
+      <img id="rika-img" src="../story/img/rika_normal.webp" alt="リカ">
+    </div>
+
+    <!-- 問題画面 -->
+    <div id="problem-view">
+      <div class="card">
+        <span class="badge" id="badge"></span>
+        <p class="problem-text" id="problem-text"></p>
+        <div id="pic"></div>
+        <div id="answer-area"></div>
+        <button class="btn-primary" id="check-btn" onclick="checkAnswer()">答えを確認する</button>
+        <div class="feedback" id="feedback"></div>
+        <div class="explain" id="explain" style="display:none"></div>
+        <button class="btn-secondary" id="next-btn" onclick="nextProblem()">次の問題 →</button>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <span class="progress-text" id="progress-text">0 / 10 問</span>
+      </div>
+    </div>
+
+    <!-- 結果画面 -->
+    <div id="result-view" style="display:none">
+      <div class="card result-card">
+        <div class="result-title" id="result-title"></div>
+        <div class="result-score">
+          <span id="result-score-num"></span>
+          <span class="result-score-denom"> / 10</span>
+        </div>
+        <p class="result-msg" id="result-msg"></p>
+        <button class="btn-primary" onclick="retry()">もう一度挑戦！</button>
+        <a href="units.html" class="btn-home">← ほかの単元をえらぶ</a>
+      </div>
+    </div>
+  </div>
+  <script src="drill.js"></script>
+</body>
+</html>
