@@ -196,7 +196,7 @@
           <div class="mp-card-icon">
             ${l === 'trophy' ? '🏆' : l === 'medal' ? '🥇' : '<span class="mp-card-empty">⊙</span>'}
           </div>
-          <div class="mp-card-id">第${s.ep}話</div>
+          <div class="mp-card-id">${s.chem ? '化学 ' : ''}第${s.ep}話</div>
           <div class="mp-card-name">${s.name}</div>
           <div class="mp-card-score">${rec && rec.total ? `ミッション ${SimMedal.count(rec)} / ${rec.total}` : '未挑戦'}</div>
         `;

@@ -25,6 +25,15 @@
     { id: 'fall-force',        ep: 15, name: '落下と運動方程式' },
     { id: 'friction',          ep: 16, name: 'まさつ力' },
     { id: 'buoyancy',          ep: 17, name: '浮力' },
+    // 化学（chem: true。マイページでは「化学 第◯話」と出す）
+    { id: 'chem-boiling',        ep: 1, name: '加熱のグラフ', chem: true },
+    { id: 'chem-separation',     ep: 2, name: '分離の実験室', chem: true },
+    { id: 'chem-chromatography', ep: 3, name: 'クロマトグラフィー', chem: true },
+    { id: 'chem-element',        ep: 4, name: '元素と単体の仕分け', chem: true },
+    { id: 'chem-allotrope',      ep: 5, name: '同素体', chem: true },
+    { id: 'chem-flame',          ep: 6, name: '炎色反応', chem: true },
+    { id: 'chem-heating-curve',  ep: 7, name: '加熱曲線', chem: true },
+    { id: 'chem-particles',      ep: 8, name: '粒子モデル', chem: true },
   ];
 
   function loadAll() {
