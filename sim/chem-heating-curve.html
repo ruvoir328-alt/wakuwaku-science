@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>加熱曲線シミュレーター | わくわく化学基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=c07">← 第7話 ストーリーにもどる</a>
+    <span>化学1章 物質の成分と構成元素</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　化学 第7話</div>
+    <h1>氷を熱し続けると、温度はどうなる？</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 352" role="img" aria-label="熱しているビーカーと粒のようす、加熱曲線のグラフ"></svg>
+    </div>
+
+    <div class="time-row">
+      <span class="label">熱しはじめてからの時間</span>
+      <span class="t" id="tOut">0.0<small>分</small></span>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>温度</div><div id="TOut"></div>
+      <div>状態</div><div id="sOut"></div>
+      <div>熱の使われ方</div><div id="hOut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <div class="row">
+        <span class="name">熱する強さ</span>
+        <div class="seg" role="group" aria-label="熱する強さ">
+          <button type="button" data-pw="2" aria-pressed="false">弱い</button>
+          <button type="button" data-pw="1" aria-pressed="true">ふつう</button>
+          <button type="button" data-pw="0.5" aria-pressed="false">強い</button>
+        </div>
+      </div>
+      <label class="slider"><span class="s-head"><span class="s-name">グラフをなぞる（熱したあと）</span><output id="oS"></output></span>
+        <input type="range" id="inS" min="0" max="15" step="0.25" value="0" disabled></label>
+      <div class="btns">
+        <button type="button" class="drop" id="go">熱する ▶</button>
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>−20 ℃ の氷を最後まで熱して、温度が止まるところを見る</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>熱する強さを変えて熱し、温度が止まる温度をくらべる</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>グラフの平らなところをなぞって、粒のようすを見る</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>物質には固体・液体・気体の3つの状態（三態）がある</li><li>状態が変わっている間は、加えた熱が粒のつながりを切るのに使われ、温度は変わらない</li><li>1気圧の水は 0 ℃ でとけ（融点）、100 ℃ で沸騰する（沸点）</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <span class="soon">チャレンジモード（準備中）</span>
+    <a class="back" href="../story/?ep=c07">第7話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 化学 第7話 物質の三態と状態変化 ----
+   1気圧。−20 ℃ の氷を一定の強さで熱する。0 ℃ で融解（平ら）、100 ℃ で沸騰（平ら）
+   横はば（ふつうの強さ、分）：氷 −20→0 ℃ 1、融解 3、水 0→100 ℃ 4、沸騰 6、水蒸気 100→120 ℃ 1
+   （本当の熱の量は 氷 42 : 融解 334 : 水 420 : 沸騰 2257 : 水蒸気 40 J（1 g）。沸騰の平らな部分はもっと長いが、見やすいように縮めてある）
+   強い → 時間は半分、弱い → 2倍。平らになる温度は変わらない
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+// u：ふつうの強さで熱したときの時間（分）。強さ k（弱い 2・ふつう 1・強い 0.5）で、本当の時間は u × k
+const SEG = [   // [はじめの u, おわりの u, はじめの温度, おわりの温度, 状態, 熱の使われ方]
+  [0, 1, -20, 0, '固体（氷）', '温度を上げる'],
+  [1, 4, 0, 0, '固体と液体（融解中）', '粒のつながりを切る（温度は変わらない）'],
+  [4, 8, 0, 100, '液体（水）', '温度を上げる'],
+  [8, 14, 100, 100, '液体と気体（沸騰中）', '粒のつながりを切る（温度は変わらない）'],
+  [14, 15, 100, 120, '気体（水蒸気）', '温度を上げる']
+];
+const UMAX = 15, TMAX = 30;                // グラフの横軸は 0〜30 分（弱いとき）
+const svg = $('svg');
+const G = { x0: 46, x1: 304, y0: 320, h: 130 };   // グラフ（−20〜120 ℃）
+let k = 1, u = 0, ran = false, runs = [];
+const seg = uu => SEG.find(s => uu <= s[1] + 1e-9) || SEG[4];
+const tempAt = uu => { const s = seg(uu); return s[2] + (s[3] - s[2]) * (uu - s[0]) / (s[1] - s[0]); };
+const gx = min => G.x0 + (G.x1 - G.x0) * min / TMAX, gy = T => G.y0 - G.h * (T + 20) / 140;
+// 氷が水になっている割合（0〜1）と、水が水蒸気になっている割合
+const meltF = uu => Math.max(0, Math.min(1, (uu - 1) / 3)), boilF = uu => Math.max(0, Math.min(1, (uu - 8) / 6));
+
+function particles(uu, time){
+  const bx = 176, by = 14, bw = 132, bh = 124, n = 16, r = 7;
+  el('rect', { x: bx, y: by, width: bw, height: bh, rx: 8, fill: '#fff', stroke: '#6b7488', 'stroke-width': 1.5 }, svg);
+  txt(svg, bx + bw / 2, by + bh + 14, '粒のようす（大きさは同じ）', 10, '#6b7488');
+  const T = tempAt(uu), amp = 1.5 + Math.max(0, T + 20) / 30;
+  const m = meltF(uu), gasN = Math.round(n * boilF(uu)), liqN = m >= 1 ? n - gasN : Math.round(n * m);
+  for (let i = 0; i < n; i++){
+    const gas = i < gasN, liquid = !gas && i < gasN + liqN, j = i - gasN - liqN;   // j：固体の粒の番号
+    const ph = i * 2.39, sp = reduce ? 0 : time;
+    let x, y;
+    if (gas){                                // 気体：箱いっぱいに飛び回る
+      x = bx + 12 + ((i * 37 + sp * 60 * (1 + i % 3)) % (bw - 24 + 0.01));
+      y = by + 12 + Math.abs(((i * 53 + sp * 50 * (1 + (i + 1) % 3)) % (2 * (bh - 24))) - (bh - 24));
+    } else if (liquid){                      // 液体：下のほうで、たがいに入れかわりながら動く（とけている間は、氷の右がわ）
+      const L = m < 1 ? bx + 92 : bx + 16, Wd = bx + bw - 14 - L;
+      x = L + ((i * 29 + Math.sin(sp * 2 + ph) * 10) % Wd + Wd) % Wd;
+      y = by + bh - 16 - Math.floor((i % 15) / 5) * 15 + Math.cos(sp * 2.4 + ph) * 3;
+    } else {                                 // 固体：ならんだまま、その場で小さくゆれる
+      x = bx + 18 + (j % 4) * 17 + Math.sin(sp * 9 + ph) * amp * 0.6;
+      y = by + bh - 14 - Math.floor(j / 4) * 16 + Math.cos(sp * 9 + ph) * amp * 0.6;
+    }
+    el('circle', { cx: x, cy: y, r, fill: '#bfe2f6', stroke: '#22305a', 'stroke-width': 1.3 }, svg);
+  }
+}
+
+function beaker(uu){
+  const T = tempAt(uu), m = meltF(uu), b = boilF(uu);
+  // バーナー
+  el('rect', { x: 64, y: 136, width: 16, height: 18, fill: '#6b7488' }, svg);
+  el('path', { d: 'M64 136 q8 -20 8 -26 q8 12 8 26 z', fill: '#d93a3f' }, svg);
+  el('path', { d: 'M67 136 q5 -10 5 -14 q5 8 5 14 z', fill: '#ffe14a' }, svg);
+  // ビーカーの中身
+  const level = 72 + 30 * b;                  // 沸騰すると水がへっていく（全部水蒸気になると 0）
+  if (m > 0 && b < 1) el('rect', { x: 30, y: level, width: 84, height: 104 - level, fill: '#bfe2f6', opacity: 0.45 + 0.4 * m }, svg);
+  if (b > 0) for (let i = 0; i < 3; i++)      // 湯気（水蒸気は目に見えない。見えるのは冷えた小さな水てき）
+    el('path', { d: 'M' + (48 + i * 22) + ' ' + (level - 6) + ' q-6 -10 0 -20 q6 -10 0 -20', fill: 'none', stroke: '#6b7488', 'stroke-width': 1.2, opacity: 0.6 }, svg);
+  for (let i = 0; i < Math.round(5 * (1 - m)); i++)   // 氷（白い固体）
+    el('rect', { x: 36 + i * 15, y: 82 - (i % 2) * 8, width: 13, height: 13, rx: 2, fill: '#fff', stroke: '#6b7488', 'stroke-width': 1.2 }, svg);
+  if (b > 0 && b < 1) for (let i = 0; i < 4; i++)        // 沸騰のあわ
+    el('circle', { cx: 44 + i * 18, cy: 98 - (i % 2) * 6, r: 3, fill: '#fff', stroke: '#6b7488', 'stroke-width': 1 }, svg);
+  el('path', { d: 'M28 30 V104 H116 V30', fill: 'none', stroke: '#6b7488', 'stroke-width': 2.5 }, svg);
+  // 温度計
+  el('rect', { x: 124, y: 16, width: 10, height: 92, rx: 5, fill: '#fff', stroke: '#6b7488', 'stroke-width': 1.5 }, svg);
+  el('rect', { x: 126, y: 104 - 84 * (T + 20) / 140, width: 6, height: 84 * (T + 20) / 140 + 2, fill: '#d93a3f' }, svg);
+  txt(svg, 129, 124, Math.round(T) + ' ℃', 12, '#d93a3f');
+}
+
+function graph(uu){
+  el('rect', { x: G.x0, y: G.y0 - G.h, width: G.x1 - G.x0, height: G.h, fill: '#fff' }, svg);
+  [-20, 0, 50, 100, 120].forEach(T => {
+    el('line', { x1: G.x0, x2: G.x1, y1: gy(T), y2: gy(T), stroke: T === 0 || T === 100 ? '#e9c48f' : '#dfe4ee', 'stroke-width': 1 }, svg);
+    txt(svg, G.x0 - 4, gy(T) + 4, T < 0 ? '−' + (-T) : T, 10, '#6b7488', 'end');
+  });
+  for (let m = 5; m <= TMAX; m += 5) txt(svg, gx(m), G.y0 + 13, m, 10, '#6b7488');
+  el('path', { d: 'M' + G.x0 + ' ' + (G.y0 - G.h - 6) + ' V' + G.y0 + ' H' + (G.x1 + 4), fill: 'none', stroke: '#1f2638', 'stroke-width': 1.5 }, svg);
+  txt(svg, G.x0 + 4, G.y0 - G.h - 6, '温度〔℃〕', 10, '#4b5568', 'start');
+  txt(svg, G.x1, G.y0 + 26, '時間〔分〕', 10, '#4b5568', 'end');
+  const path = (kk, uEnd) => { let d = ''; for (let q = 0; q <= uEnd + 1e-9; q += 0.25) d += (d ? ' L' : 'M') + gx(q * kk).toFixed(1) + ' ' + gy(tempAt(q)).toFixed(1); return d; };
+  runs.forEach(r => { if (r !== k) el('path', { d: path(r, UMAX), fill: 'none', stroke: '#9aa3b1', 'stroke-width': 2, 'stroke-dasharray': '4 3' }, svg); });
+  if (uu > 0) el('path', { d: path(k, uu), fill: 'none', stroke: '#d93a3f', 'stroke-width': 3, 'stroke-linejoin': 'round' }, svg);
+  const lx = x => Math.max(G.x0 + 34, Math.min(G.x1 - 34, x));   // 文字がはしからはみ出さないように
+  if (uu >= 4 || ran) txt(svg, lx(gx(2.5 * k)), gy(0) - 6, '0 ℃ 融解', 10, '#7e5129');
+  if (uu >= 14 || ran) txt(svg, lx(gx(11 * k)), gy(100) - 6, '100 ℃ 沸騰', 10, '#7e5129');
+  if (uu > 0) el('circle', { cx: gx(uu * k), cy: gy(tempAt(uu)), r: 4, fill: '#d93a3f' }, svg);
+}
+
+function draw(uu, time){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 352, fill: '#eef2f7' }, svg);
+  txt(svg, 8, 14, '1気圧', 10, '#6b7488', 'start');
+  beaker(uu); particles(uu, time || 0); graph(uu);
+  show(uu);
+}
+function show(uu){
+  const s = seg(uu), T = tempAt(uu);
+  $('tOut').innerHTML = (uu * k).toFixed(1) + '<small>分</small>';
+  $('TOut').textContent = (T < 0 ? '−' + Math.abs(T).toFixed(0) : T.toFixed(0)) + ' ℃';
+  $('sOut').textContent = s[4];
+  $('hOut').textContent = uu > 0 ? s[5] : '—';
+  $('oS').innerHTML = (uu * k).toFixed(1) + '<small>分</small>';
+  $('formula').innerHTML = '状態が変わっている間（グラフの平らなところ）は、温度が変わらない<br>融点 <b>0 ℃</b>（融解）・沸点 <b>100 ℃</b>（沸騰）<br><small>※ 平らな部分の長さは、見やすいように縮めてある（本当は沸騰の部分がもっと長い）</small>';
+}
+
+function talk(uu){
+  if (!ran) return say('question', '−20 ℃ の氷を、ずっと同じ強さで熱するぞ。温度はどうなるかな？');
+  const s = seg(uu);
+  if (!done.m2) return say('proud', '0 ℃ と 100 ℃ で、温度が止まったじゃろう？ 熱する強さを変えたら、止まる温度は変わるかな？');
+  if (!done.m3) return say('think', '強さを変えても、止まるのは 0 ℃ と 100 ℃ じゃ。下のスライダーで、平らなところの粒を見てごらん。');
+  if (s[2] === s[3]) return say('happy', '平らなところでは、熱は粒のつながりを切るのに使われておる。だから温度が上がらんのじゃ！');
+  say('normal', 'グラフをなぞると、粒のようすが変わるぞ。固体はならんでゆれ、液体は動き回り、気体は飛び回る。');
+}
+
+let idle = 0;
+function start(){
+  $('go').disabled = true; $('inS').disabled = true;
+  say('normal', '温度計とグラフを見ていてごらん。');
+  play(UMAX, uu => { u = uu; draw(uu, uu); }, () => {
+    ran = true; if (!runs.includes(k)) runs.push(k);
+    done.m1 = true;
+    if (runs.length >= 2) done.m2 = true;
+    $('go').disabled = false; $('go').textContent = 'もう一度熱する ▶';
+    $('inS').disabled = false; $('inS').value = UMAX; u = UMAX;
+    showMissions(); draw(UMAX, 0); talk(UMAX);
+  }, 4 / k);                                 // 強いほど速く進む
+}
+segGroup('pw', v => { stopPlay(); k = Number(v); u = 0; $('inS').value = 0; $('inS').disabled = true; $('go').disabled = false; $('go').textContent = '熱する ▶'; draw(0); talk(0); });
+$('inS').addEventListener('input', () => {
+  u = Number($('inS').value);
+  const s = seg(u);
+  if (ran && s[2] === s[3] && u > s[0] + 0.2 && u < s[1] - 0.2) done.m3 = true;
+  showMissions(); draw(u, idle); talk(u);
+});
+$('go').addEventListener('click', start);
+$('reset').addEventListener('click', () => {
+  stopPlay(); k = 1; u = 0; ran = false; runs = []; pickSeg('pw', '1');
+  $('inS').value = 0; $('inS').disabled = true; $('go').disabled = false; $('go').textContent = '熱する ▶';
+  draw(0); talk(0);
+});
+// 粒がうごき続けるアニメ（熱していないとき。動きを減らす設定では止めておく）
+if (!reduce){ const tick = now => { idle = now / 1000; if (!play.raf) draw(u, idle); requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+draw(0); talk(0);
+</script>
+</body>
+</html>
