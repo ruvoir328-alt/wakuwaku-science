@@ -131,26 +131,33 @@
       }
       const data = readStore(`wakuwakupub_progress_${sid}`, {});
 
-      // ── サマリー ──
-      let cleared = 0, trophies = 0;
-      UNITS.forEach(u => {
-        if (data[u.id] && data[u.id].bestScore >= 4) {   // メダル（4問以上）でクリア
-          cleared++;
-          if (data[u.id].perfect) trophies++;
-        }
-      });
-      document.getElementById('mp-summary').innerHTML = `
-        <div class="mp-stat">
-          <span class="mp-stat-num">${cleared}</span>
-          <span class="mp-stat-lbl">/ ${UNITS.length} クリア</span>
-        </div>
-        <div class="mp-stat-div"></div>
-        <div class="mp-stat">
-          <span class="mp-stat-icon">🏆</span>
-          <span class="mp-stat-num">${trophies}</span>
-          <span class="mp-stat-lbl">トロフィー</span>
-        </div>
-      `;
+      // ── サマリー（物理と化学で分ける）──
+      const sumRow = (label, list) => {
+        let cleared = 0, trophies = 0;
+        list.forEach(u => {
+          if (data[u.id] && data[u.id].bestScore >= 4) {   // メダル（4問以上）でクリア
+            cleared++;
+            if (data[u.id].perfect) trophies++;
+          }
+        });
+        return `
+        <div class="mp-sum-row">
+          <span class="mp-sum-sub">${label}</span>
+          <div class="mp-stat">
+            <span class="mp-stat-num">${cleared}</span>
+            <span class="mp-stat-lbl">/ ${list.length} クリア</span>
+          </div>
+          <div class="mp-stat-div"></div>
+          <div class="mp-stat">
+            <span class="mp-stat-icon">🏆</span>
+            <span class="mp-stat-num">${trophies}</span>
+            <span class="mp-stat-lbl">トロフィー</span>
+          </div>
+        </div>`;
+      };
+      const isChem = u => String(u.ch).startsWith('c');
+      document.getElementById('mp-summary').innerHTML =
+        sumRow('物理', UNITS.filter(u => !isChem(u))) + sumRow('化学', UNITS.filter(isChem));
 
       // ── CSV ダウンロード ──
       function downloadCSV(entries, filename) {

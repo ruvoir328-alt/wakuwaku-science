@@ -306,3 +306,9 @@ body {
 .mp-sim-head .mp-section-num { white-space: nowrap; }
 .mp-sim-count { margin-left: auto; font-size: 0.85rem; font-weight: 800; color: #1f2638; white-space: nowrap; }
 .mp-sim-note { padding: 8px 20px 0; font-size: 0.75rem; font-weight: 700; color: #6b7488; }
+
+/* ---- サマリーを物理と化学の2行に（T-44） ---- */
+.mp-summary { flex-direction: column; gap: 12px; padding: 16px 20px; }
+.mp-sum-row { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; }
+.mp-sum-row + .mp-sum-row { border-top: 1px solid #dfe4ee; padding-top: 12px; }
+.mp-sum-sub { font-size: 0.8rem; font-weight: 800; color: #d93a3f; background: #f4f6fb; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
