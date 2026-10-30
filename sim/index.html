@@ -47,6 +47,9 @@ h1{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(28px
 .sim .medal{flex:none;margin-left:auto;font-size:20px;line-height:1}
 .sim .medal.none{font-size:18px;color:#d6dce6}
 #physics a.sim{background:var(--physics-bg)}
+#chemistry a.sim{background:var(--chemistry-bg)}
+#chemistry a.sim:hover{background:var(--chemistry);color:#fff}
+#chemistry a.sim:hover .d{color:#fff}
 #physics a.sim:hover{background:var(--physics);color:#fff}
 #physics a.sim:hover .d{color:#fff}
 .chapter{font-size:14px;font-weight:900;color:var(--muted);margin-top:4px}
@@ -149,10 +152,39 @@ h1{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(28px
 
   <section class="subject" id="chemistry" aria-labelledby="chemistry-title">
     <h2 id="chemistry-title"><span class="icon" aria-hidden="true">化</span>化学の実験</h2>
-    <div class="sim soon">
-      <div><div class="t">化学反応</div><div class="d">反応のようすを目で見てみよう</div></div>
-      <span class="arrow">準備中</span>
-    </div>
+    <p class="chapter">1章　物質の成分と構成元素</p>
+    <a class="sim" href="chem-boiling.html">
+      <div><div class="t">加熱のグラフ</div><div class="d">化学 第1話｜純水と食塩水を熱して、温度をくらべよう</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-separation.html">
+      <div><div class="t">分離の実験室</div><div class="d">化学 第2話｜ろ過と蒸留で、まじりけのない水を取り出そう</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-chromatography.html">
+      <div><div class="t">クロマトグラフィー</div><div class="d">化学 第3話｜黒いインクは何色に分かれる？</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-element.html">
+      <div><div class="t">元素と単体の仕分け</div><div class="d">化学 第4話｜文の中の「酸素」は、元素？ 単体？</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-allotrope.html">
+      <div><div class="t">同素体</div><div class="d">化学 第5話｜炭素のつながり方で、ダイヤモンドと黒鉛</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-flame.html">
+      <div><div class="t">炎色反応</div><div class="d">化学 第6話｜水溶液を炎に入れて、色をくらべよう</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-heating-curve.html">
+      <div><div class="t">加熱曲線</div><div class="d">化学 第7話｜氷を熱し続けると、温度はどうなる？</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="sim" href="chem-particles.html">
+      <div><div class="t">粒子モデル</div><div class="d">化学 第8話｜温度を変えて、粒の動きを見よう</div></div>
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
   </section>
 </div>
 <script src="medal.js"></script>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分離の実験室 | わくわく化学基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=c02">← 第2話 ストーリーにもどる</a>
+    <span>化学1章 物質の成分と構成元素</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　化学 第2話</div>
+    <h1>ろ過と蒸留で、まじりけのない水を取り出そう</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 300" role="img" aria-label="ろ過・蒸留・蒸発皿でしらべるようす"></svg>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>手もとの液</div><div id="haveOut"></div>
+      <div>わかったこと</div><div id="foundOut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <div class="row">
+        <span class="name">やること</span>
+        <div class="seg" role="group" aria-label="やること">
+          <button type="button" data-op="filter" aria-pressed="true">ろ過</button>
+          <button type="button" data-op="distill" aria-pressed="false">蒸留</button>
+          <button type="button" data-op="test" aria-pressed="false">しらべる</button>
+        </div>
+      </div>
+      <div class="btns">
+        <button type="button" class="drop" id="go">ろ過する ▶</button>
+        <button type="button" class="sub" id="reset">はじめから</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>砂まじりの食塩水をろ過して、ろ紙に残るものと通りぬけるものを見る</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>ろ過した液を少し蒸発させて、何かとけていないかしらべる</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>蒸留で取り出した液をしらべて、水だけになっているか確かめる</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>混合物から物質を分けることを「分離」という</li><li>ろ過：ろ紙で、液体と、とけていない固体（砂など）を分ける。とけているもの（食塩）は通りぬける</li><li>蒸留：液体を沸騰させて、出てきた蒸気を冷やして取り出す。とけているものと液体を分けられる</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <span class="soon">チャレンジモード（準備中）</span>
+    <a class="back" href="../story/?ep=c02">第2話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 化学 第2話 ろ過と蒸留 ----
+   砂＋食塩水（混合物）。ろ過：砂はろ紙の上に残り、食塩水は通りぬける（食塩は水にとけているので、ろ紙の穴を通る）
+   蒸留：食塩水を熱して、出てきた水蒸気をリービッヒ冷却器で冷やして集める → 水だけ。フラスコに食塩が残る
+   しらべる：液を蒸発皿で蒸発させる。食塩がとけていれば白い粒が残る。水だけなら何も残らない
+   蒸留のコツ：温度計の球は枝のつけね、沸騰石を入れる、冷却水は下から上へ
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+// 手もとの液：mix（砂＋食塩水）→ ろ過 → filtrate（食塩水）→ 蒸留 → water（水だけ）
+const NAMES = { mix: '砂まじりの食塩水', filtrate: 'ろ過した液（食塩水）', water: '蒸留した液（水）' };
+const DUR = { filter: 4, distill: 5, test: 3 };
+const svg = $('svg');
+let op = 'filter', have = 'mix', simT = 0, last = null, found = [];   // last：直前にやったこと
+
+function grains(cx, cy, w, h, n, fill, stroke, r){
+  for (let i = 0; i < n; i++) el('circle', { cx: cx + (i * 37 % w), cy: cy + (i * 17 % h), r: r || 2.2, fill, stroke, 'stroke-width': 0.8 }, svg);
+}
+
+// ろ過：ろうと台・ろ紙・ビーカー
+function drawFilter(t){
+  const k = Math.min(1, t / DUR.filter), X = 160;
+  txt(svg, X, 22, 'ろ過', 13, '#22305a');
+  // 上のビーカー（そそぐ液）
+  el('rect', { x: 34, y: 56, width: 50, height: 40 * (1 - k), fill: '#bfe2f6', transform: 'translate(0,' + (40 * k) + ')' }, svg);
+  el('path', { d: 'M32 50 V98 H86 V50', fill: 'none', stroke: '#6b7488', 'stroke-width': 2.5 }, svg);
+  if (k < 1) grains(38, 82, 42, 12, 8, '#b47a44', '#7e5129');
+  txt(svg, 59, 116, '砂＋食塩水', 10, '#4b5568');
+  if (t > 0 && k < 1) el('path', { d: 'M86 54 Q120 40 ' + (X - 10) + ' 70', fill: 'none', stroke: '#bfe2f6', 'stroke-width': 4 }, svg);
+  // ろうととろ紙
+  el('path', { d: 'M' + (X - 38) + ' 66 L' + X + ' 128 L' + (X + 38) + ' 66z', fill: '#fff', stroke: '#6b7488', 'stroke-width': 2 }, svg);
+  el('line', { x1: X, x2: X, y1: 128, y2: 168, stroke: '#6b7488', 'stroke-width': 4 }, svg);
+  if (k > 0) grains(X - 16, 104, 30, 14, Math.round(14 * k), '#b47a44', '#7e5129');       // ろ紙の上に砂
+  txt(svg, X + 44, 92, 'ろ紙', 10, '#4b5568', 'start');
+  // しずく
+  if (t > 0 && k < 1) for (let i = 0; i < 2; i++) el('circle', { cx: X, cy: 172 + ((t * 60 + i * 20) % 30), r: 3, fill: '#bfe2f6', stroke: '#22305a', 'stroke-width': .8 }, svg);
+  // 下のビーカー
+  el('rect', { x: X - 30, y: 254 - 44 * k, width: 60, height: 44 * k, fill: '#bfe2f6' }, svg);
+  el('path', { d: 'M' + (X - 32) + ' 200 V256 H' + (X + 32) + ' V200', fill: 'none', stroke: '#6b7488', 'stroke-width': 2.5 }, svg);
+  if (k > 0.2) grains(X - 24, 236 - 30 * k + 12, 48, 16, Math.round(10 * k), '#fff', '#6b7488', 1.8);       // とけた食塩
+  if (k >= 1){
+    txt(svg, X + 40, 112, '砂は残る', 11, '#7e5129', 'start');
+    txt(svg, X + 40, 236, '透明な液が通った', 11, '#22305a', 'start');
+    txt(svg, X + 40, 252, '（食塩は？）', 10, '#6b7488', 'start');
+  }
+}
+
+// 蒸留：枝付きフラスコ・温度計・リービッヒ冷却器・受け器
+function drawDistill(t){
+  const k = Math.min(1, t / DUR.distill);
+  txt(svg, 160, 22, '蒸留', 13, '#22305a');
+  // バーナー
+  el('rect', { x: 52, y: 214, width: 18, height: 26, fill: '#6b7488' }, svg);
+  if (t > 0){
+    el('path', { d: 'M49 214 Q61 180 73 214z', fill: '#d93a3f' }, svg);
+    el('path', { d: 'M55 214 Q61 192 67 214z', fill: '#ffe14a' }, svg);
+  }
+  // フラスコ
+  el('circle', { cx: 61, cy: 150, r: 30, fill: '#fff', stroke: '#6b7488', 'stroke-width': 2.5 }, svg);
+  el('path', { d: 'M' + 35 + ' ' + (164 - 0) + ' A30 30 0 0 0 87 164z', fill: '#bfe2f6', opacity: 1 - 0.5 * k }, svg);
+  grains(44, 160, 32, 10, 6 + Math.round(6 * k), '#fff', '#6b7488', 1.8);                          // 食塩（のこる）
+  el('circle', { cx: 52, cy: 172, r: 3, fill: '#d6dce6', stroke: '#6b7488' }, svg); txt(svg, 22, 196, '沸騰石', 9, '#4b5568', 'start');
+  el('rect', { x: 55, y: 84, width: 12, height: 40, fill: '#fff', stroke: '#6b7488', 'stroke-width': 2 }, svg);   // 首
+  // 温度計（球は枝のつけね）
+  el('line', { x1: 61, x2: 61, y1: 52, y2: 98, stroke: '#6b7488', 'stroke-width': 3 }, svg);
+  el('circle', { cx: 61, cy: 98, r: 3.5, fill: '#d93a3f' }, svg);
+  txt(svg, 69, 58, t > 0 ? (k > 0.15 ? '100 ℃' : '…') : '', 10, '#d93a3f', 'start');
+  // 枝 → 冷却器 → 受け器
+  el('path', { d: 'M67 98 L130 120', stroke: '#6b7488', 'stroke-width': 4, fill: 'none' }, svg);
+  el('path', { d: 'M126 110 L236 150 L230 166 L120 126z', fill: '#bfe2f6', opacity: .55, stroke: '#6b7488', 'stroke-width': 1.5 }, svg);   // 冷却器（外側に冷却水）
+  el('path', { d: 'M130 120 L240 160', stroke: '#6b7488', 'stroke-width': 3, fill: 'none' }, svg);
+  arrow(svg, 222, 186, 222, 166, '#22305a', 2); txt(svg, 226, 196, '冷却水（入る）', 9, '#22305a', 'start');
+  arrow(svg, 142, 106, 142, 88, '#22305a', 2); txt(svg, 146, 84, '冷却水（出る）', 9, '#22305a', 'start');
+  // 蒸気（つぶつぶ）
+  if (t > 0 && k < 1) for (let i = 0; i < 4; i++){
+    const s = ((t * 0.6 + i * 0.25) % 1);
+    el('circle', { cx: 67 + s * 170, cy: 98 + s * 62, r: 2.4, fill: '#fff', stroke: '#22305a', 'stroke-width': .8 }, svg);
+  }
+  // 受け器
+  el('rect', { x: 236, y: 252 - 36 * k, width: 44, height: 36 * k, fill: '#bfe2f6' }, svg);
+  el('path', { d: 'M234 196 V254 H282 V196', fill: 'none', stroke: '#6b7488', 'stroke-width': 2.5 }, svg);
+  txt(svg, 258, 272, '受け器', 10, '#4b5568');
+  if (k >= 1){ txt(svg, 61, 262, 'フラスコに白い粒が残る', 10, '#7e5129'); txt(svg, 258, 288, '水がたまった', 10, '#22305a'); }
+}
+
+// しらべる：蒸発皿で液を蒸発させる
+function drawTest(t){
+  const k = Math.min(1, t / DUR.test), salty = have !== 'water';
+  txt(svg, 160, 22, 'しらべる（蒸発皿で水を蒸発させる）', 13, '#22305a');
+  txt(svg, 160, 44, NAMES[have] + 'を少し入れる', 11, '#4b5568');
+  el('rect', { x: 151, y: 214, width: 18, height: 26, fill: '#6b7488' }, svg);
+  if (t > 0){
+    el('path', { d: 'M148 214 Q160 180 172 214z', fill: '#d93a3f' }, svg);
+    el('path', { d: 'M154 214 Q160 192 166 214z', fill: '#ffe14a' }, svg);
+  }
+  el('line', { x1: 110, x2: 210, y1: 170, y2: 170, stroke: '#6b7488', 'stroke-width': 3 }, svg);
+  el('path', { d: 'M110 140 Q160 196 210 140', fill: '#fff', stroke: '#6b7488', 'stroke-width': 2.5 }, svg);
+  if (k < 1) el('path', { d: 'M' + (124 + 20 * k) + ' ' + (150 + 6 * k) + ' Q160 ' + (180) + ' ' + (196 - 20 * k) + ' ' + (150 + 6 * k), fill: '#bfe2f6', stroke: 'none' }, svg);
+  if (t > 0 && k < 1) for (let i = 0; i < 3; i++){ const s = (t * 0.8 + i * 0.33) % 1; el('path', { d: 'M' + (140 + i * 20) + ' ' + (140 - s * 50) + ' q4 -6 0 -12', fill: 'none', stroke: '#6b7488', 'stroke-width': 1.5, opacity: 1 - s }, svg); }
+  if (k >= 1){
+    if (salty){ grains(140, 160, 40, 6, 12, '#fff', '#6b7488', 2.4); txt(svg, 160, 120, '白い粒が残った！ → 食塩がとけていた', 12, '#7e5129'); }
+    else txt(svg, 160, 120, '何も残らない → 水だけ！', 12, '#22305a');
+  }
+}
+
+function draw(t){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 300, fill: '#eef2f7' }, svg);
+  el('rect', { y: 256, width: 320, height: 44, fill: '#d6dce6' }, svg);
+  if (op === 'filter') drawFilter(t); else if (op === 'distill') drawDistill(t); else drawTest(t);
+  show();
+}
+
+function show(){
+  $('haveOut').textContent = NAMES[have];
+  $('foundOut').textContent = found.length ? found.join('／') : '—';
+  const f = {
+    filter: have === 'mix' ? 'ろ紙で、液体と、とけていない固体を分ける。砂と食塩水を分けてみよう。' : 'ろ過はもうすんでいる。「蒸留」か「しらべる」をえらぼう。',
+    distill: have === 'water' ? '蒸留はもうすんでいる。「しらべる」で確かめよう。' : '液を沸騰させて、出てきた<b>水蒸気だけ</b>を冷やして集める。<br>コツ：温度計の球は枝のつけね／沸騰石を入れる／冷却水は下から上へ',
+    test: '手もとの液を蒸発皿で熱して、水を蒸発させる。何か残るかな？'
+  };
+  $('formula').innerHTML = f[op];
+  $('go').disabled = (op === 'filter' && have !== 'mix') || (op === 'distill' && have === 'water');
+  $('go').textContent = { filter: 'ろ過する ▶', distill: '蒸留する ▶', test: '蒸発させてしらべる ▶' }[op];
+}
+
+function talk(){
+  if (!last) return say('question', '砂がまざって、しょっぱい水じゃ。ここから、まじりけのない水を取り出したい。まずはろ過してみよう。');
+  if (last === 'filter') return say('think', '透明になったな。リカくんは「完成！」と言うが…本当に水だけかな？「しらべる」で確かめてみよう。');
+  if (last === 'test' && have === 'filtrate') return say('proud', '白い粒が残った。食塩はとけているので、ろ紙の穴を通りぬけてしまうのじゃ。では「蒸留」をためしてみよう。');
+  if (last === 'distill') return say('proud', '水蒸気だけを冷やして集めたぞ。こういう道具は、むかしの錬金術師たちが工夫して作ったものじゃ。「しらべる」で確かめよう。');
+  if (last === 'test' && have === 'water') return say('happy', '何も残らない。水だけを取り出せたな！ ろ過は固体と液体、蒸留はとけているものと液体を分けるのじゃ。');
+  say('normal', 'やることをえらんで、ためしてみよう。');
+}
+
+function start(){
+  const doing = op;
+  $('go').disabled = true;
+  play(DUR[doing], t => { simT = t; draw(t); }, () => {
+    last = doing;
+    if (doing === 'filter'){ have = 'filtrate'; done.m1 = true; if (!found.includes('砂はろ紙に残る')) found.push('砂はろ紙に残る'); }
+    if (doing === 'distill'){ have = 'water'; }
+    if (doing === 'test'){
+      if (have === 'filtrate'){ done.m2 = true; if (!found.includes('ろ過した液には食塩がとけている')) found.push('ろ過した液には食塩がとけている'); }
+      if (have === 'water'){ done.m3 = true; if (!found.includes('蒸留した液は水だけ')) found.push('蒸留した液は水だけ'); }
+    }
+    showMissions(); draw(DUR[doing]); talk();
+  });
+}
+function reset(){
+  stopPlay(); simT = 0; have = 'mix'; last = null; found = []; op = 'filter'; pickSeg('op', 'filter');
+  draw(0); talk();
+}
+segGroup('op', v => { stopPlay(); op = v; simT = 0; draw(0); talk(); });
+$('go').addEventListener('click', start);
+$('reset').addEventListener('click', reset);
+draw(0); talk();
+</script>
+</body>
+</html>

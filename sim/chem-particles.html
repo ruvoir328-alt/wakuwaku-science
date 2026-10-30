@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>粒子モデルシミュレーター | わくわく化学基礎</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;
+  --coat:#22305a;      /* ストーリーモードと同じ紺 */
+  --coat-deep:#18223f;
+  --paper:#ffffff;
+  --ink:#1f2638;
+  --apple:#d93a3f;
+  --muted:#6b7488;
+  --line:#dfe4ee;
+  --soft:#f4f6fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--coat);
+  color:var(--ink);
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.app{max-width:540px;margin:0 auto;padding-block:12px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:12px}
+
+/* ---- ヘッダー ---- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#cfd7ee;font-size:13px}
+.top a{color:#cfd7ee;text-decoration:none;padding:6px 0}
+.top a:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+.head{color:#fff}
+.head .tag{font-family:'Dela Gothic One',sans-serif;font-size:14px;color:#ffd6d7;letter-spacing:.04em}
+.head h1{font-weight:900;font-size:20px;line-height:1.35}
+
+/* ---- ナビ役 ---- */
+.guide{display:flex;align-items:flex-end;gap:8px}
+.guide img{width:64px;height:auto;flex:none}
+.bubble{position:relative;background:#fff;border-radius:14px;padding:10px 12px;font-size:14px;font-weight:700;line-height:1.6;flex:1;min-height:58px}
+.bubble::before{content:'';position:absolute;left:-8px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
+
+/* ---- 実験台 ---- */
+.bench{background:var(--paper);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.view{position:relative}
+.view svg{display:block;width:100%;height:auto}
+
+.readout{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+.readout > div{padding:7px 10px;border-top:1px solid var(--line)}
+.readout > div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:900;font-size:12.5px;color:var(--muted)}
+.readout .k{font-weight:700;color:var(--muted);font-size:13px}
+.readout .num{font-weight:900;font-variant-numeric:tabular-nums;text-align:right}
+.readout .num small{font-weight:700;color:var(--muted);margin-left:2px}
+.time-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.time-row .t{font-family:'Dela Gothic One',sans-serif;font-size:28px;font-variant-numeric:tabular-nums;color:var(--coat)}
+.time-row .t small{font-family:'Zen Maru Gothic',sans-serif;font-size:14px;font-weight:700;color:var(--muted);margin-left:4px}
+.time-row .label{font-size:13px;font-weight:700;color:var(--muted)}
+.formula{font-size:13px;line-height:1.6;background:#fff7e9;border:2px dashed #e9c48f;border-radius:8px;padding:8px 10px}
+.formula .m{font-family:'Times New Roman',serif;font-style:italic;font-size:15px}
+.formula b{font-variant-numeric:tabular-nums}
+
+/* ---- そうさ ---- */
+.controls{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{font-size:13px;font-weight:900;color:var(--muted);width:4.5em;flex:none}
+.seg{display:flex;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;flex:1;min-width:0}
+.seg button{flex:1;font:700 14px 'Zen Maru Gothic',sans-serif;border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--coat);color:#fff}
+.seg button:focus-visible,.switch:focus-visible,.drop:focus-visible,.links a:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;font:700 14px 'Zen Maru Gothic',sans-serif;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left}
+.switch .knob{flex:none;width:44px;height:26px;border-radius:999px;background:#c9d0de;position:relative;transition:background .2s}
+.switch .knob::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch[aria-checked="true"] .knob{background:var(--apple)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(18px)}
+.drop{font:900 17px 'Zen Maru Gothic',sans-serif;background:var(--apple);color:#fff;border:0;border-radius:999px;padding:14px;cursor:pointer;box-shadow:0 4px 0 #a82a2f}
+.drop:active{transform:translateY(2px);box-shadow:0 2px 0 #a82a2f}
+.drop[disabled]{opacity:.6;cursor:default}
+
+/* ---- ミッション ---- */
+.missions{background:#fff;border-radius:14px;padding:12px 14px}
+.missions h2{font-size:14px;font-weight:900;margin-bottom:6px;color:var(--coat)}
+.missions ol{list-style:none;display:grid;gap:6px}
+.missions li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.5}
+.missions li .box{flex:none;width:20px;height:20px;border-radius:6px;border:2px solid #c9d0de;margin-top:1px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900}
+.missions li.done .box{background:#3f9a5c;border-color:#3f9a5c}
+.missions li.done span:last-child{color:var(--muted)}
+
+.links{display:grid;gap:8px}
+.links a{display:block;text-align:center;text-decoration:none;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid #fff}
+.links .go{background:#fff;color:var(--coat)}
+.links .back{color:#fff;background:transparent;border-color:rgba(255,255,255,.5)}
+
+@media (prefers-reduced-motion: reduce){
+  .switch .knob,.switch .knob::after{transition:none}
+}
+.ask-newton{flex:none;display:inline-flex;align-items:center;gap:4px;color:#16233F !important;background:#FFE45C;border-radius:999px;padding:2px 10px 2px 4px !important;font-weight:700;font-size:12px;white-space:nowrap}
+.ask-newton img{width:22px;height:22px;border-radius:50%;background:#fff;object-fit:contain}
+.ask-newton .ai-mini{font-size:10px;background:#16233F;color:#FFE45C;border-radius:999px;padding:0 6px;margin-left:2px}
+
+/* ---- 1章のシミュで足したもの（色は上と同じものだけ） ---- */
+.view svg{touch-action:manipulation}
+.slider{display:flex;flex-direction:column;gap:2px}
+.slider .s-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.slider .s-name{font-size:13px;font-weight:900;color:var(--muted)}
+.slider output{font-weight:900;font-size:16px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.slider output small{font-size:12px;color:var(--muted);margin-left:2px}
+.slider input[type=range]{width:100%;height:34px;margin:0;accent-color:var(--apple);cursor:pointer}
+.slider input[type=range]:focus-visible{outline:3px solid var(--apple);outline-offset:2px;border-radius:6px}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px}
+.btns2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sub{font:700 15px 'Zen Maru Gothic',sans-serif;background:var(--soft);color:var(--coat);border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer}
+.sub:focus-visible{outline:3px solid var(--apple);outline-offset:2px}
+.sub[disabled]{opacity:.45;cursor:default}
+.learned{background:#fff7e9;border:2px dashed #e9c48f;border-radius:14px;padding:12px 14px}
+.learned h2{font-size:14px;font-weight:900;margin-bottom:6px;color:#7e5129}
+.learned ul{margin-left:1.2em;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.links .soon{display:block;text-align:center;font:700 15px 'Zen Maru Gothic',sans-serif;padding:12px;border-radius:12px;border:2px solid rgba(255,255,255,.25);color:#cfd7ee}
+.readout.c2{grid-template-columns:auto 1fr}
+.readout.c2 > div:nth-child(-n+3){border-top:1px solid var(--line);background:transparent;font-size:14px}
+.readout.c2 > div:nth-child(-n+2){border-top:0}
+.readout.c2 > div:nth-child(odd){font-weight:700;color:var(--muted);font-size:13px}
+.readout.c2 > div:nth-child(even){font-weight:900;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a href="../story/?ep=c08">← 第8話 ストーリーにもどる</a>
+    <span>化学1章 物質の成分と構成元素</span>
+    <a class="ask-newton" href="../newton/" aria-label="ニュートンくんに質問する（AIチャット）"><img src="../story/img/newton_normal.webp" alt="" width="22" height="22">質問 <span class="ai-mini">AI</span></a>
+  </div>
+  <div class="head">
+    <div class="tag">シミュレーションモード　化学 第8話</div>
+    <h1>温度を変えると、粒はどう動く？</h1>
+  </div>
+
+  <div class="guide">
+    <img id="guideImg" src="../story/img/newton_question.webp" alt="ニュートンくん">
+    <p class="bubble" id="bubble" aria-live="polite"></p>
+  </div>
+
+  <div class="bench">
+    <div class="view">
+      <svg id="svg" viewBox="0 0 320 250" role="img" aria-label="水の粒の動き（粒子モデル）"></svg>
+    </div>
+
+    <div class="readout c2" aria-live="off">
+      <div>セルシウス温度 t</div><div id="tOut"></div>
+      <div>絶対温度 T</div><div id="TOut"></div>
+      <div>水の状態</div><div id="sOut"></div>
+      <div>粒の動き</div><div id="mOut"></div>
+    </div>
+
+    <p class="formula" id="formula"></p>
+
+    <div class="controls">
+      <label class="slider"><span class="s-head"><span class="s-name">温度 t</span><output id="oT"></output></span>
+        <input type="range" id="inT" min="-273" max="200" step="1" value="25"></label>
+      <div class="row">
+        <span class="name">ちょうど</span>
+        <div class="seg" role="group" aria-label="温度をえらぶ（℃）">
+          <button type="button" data-t="-273" aria-pressed="false">−273</button>
+          <button type="button" data-t="0" aria-pressed="false">0</button>
+          <button type="button" data-t="25" aria-pressed="true">25</button>
+          <button type="button" data-t="100" aria-pressed="false">100</button>
+          <button type="button" data-t="150" aria-pressed="false">150</button>
+        </div>
+      </div>
+      <div class="btns2">
+        <button type="button" class="sub" id="reset">リセット</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="missions">
+    <h2>ミッション</h2>
+    <ol>
+      <li id="m1"><span class="box" aria-hidden="true"></span><span>温度を 150 ℃ まで上げて、粒の動きと大きさを見る</span></li><li id="m2"><span class="box" aria-hidden="true"></span><span>−273 ℃ まで下げて、粒の動きが止まるのを見る</span></li><li id="m3"><span class="box" aria-hidden="true"></span><span>0 ℃ と 100 ℃ を、絶対温度で読む</span></li>
+    </ol>
+  </div>
+
+  <div class="learned">
+    <h2>わかったこと</h2>
+    <ul>
+      <li>物質をつくる粒は、いつも熱運動をしている。温度が高いほど、はげしく動く</li><li>水が水蒸気になっても、粒の大きさも数も変わらない。すきまが広がる</li><li>粒の動きが止まる −273 ℃ を 0 とした温度が絶対温度。T = t + 273（単位 K）</li>
+    </ul>
+  </div>
+
+  <div class="links">
+    <a class="go" href="../chemistry/drill.html?unit=化1-7">チャレンジモードで解いてみる →</a>
+    <a class="back" href="../story/?ep=c08">第8話のストーリーを見る</a>
+  </div>
+</div>
+
+<script src="medal.js"></script>
+<script>
+/* ---- 化学 第8話 熱運動と絶対温度 ----
+   水の粒 20 こ（大きさはいつも同じ）。1気圧：0 ℃ 以下は固体、0〜100 ℃ は液体、100 ℃ 以上は気体
+   粒の速さは √T に比例させる（T = t + 273 K）。−273 ℃（0 K）で止まる
+   0 ℃ → 273 K、100 ℃ → 373 K、25 ℃ → 298 K
+*/
+
+/* ---- 共通の道具 ---- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = id => document.getElementById(id);
+function el(tag, attrs, parent, text){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (text !== undefined) n.textContent = text;
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function txt(parent, x, y, s, size, fill, anchor, extra){
+  return el('text', Object.assign({ x, y, 'font-size': size || 12, fill: fill || '#4b5568', 'text-anchor': anchor || 'middle', 'font-family': 'Zen Maru Gothic', 'font-weight': 700 }, extra || {}), parent, s);
+}
+// 矢印（x1,y1 → x2,y2）
+function arrow(parent, x1, y1, x2, y2, color, w){
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, h = Math.min(11, L * 0.6);
+  el('line', { x1, y1, x2: x2 - ux * h * 0.8, y2: y2 - uy * h * 0.8, stroke: color, 'stroke-width': w || 4, 'stroke-linecap': 'round' }, parent);
+  el('path', { d: 'M' + x2 + ' ' + y2 + ' L' + (x2 - ux * h - uy * h * 0.55) + ' ' + (y2 - uy * h + ux * h * 0.55) + ' L' + (x2 - ux * h + uy * h * 0.55) + ' ' + (y2 - uy * h - ux * h * 0.55) + 'z', fill: color }, parent);
+}
+// ボタンのグループ（aria-pressed で選ぶ）
+function segGroup(attr, onPick){
+  const bs = document.querySelectorAll('[data-' + attr + ']');
+  bs.forEach(b => b.addEventListener('click', () => {
+    bs.forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    onPick(b.dataset[attr]);
+  }));
+}
+function pickSeg(attr, value){
+  document.querySelectorAll('[data-' + attr + ']').forEach(x => x.setAttribute('aria-pressed', x.dataset[attr] === String(value) ? 'true' : 'false'));
+}
+// ナビ役のひとこと
+function say(face, text){
+  $('bubble').textContent = text;
+  $('guideImg').src = '../story/img/newton_' + face + '.webp';
+}
+['question','normal','proud','think','happy','surprise'].forEach(f => { new Image().src = '../story/img/newton_' + f + '.webp'; });
+// ミッションの表示
+const done = {};
+function showMissions(){
+  document.querySelectorAll('.missions li').forEach(li => {
+    li.classList.toggle('done', !!done[li.id]);
+    li.querySelector('.box').textContent = done[li.id] ? '✓' : '';
+  });
+  SimMedal.sync(done);   // メダル・トロフィー（sim/medal.js）
+}
+// 時間 dur（秒）のアニメ。step(t) を毎フレーム呼ぶ。動きを減らす設定なら、最後の形だけ描く
+function play(dur, step, onEnd, rate){
+  stopPlay();
+  if (reduce){ step(dur); onEnd && onEnd(); return; }
+  let t = 0, last = performance.now(), wait = 0.25;
+  const f = now => {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (wait > 0){ wait -= dt; step(0); play.raf = requestAnimationFrame(f); return; }
+    t = Math.min(dur, t + dt * (typeof rate === 'function' ? rate() : (rate || 1)));
+    step(t);
+    if (t < dur) play.raf = requestAnimationFrame(f); else { play.raf = 0; onEnd && onEnd(); }
+  };
+  play.raf = requestAnimationFrame(f);
+}
+function stopPlay(){ if (play.raf) cancelAnimationFrame(play.raf); play.raf = 0; }
+const f1 = x => (Math.abs(x) < 0.005 ? 0 : x).toFixed(1), f2 = x => (Math.abs(x) < 0.0005 ? 0 : x).toFixed(2);
+const sgn = (x, d) => (x > 1e-9 ? '+' : x < -1e-9 ? '−' : '') + Math.abs(x).toFixed(d);
+
+const N = 20, R = 7;                       // 粒の数と半径（どの温度でも同じ）
+const BOX = { x: 14, y: 14, w: 292, h: 186 };
+const svg = $('svg');
+let t = 25, state = '', P = [], seen = {}, last = performance.now();
+const K = () => t + 273;                   // 絶対温度
+const stateOf = tt => tt <= 0 ? 'solid' : tt < 100 ? 'liquid' : 'gas';
+const NAME = { solid: '固体（氷）', liquid: '液体（水）', gas: '気体（水蒸気）' };
+const speed = () => 46 * Math.sqrt(K() / 373);   // 粒の速さ（px/秒）。√T に比例
+
+// 状態が変わったら、粒をならべなおす（数と大きさはそのまま）
+function layout(){
+  state = stateOf(t);
+  P = Array.from({ length: N }, (_, i) => {
+    let x, y;
+    if (state === 'solid'){ x = 102 + (i % 5) * 2 * R + (i % 5) * 1; y = BOX.y + BOX.h - R - 1 - Math.floor(i / 5) * 2 * R; }
+    else if (state === 'liquid'){ x = 60 + (i % 7) * 30 + (Math.floor(i / 7) % 2) * 12; y = BOX.y + BOX.h - R - 2 - Math.floor(i / 7) * 15; }
+    else { x = BOX.x + R + 12 + (i % 5) * 62; y = BOX.y + R + 10 + Math.floor(i / 5) * 46; }
+    const a = i * 2.39996;
+    return { x, y, x0: x, y0: y, vx: Math.cos(a), vy: Math.sin(a), ph: a };
+  });
+}
+function step(dt, now){
+  const v = speed();
+  P.forEach(p => {
+    if (state === 'solid'){                // その場でゆれる（0 K で止まる）
+      const amp = 2.6 * Math.sqrt(K() / 273);
+      p.x = p.x0 + Math.sin(now * 14 + p.ph) * amp; p.y = p.y0 + Math.cos(now * 17 + p.ph) * amp;
+      return;
+    }
+    p.x += p.vx * v * dt; p.y += p.vy * v * dt;
+    const top = state === 'liquid' ? BOX.y + BOX.h - 62 : BOX.y + R;   // 液体は下のほうにまとまる
+    if (p.x < BOX.x + R){ p.x = BOX.x + R; p.vx = Math.abs(p.vx); }
+    if (p.x > BOX.x + BOX.w - R){ p.x = BOX.x + BOX.w - R; p.vx = -Math.abs(p.vx); }
+    if (p.y < top){ p.y = top; p.vy = Math.abs(p.vy); }
+    if (p.y > BOX.y + BOX.h - R){ p.y = BOX.y + BOX.h - R; p.vy = -Math.abs(p.vy); }
+    if (state === 'liquid' && Math.random() < dt * 2){ const a = Math.random() * 6.283; p.vx = Math.cos(a); p.vy = Math.sin(a); }
+  });
+}
+function draw(){
+  svg.innerHTML = '';
+  el('rect', { width: 320, height: 250, fill: '#eef2f7' }, svg);
+  el('rect', { x: BOX.x, y: BOX.y, width: BOX.w, height: BOX.h, rx: 6, fill: '#fff', stroke: '#6b7488', 'stroke-width': 2 }, svg);
+  const v = speed();
+  P.forEach((p, i) => {
+    el('circle', { cx: p.x, cy: p.y, r: R, fill: '#bfe2f6', stroke: '#22305a', 'stroke-width': 1.4 }, svg);
+    // 何こかの粒に、速さの矢印（長さ ＝ 速さ）
+    if (i % 4 === 0 && K() > 0 && state !== 'solid')
+      arrow(svg, p.x, p.y, p.x + p.vx * v * 0.45, p.y + p.vy * v * 0.45, '#d93a3f', 2);
+  });
+  // 1つの粒の大きさ（直径）の目もり
+  const q = P[0];
+  el('line', { x1: q.x - R, x2: q.x + R, y1: q.y - R - 5, y2: q.y - R - 5, stroke: '#7e5129', 'stroke-width': 1.5 }, svg);
+  txt(svg, 160, 222, '粒の大きさは、どの温度でも同じ。数も 20 このまま', 11, '#1f2638');
+  txt(svg, 160, 240, K() === 0 ? '粒の動きが止まっている（0 K）' : state === 'solid' ? 'ならんだまま、その場でゆれる' : state === 'liquid' ? 'たがいに入れかわりながら動く' : '箱いっぱいに飛び回る（すきまが広い）', 11, '#7e5129');
+}
+function show(){
+  $('oT').innerHTML = (t < 0 ? '−' + (-t) : t) + '<small>℃</small>';
+  $('tOut').textContent = (t < 0 ? '−' + (-t) : t) + ' ℃';
+  $('TOut').textContent = K() + ' K';
+  $('sOut').textContent = NAME[state] + (t === 0 ? '（融点）' : t === 100 ? '（沸点）' : '');
+  $('mOut').textContent = K() === 0 ? '止まっている' : state === 'solid' ? 'その場でゆれる' : state === 'liquid' ? '動き回る' : '飛び回る';
+  $('formula').innerHTML = '絶対温度：<span class="m">T</span> = <span class="m">t</span> + 273 = ' + (t < 0 ? '(−' + (-t) + ')' : t) + ' + 273 = <b>' + K() + ' K</b>' +
+    '<br>粒の速さは、温度が高いほど大きい（赤い矢印の長さ）';
+}
+function talk(){
+  if (K() === 0) return say('surprise', '−273 ℃、つまり 0 K。粒の動きが止まった！ これより低い温度はないのじゃ。');
+  if (!done.m1) return say('question', '水の粒じゃ。温度を上げると、粒の動きはどうなる？ 粒の大きさにも注目じゃ。');
+  if (!done.m2) return say('proud', '温度が高いほど、はげしく動く。でも粒の大きさは同じじゃ。では、うんと下げるとどうなる？');
+  if (!done.m3) return say('think', '粒の動きが止まる −273 ℃ を 0 とした温度が絶対温度じゃ。0 ℃ と 100 ℃ は何 K かな？');
+  say('happy', '0 ℃ は 273 K、100 ℃ は 373 K。T = t + 273 じゃ！ 粒の中には何があるのか…次の章でのぞくぞ。');
+}
+function setT(v){
+  t = Math.round(v); $('inT').value = t;
+  pickSeg('t', t);
+  if (stateOf(t) !== state) layout();
+  if (t >= 150) done.m1 = true;
+  if (t === -273) done.m2 = true;
+  if (t === 0) seen[0] = true;
+  if (t === 100) seen[100] = true;
+  if (seen[0] && seen[100]) done.m3 = true;
+  showMissions(); show(); draw(); talk();
+}
+$('inT').addEventListener('input', () => setT(Number($('inT').value)));
+segGroup('t', v => setT(Number(v)));
+$('reset').addEventListener('click', () => { seen = {}; setT(25); });
+layout(); show(); draw(); talk();
+// 粒がうごき続けるアニメ（動きを減らす設定では、止めた絵と矢印だけ）
+if (!reduce){
+  const tick = now => { const dt = Math.min(0.05, (now - last) / 1000); last = now; step(dt, now / 1000); draw(); requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+</script>
+</body>
+</html>
