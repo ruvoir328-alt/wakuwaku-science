@@ -201,6 +201,7 @@ window.EPISODE = {
   topic: 'ろ過と蒸留',
   title: 'にごった水を、きれいにするには？',
   simUrl: '../sim/chem-separation.html',
+  drillUrl: '../chemistry/drill.html?unit=化1-2',
   scenes: [
     { bg: 'title' },
 

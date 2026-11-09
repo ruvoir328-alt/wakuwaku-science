@@ -146,6 +146,7 @@ window.EPISODE = {
   topic: 'クロマトグラフィーなど',
   title: '黒いインクは、1色？',
   simUrl: '../sim/chem-chromatography.html',
+  drillUrl: '../chemistry/drill.html?unit=化1-2',
   scenes: [
     { bg: 'title' },
 

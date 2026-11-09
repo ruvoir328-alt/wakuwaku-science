@@ -164,6 +164,7 @@ window.EPISODE = {
   topic: '炎色反応・成分元素の検出',
   title: '炎の色で、中身がわかる？',
   simUrl: '../sim/chem-flame.html',
+  drillUrl: '../chemistry/drill.html?unit=化1-5',
   scenes: [
     { bg: 'title' },
 

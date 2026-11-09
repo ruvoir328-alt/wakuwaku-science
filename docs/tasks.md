@@ -226,7 +226,7 @@ Claude Code にこう送るだけ：
   - マイページのいちばん上の「◯ / ◯ クリア」を物理と化学で分ける
   - さわる場所：`index.html`（リンク1つ）、`chemistry/units.html`、`chemistry/index.html`（もどるリンク）、`physics/mypage.html`・`physics/mypage.css`
 
-- [ ] **T-43　化学1章のドリル（化1-1〜化1-7）** 🌙
+- [x] **T-43　化学1章のドリル（化1-1〜化1-7）** 🌙
   - 化1-2〜化1-6 を作る。化1-1・化1-7 も話の場面にそろえて見直す。問題に場面の絵を入れる（`pic`）
   - 化学1章の話の最後とシミュから、それぞれのドリルにつなぐ（`SIM_EP` も）
   - 単元一覧とマイページ（`physics/mypage.html` の `UNITS` の `soon: true`）の「準備中」を外す

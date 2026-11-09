@@ -165,6 +165,7 @@ window.EPISODE = {
   topic: '元素と単体',
   title: '骨の『カルシウム』は、金属のかたまり？',
   simUrl: '../sim/chem-element.html',
+  drillUrl: '../chemistry/drill.html?unit=化1-3',
   scenes: [
     { bg: 'title' },
 
