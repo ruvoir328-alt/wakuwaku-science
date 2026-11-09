@@ -176,6 +176,7 @@ window.EPISODE = {
   topic: '物質の三態と状態変化',
   title: '氷がとけている間、温度は？',
   simUrl: '../sim/chem-heating-curve.html',
+  drillUrl: '../chemistry/drill.html?unit=化1-6',
   scenes: [
     { bg: 'title' },
 

@@ -170,6 +170,7 @@ window.EPISODE = {
   topic: '同素体',
   title: 'ダイヤモンドと鉛筆のしんは、同じもの？',
   simUrl: '../sim/chem-allotrope.html',
+  drillUrl: '../chemistry/drill.html?unit=化1-4',
   scenes: [
     { bg: 'title' },
 

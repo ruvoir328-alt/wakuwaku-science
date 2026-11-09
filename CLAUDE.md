@@ -92,6 +92,7 @@
   - 問題は2つの形：選ぶ問題（`choices` と `answer`）、数の問題（`number: true`・`answer`・`unit`）。どちらも `explain`（答えのあとに出す説明）を書く
   - メダル・トロフィー・記録のしかたは物理のドリルと同じ（記録のキーも同じ。単元の番号は「化1-1」）
 - 入り口：トップ画面の「化学 → チャレンジ」は単元一覧 `chemistry/units.html`。今の元素・周期表ドリル（`chemistry/index.html`）は、単元一覧の中の「別枠」として残す
+- 化学1章の対応（話・ストーリー・シミュ・ドリル）：第1話 `chem01.js`・`chem-boiling`・化1-1／第2話 `chem02.js`・`chem-separation`・化1-2／第3話 `chem03.js`・`chem-chromatography`・化1-2／第4話 `chem04.js`・`chem-element`・化1-3／第5話 `chem05.js`・`chem-allotrope`・化1-4／第6話 `chem06.js`・`chem-flame`・化1-5／第7話 `chem07.js`・`chem-heating-curve`・化1-6／第8話 `chem08.js`・`chem-particles`・化1-7
 - 化学のドリルの記録は、物理のマイページ（`physics/mypage.html`）の「化学 第1章」の欄にも出る（`UNITS` の `ch: 'c1'`）
 
 ## キャラクター
